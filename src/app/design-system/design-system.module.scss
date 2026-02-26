@@ -1,0 +1,246 @@
+// =============================================================================
+// DESIGN SYSTEM PAGE STYLES
+// =============================================================================
+
+// @import brings typography classes + all variables into scope for @extend
+@import '../../styles/typography';
+
+// ————————————————————————————————————————————————
+// LAYOUT
+// ————————————————————————————————————————————————
+
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: $surface-base;
+  color: $text-default;
+  font-family: $font-body;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background-color: $surface-raised;
+  border-right: 1px solid $border-default;
+  padding: $space-8 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  padding: 0 $space-5;
+  margin-bottom: $space-6;
+}
+
+.sidebarTitle {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: $text-default;
+  margin-bottom: 2px;
+}
+
+.sidebarSubtitle {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: $text-subtle;
+}
+
+.sidebarDivider {
+  height: 1px;
+  background-color: $border-default;
+  margin-bottom: $space-4;
+}
+
+.navSection {
+  padding: 0 $space-5;
+  margin: 0 0 $space-2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-subtle;
+}
+
+.nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: $space-2 $space-5;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: $text-default;
+  text-decoration: none;
+  position: relative;
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background-color: $surface-sunken;
+    color: $primary-default;
+  }
+}
+
+.navLinkActive {
+  color: $primary-default;
+  background-color: $surface-sunken;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: $primary-default;
+  }
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: $space-12;
+  max-width: 860px;
+}
+
+// ————————————————————————————————————————————————
+// PAGE HEADER
+// ————————————————————————————————————————————————
+
+.pageHeader {
+  margin-bottom: $space-10;
+  padding-bottom: $space-8;
+  border-bottom: 1px solid $border-default;
+}
+
+.pageTitle {
+  @extend .hero-3;
+  color: $text-default;
+  margin: 0 0 $space-2;
+}
+
+.pageDescription {
+  @extend .body-default-regular;
+  color: $text-subtle;
+  margin: 0;
+}
+
+// ————————————————————————————————————————————————
+// SECTION
+// ————————————————————————————————————————————————
+
+.section {
+  margin-bottom: $space-10;
+}
+
+.sectionHeading {
+  @extend .label-caption-strong;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-subtle;
+  margin: 0 0 $space-4;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $border-subtle;
+}
+
+// ————————————————————————————————————————————————
+// TYPOGRAPHY SPECIMENS
+// ————————————————————————————————————————————————
+
+.typeTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.typeRow {
+  border-bottom: 1px solid $border-subtle;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.typePreview {
+  padding: $space-5 $space-4 $space-5 0;
+  color: $text-default;
+  width: 58%;
+  vertical-align: middle;
+}
+
+.typeMeta {
+  padding: $space-5 0 $space-5 $space-6;
+  width: 42%;
+  vertical-align: middle;
+  border-left: 1px solid $border-subtle;
+}
+
+.typeStyleName {
+  @extend .label-caption-strong;
+  display: block;
+  color: $text-default;
+  margin-bottom: 2px;
+}
+
+.typeSpecs {
+  @extend .caption-regular;
+  display: block;
+  color: $text-subtle;
+}
+
+// ————————————————————————————————————————————————
+// COLOR TOKENS
+// ————————————————————————————————————————————————
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: $space-3;
+}
+
+.colorCard {
+  border: 1px solid $border-default;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background-color: $surface-raised;
+  box-shadow: $shadow-xs;
+}
+
+.swatchArea {
+  height: 72px;
+  width: 100%;
+}
+
+.colorCardBody {
+  padding: $space-3 $space-4;
+  border-top: 1px solid $border-subtle;
+}
+
+.tokenName {
+  @extend .label-caption-strong;
+  display: block;
+  color: $text-default;
+  margin-bottom: 1px;
+}
+
+.tokenRef {
+  @extend .caption-regular;
+  display: block;
+  color: $text-subtle;
+}
+
+.tokenHexCode {
+  @extend .caption-regular;
+  display: block;
+  color: $text-subtle;
+}

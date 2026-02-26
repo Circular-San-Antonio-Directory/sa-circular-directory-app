@@ -1,0 +1,217 @@
+// tokens.scss – maps SCSS vars to CSS custom properties
+// Variables are available globally via @import chain (globals → typography → variables)
+:root {
+
+  // ---------------------------------------------------------------------------
+  // FONTS
+  // ---------------------------------------------------------------------------
+
+  --font-display: #{$font-display};
+  --font-body:    #{$font-body};
+
+  // ---------------------------------------------------------------------------
+  // BASE COLORS
+  // ---------------------------------------------------------------------------
+
+  // Mono
+  --mono-100: #{$mono-100};
+  --mono-200: #{$mono-200};
+  --mono-300: #{$mono-300};
+  --mono-400: #{$mono-400};
+  --mono-500: #{$mono-500};
+  --mono-600: #{$mono-600};
+  --mono-700: #{$mono-700};
+  --mono-800: #{$mono-800};
+  --mono-900: #{$mono-900};
+
+  // Off-White
+  --offWhite-100: #{$offWhite-100};
+  --offWhite-200: #{$offWhite-200};
+  --offWhite-300: #{$offWhite-300};
+  --offWhite-400: #{$offWhite-400};
+  --offWhite-500: #{$offWhite-500};
+  --offWhite-700: #{$offWhite-700};
+
+  // Orange
+  --orange-100: #{$orange-100};
+  --orange-200: #{$orange-200};
+  --orange-300: #{$orange-300};
+  --orange-400: #{$orange-400};
+  --orange-500: #{$orange-500};
+  --orange-600: #{$orange-600};
+  --orange-700: #{$orange-700};
+  --orange-800: #{$orange-800};
+  --orange-900: #{$orange-900};
+
+  // Merlot
+  --merlot-100: #{$merlot-100};
+  --merlot-200: #{$merlot-200};
+  --merlot-300: #{$merlot-300};
+  --merlot-400: #{$merlot-400};
+  --merlot-500: #{$merlot-500};
+  --merlot-600: #{$merlot-600};
+  --merlot-700: #{$merlot-700};
+  --merlot-800: #{$merlot-800};
+  --merlot-900: #{$merlot-900};
+
+  // Fern
+  --fern-100:     #{$fern-100};
+  --fern-200:     #{$fern-200};
+  --fern-300:     #{$fern-300};
+  --fern-400:     #{$fern-400};
+  --fern-400-alt: #{$fern-400-alt};
+  --fern-500:     #{$fern-500};
+  --fern-600:     #{$fern-600};
+  --fern-700:     #{$fern-700};
+  --fern-800:     #{$fern-800};
+  --fern-900:     #{$fern-900};
+
+  // Violet
+  --violet-100: #{$violet-100};
+  --violet-200: #{$violet-200};
+  --violet-300: #{$violet-300};
+  --violet-400: #{$violet-400};
+  --violet-500: #{$violet-500};
+  --violet-600: #{$violet-600};
+  --violet-700: #{$violet-700};
+  --violet-800: #{$violet-800};
+  --violet-900: #{$violet-900};
+
+  // Spruce
+  --spruce-100: #{$spruce-100};
+  --spruce-200: #{$spruce-200};
+  --spruce-300: #{$spruce-300};
+  --spruce-400: #{$spruce-400};
+  --spruce-500: #{$spruce-500};
+  --spruce-600: #{$spruce-600};
+  --spruce-700: #{$spruce-700};
+  --spruce-800: #{$spruce-800};
+  --spruce-900: #{$spruce-900};
+
+  // MintChoc
+  --mintChoc-100: #{$mintChoc-100};
+  --mintChoc-200: #{$mintChoc-200};
+  --mintChoc-300: #{$mintChoc-300};
+  --mintChoc-400: #{$mintChoc-400};
+  --mintChoc-500: #{$mintChoc-500};
+  --mintChoc-600: #{$mintChoc-600};
+  --mintChoc-700: #{$mintChoc-700};
+  --mintChoc-800: #{$mintChoc-800};
+  --mintChoc-900: #{$mintChoc-900};
+
+  // Blue
+  --blue-100: #{$blue-100};
+  --blue-200: #{$blue-200};
+  --blue-300: #{$blue-300};
+  --blue-400: #{$blue-400};
+  --blue-500: #{$blue-500};
+  --blue-600: #{$blue-600};
+  --blue-700: #{$blue-700};
+  --blue-800: #{$blue-800};
+  --blue-900: #{$blue-900};
+
+  // RedAdobe
+  --redAdobe-100: #{$redAdobe-100};
+  --redAdobe-200: #{$redAdobe-200};
+  --redAdobe-300: #{$redAdobe-300};
+  --redAdobe-400: #{$redAdobe-400};
+  --redAdobe-500: #{$redAdobe-500};
+  --redAdobe-600: #{$redAdobe-600};
+  --redAdobe-700: #{$redAdobe-700};
+  --redAdobe-800: #{$redAdobe-800};
+  --redAdobe-900: #{$redAdobe-900};
+
+  // ---------------------------------------------------------------------------
+  // SEMANTIC TOKENS
+  // ---------------------------------------------------------------------------
+
+  // Surface
+  --surface-base:   #{$surface-base};
+  --surface-raised: #{$surface-raised};
+  --surface-sunken: #{$surface-sunken};
+
+  // Text
+  --text-default:           #{$text-default};
+  --text-subtle:            #{$text-subtle};
+  --text-disabled:          #{$text-disabled};
+  --text-inverse:           #{$text-inverse};
+  --text-inverse-secondary: #{$text-inverse-secondary};
+  --text-link:              #{$text-link};
+
+  // Border
+  --border-default: #{$border-default};
+  --border-subtle:  #{$border-subtle};
+  --border-medium:  #{$border-medium};
+  --border-strong:  #{$border-strong};
+
+  // Primary
+  --primary-default: #{$primary-default};
+  --primary-hover:   #{$primary-hover};
+  --primary-active:  #{$primary-active};
+  --primary-subtle:  #{$primary-subtle};
+
+  // Secondary
+  --secondary-default: #{$secondary-default};
+  --secondary-hover:   #{$secondary-hover};
+  --secondary-active:  #{$secondary-active};
+  --secondary-subtle:  #{$secondary-subtle};
+
+  // Feedback / Warning
+  --warning-surface-dark:       #{$warning-surface-dark};
+  --warning-surface-light:      #{$warning-surface-light};
+  --warning-text-surface-light: #{$warning-text-surface-light};
+  --warning-icon-surface-light: #{$warning-icon-surface-light};
+
+  // Feedback / Success
+  --success-surface-dark:       #{$success-surface-dark};
+  --success-surface-light:      #{$success-surface-light};
+  --success-text-surface-light: #{$success-text-surface-light};
+  --success-icon-surface-light: #{$success-icon-surface-light};
+
+  // Feedback / Error
+  --error-surface-dark:         #{$error-surface-dark};
+  --error-surface-light:        #{$error-surface-light};
+  --error-text-surface-light:   #{$error-text-surface-light};
+  --error-icon-surface-light:   #{$error-icon-surface-light};
+
+  // Feedback / Info
+  --info-surface-dark:          #{$info-surface-dark};
+  --info-surface-light:         #{$info-surface-light};
+  --info-text-surface-light:    #{$info-text-surface-light};
+  --info-icon-surface-light:    #{$info-icon-surface-light};
+
+  // ---------------------------------------------------------------------------
+  // BORDER RADIUS
+  // ---------------------------------------------------------------------------
+
+  --radius-sm:  #{$radius-sm};
+  --radius-md:  #{$radius-md};
+  --radius-lg:  #{$radius-lg};
+  --radius-xl:  #{$radius-xl};
+  --radius-2xl: #{$radius-2xl};
+
+  // ---------------------------------------------------------------------------
+  // SHADOWS
+  // ---------------------------------------------------------------------------
+
+  --shadow-xs: #{$shadow-xs};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+
+  // ---------------------------------------------------------------------------
+  // SPACING
+  // ---------------------------------------------------------------------------
+
+  --space-1:  #{$space-1};
+  --space-2:  #{$space-2};
+  --space-3:  #{$space-3};
+  --space-4:  #{$space-4};
+  --space-5:  #{$space-5};
+  --space-6:  #{$space-6};
+  --space-7:  #{$space-7};
+  --space-8:  #{$space-8};
+  --space-10: #{$space-10};
+  --space-12: #{$space-12};
+
+}

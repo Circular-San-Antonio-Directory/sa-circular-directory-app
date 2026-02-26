@@ -1,0 +1,22 @@
+// =============================================================================
+// GLOBAL STYLES
+// Loaded via layout.tsx — applies base element defaults app-wide.
+// =============================================================================
+
+@import 'typography';
+@import 'tokens';
+
+// -----------------------------------------------------------------------------
+// BASE HTML ELEMENT DEFAULTS
+// -----------------------------------------------------------------------------
+
+h1 { @extend .heading-1; }
+h2 { @extend .heading-2; }
+h3 { @extend .heading-3; }
+h4 { @extend .heading-4; }
+h5 { @extend .heading-5; }
+
+p {
+  @extend .body-default-regular;
+  color: $text-default;
+}

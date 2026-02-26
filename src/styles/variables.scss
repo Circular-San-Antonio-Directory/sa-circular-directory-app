@@ -1,0 +1,217 @@
+// =============================================================================
+// VARIABLES
+// Generated from Figma: 2026_Circular_Directory
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// FONTS
+// -----------------------------------------------------------------------------
+
+$font-display: 'Archivo', serif;    // Hero styles
+$font-body: 'Geist', sans-serif;    // Headings, body, labels
+
+// -----------------------------------------------------------------------------
+// BASE COLORS - COLOR PALETTE
+// -----------------------------------------------------------------------------
+
+// Mono
+$mono-100: #FFFFFF;
+$mono-200: #FAFAFA;
+$mono-300: #F0F0F0;
+$mono-400: #BFBFBF;
+$mono-500: #8C8C8C;
+$mono-600: #6F6F6F;
+$mono-700: #4F4F4F;
+$mono-800: #2F2F2F;
+$mono-900: #000000;
+
+// Off-White
+$offWhite-100: #F9F8F5;
+$offWhite-200: #F5F4EF;
+$offWhite-300: #EEECE8;
+$offWhite-400: #D6D4CE;
+$offWhite-500: #CAC7BE;
+$offWhite-700: #A6A29A;
+
+// Orange
+$orange-100: #FEFAE8;
+$orange-200: #FDF3C2;
+$orange-300: #FAE89A;
+$orange-400: #F8D672;
+$orange-500: #F0B040;
+$orange-600: #D97828;
+$orange-700: #B43B0D;
+$orange-800: #8A2A08;
+$orange-900: #5C1A04;
+
+// Merlot
+$merlot-100: #FAF5FC;
+$merlot-200: #F2E5F8;
+$merlot-300: #E8D1F0;
+$merlot-400: #D4A8D8;
+$merlot-500: #B87AAA;
+$merlot-600: #9E4868;
+$merlot-700: #851926;
+$merlot-800: #5E0F1A;
+$merlot-900: #3A0810;
+
+// Fern
+$fern-100: #F0FDE8;
+$fern-200: #D8FAC2;
+$fern-300: #C1F1A1;
+$fern-400: #92D678;
+$fern-400-alt: #80B7B1;
+$fern-500: #5CAF60;
+$fern-600: #388A58;
+$fern-700: #1E5751;
+$fern-800: #123D38;
+$fern-900: #092620;
+
+// Violet
+$violet-100: #FFF5F5;
+$violet-200: #FFECEE;
+$violet-300: #FFDADB;
+$violet-400: #E8AECF;
+$violet-500: #C278A8;
+$violet-600: #8C4480;
+$violet-700: #4A1A5C;
+$violet-800: #321040;
+$violet-900: #1E0828;
+
+// Spruce
+$spruce-100: #FDF8E0;
+$spruce-200: #FAF0C0;
+$spruce-300: #F5E6A3;
+$spruce-400: #C8C478;
+$spruce-500: #8A9A58;
+$spruce-600: #4E7058;
+$spruce-700: #134656;
+$spruce-800: #0C2E3D;
+$spruce-900: #071C26;
+
+// MintChoc
+$mintChoc-100: #F2FCF7;
+$mintChoc-200: #E4F8EF;
+$mintChoc-300: #D8F3E9;
+$mintChoc-400: #A8C8A8;
+$mintChoc-500: #7A9070;
+$mintChoc-600: #5E5838;
+$mintChoc-700: #51270B;
+$mintChoc-800: #361808;
+$mintChoc-900: #200E04;
+
+// Blue
+$blue-100: #EFF8FF;
+$blue-200: #E6F4FF;
+$blue-300: #D0EBFF;
+$blue-400: #A1C9EB;
+$blue-500: #72A4D7;
+$blue-600: #417BC2;
+$blue-700: #0049AC;
+$blue-800: #0A3876;
+$blue-900: #002352;
+
+// RedAdobe
+$redAdobe-100: #FDF4F6;
+$redAdobe-200: #F9E8EC;
+$redAdobe-300: #F2DAE0;
+$redAdobe-400: #E4AEBA;
+$redAdobe-500: #CC7A8A;
+$redAdobe-600: #C34242;
+$redAdobe-700: #A53331;
+$redAdobe-800: #7A1F1E;
+$redAdobe-900: #4F0F0E;
+
+// -----------------------------------------------------------------------------
+// COLORS - COLOR TOKENS
+// -----------------------------------------------------------------------------
+
+// Surface
+$surface-base:   $offWhite-100;
+$surface-raised: $mono-100;
+$surface-sunken: $offWhite-300;
+
+// Text
+$text-default:           $mono-800;
+$text-subtle:            $mono-600;
+$text-disabled:          $offWhite-700;
+$text-inverse:           $mono-100;
+$text-inverse-secondary: $mono-300;
+$text-link:              $fern-700;
+
+// Border
+$border-default: $offWhite-400;
+$border-subtle:  $offWhite-300;
+$border-medium:  $offWhite-500;
+$border-strong:  $mono-800;
+
+// Primary Color
+$primary-default:  $fern-700;
+$primary-hover:    $fern-900;
+$primary-active:   $fern-600;
+$primary-subtle: $fern-400-alt;
+
+// Secondary Color
+$secondary-default:  $merlot-700;
+$secondary-hover:    $merlot-900;
+$secondary-active:   $merlot-600;
+$secondary-subtle: $merlot-400;
+
+// Feedback / Warning
+$warning-surface-dark:       $orange-600;
+$warning-surface-light:      $orange-200;
+$warning-text-surface-light: $orange-800;
+$warning-icon-surface-light: $orange-700;
+
+// Feedback / Success
+$success-surface-dark:       $fern-600;
+$success-surface-light:      $fern-200;
+$success-text-surface-light: $fern-800;
+$success-icon-surface-light: $fern-700;
+
+// Feedback / Error
+$error-surface-dark:         $redAdobe-600;
+$error-surface-light:        $redAdobe-200;
+$error-text-surface-light:   $redAdobe-800;
+$error-icon-surface-light:   $redAdobe-700;
+
+// Feedback / Info
+$info-surface-dark:          $mintChoc-600;
+$info-surface-light:         $mintChoc-200;
+$info-text-surface-light:    $mintChoc-800;
+$info-icon-surface-light:    $mintChoc-700;
+
+
+// -----------------------------------------------------------------------------
+// BORDER RADIUS
+// -----------------------------------------------------------------------------
+
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+$radius-2xl: 16px;
+
+// -----------------------------------------------------------------------------
+// SHADOWS
+// -----------------------------------------------------------------------------
+
+$shadow-xs: 0px 1px 2px 0px rgba(10, 13, 18, 0.05);
+$shadow-sm: 0px 1px 2px 0px rgba(10, 13, 18, 0.06), 0px 1px 3px 0px rgba(10, 13, 18, 0.1);
+$shadow-md: 0px 2px 4px -2px rgba(10, 13, 18, 0.06), 0px 4px 8px -2px rgba(10, 13, 18, 0.1);
+$shadow-lg: 0px 4px 6px -2px rgba(10, 13, 18, 0.03), 0px 12px 16px -4px rgba(10, 13, 18, 0.08);
+
+// -----------------------------------------------------------------------------
+// SPACING (base 4px scale)
+// -----------------------------------------------------------------------------
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-7: 28px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
