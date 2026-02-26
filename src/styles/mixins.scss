@@ -1,0 +1,237 @@
+// =============================================================================
+// MIXINS
+// Typography mixins mirroring every class in typography.scss.
+// Usage in a module: @include type-hero-1;
+// =============================================================================
+
+@import 'variables';
+
+// -----------------------------------------------------------------------------
+// HERO  (font: Archivo)
+// -----------------------------------------------------------------------------
+
+@mixin type-hero-1 {
+  font-family: $font-display;
+  font-size: 62px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+@mixin type-hero-2-strong {
+  font-family: $font-display;
+  font-size: 50px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+@mixin type-hero-2-light {
+  font-family: $font-display;
+  font-size: 50px;
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+@mixin type-hero-3 {
+  font-family: $font-display;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+@mixin type-hero-4 {
+  font-family: $font-display;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+// -----------------------------------------------------------------------------
+// HEADING  (font: Geist)
+// -----------------------------------------------------------------------------
+
+@mixin type-heading-1 {
+  font-family: $font-body;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+@mixin type-heading-2 {
+  font-family: $font-body;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@mixin type-heading-3 {
+  font-family: $font-body;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+@mixin type-heading-4 {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+@mixin type-heading-5 {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+// -----------------------------------------------------------------------------
+// BODY  (font: Geist)
+// -----------------------------------------------------------------------------
+
+@mixin type-body-large-regular {
+  font-family: $font-body;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+@mixin type-body-large-medium {
+  font-family: $font-body;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@mixin type-body-large-bold {
+  font-family: $font-body;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+@mixin type-body-default-regular {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+@mixin type-body-default-medium {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@mixin type-body-default-bold {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+@mixin type-body-small-regular {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+@mixin type-body-small-medium {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@mixin type-body-small-bold {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+// -----------------------------------------------------------------------------
+// CAPTION  (font: Geist)
+// -----------------------------------------------------------------------------
+
+@mixin type-caption-regular {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+@mixin type-caption-bold {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+@mixin type-caption-extrabold {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+// -----------------------------------------------------------------------------
+// LABEL  (font: Geist)
+// -----------------------------------------------------------------------------
+
+@mixin type-label-large {
+  font-family: $font-body;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+@mixin type-label-large-strong {
+  font-family: $font-body;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+@mixin type-label-default {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+@mixin type-label-default-strong {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+@mixin type-label-small {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+@mixin type-label-small-strong {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+@mixin type-label-caption {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+@mixin type-label-caption-strong {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.1;
+}

@@ -1,0 +1,54 @@
+@import '../../styles/mixins'; // mixins already imports variables
+
+// -----------------------------------------------------------------------------
+// Shared base
+// -----------------------------------------------------------------------------
+
+.selector {
+  @include type-label-default;
+  background-color: $surface-base;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+  &:hover:not(:disabled) { background-color: $offWhite-400;}
+}
+
+// -----------------------------------------------------------------------------
+// Sizes
+// -----------------------------------------------------------------------------
+
+.small {
+  @include type-label-small;
+  padding: $space-2;
+}
+
+// -----------------------------------------------------------------------------
+// Variants
+// -----------------------------------------------------------------------------
+
+.primary {
+  &.selected {
+    background-color: $primary-default;
+    color: $text-inverse;
+    &:hover:not(:disabled) { background-color: $primary-hover;}
+  }
+
+}
+
+.secondary {
+  &.selected {
+    background-color: $secondary-default;
+    color: $text-inverse;
+    &:hover:not(:disabled) { background-color: $secondary-hover;}
+  }
+}

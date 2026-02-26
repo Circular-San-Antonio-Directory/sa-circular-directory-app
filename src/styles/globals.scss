@@ -3,6 +3,8 @@
 // Loaded via layout.tsx — applies base element defaults app-wide.
 // =============================================================================
 
+@import 'variables';
+@import 'mixins';
 @import 'typography';
 @import 'tokens';
 

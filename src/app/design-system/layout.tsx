@@ -4,9 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './design-system.module.scss';
 
-const navItems = [
+const foundationItems = [
   { label: 'Typography', href: '/design-system/typography' },
   { label: 'Color', href: '/design-system/color' },
+];
+
+const componentItems = [
+  { label: 'Buttons', href: '/design-system/buttons' },
 ];
 
 export default function DesignSystemLayout({ children }: { children: React.ReactNode }) {
@@ -22,7 +26,20 @@ export default function DesignSystemLayout({ children }: { children: React.React
         <div className={styles.sidebarDivider} />
         <p className={styles.navSection}>Foundations</p>
         <ul className={styles.nav}>
-          {navItems.map((item) => (
+          {foundationItems.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className={`${styles.navLink}${pathname === item.href ? ` ${styles.navLinkActive}` : ''}`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className={styles.navSection}>Components</p>
+        <ul className={styles.nav}>
+          {componentItems.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}

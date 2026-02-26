@@ -7,7 +7,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&display=swap');
 // Note: Geist is a Vercel font — import via next/font in layout.tsx (see below)
 
-@import 'variables';
+@import 'mixins'; // mixins already imports variables
 
 // -----------------------------------------------------------------------------
 // HERO STYLES  (font: Archivo)
@@ -15,42 +15,27 @@
 
 // Hero 1 — 62px / 110% / Regular
 .hero-1 {
-  font-family: $font-display;
-  font-size: 62px;
-  font-weight: 400;
-  line-height: 1.1;
+  @include type-hero-1;
 }
 
 // Hero 2 Strong — 50px / 110% / Medium
 .hero-2-strong {
-  font-family: $font-display;
-  font-size: 50px;
-  font-weight: 500;
-  line-height: 1.1;
+  @include type-hero-2-strong;
 }
 
 // Hero 2 Light — 50px / 110% / Light
 .hero-2-light {
-  font-family: $font-display;
-  font-size: 50px;
-  font-weight: 300;
-  line-height: 1.1;
+  @include type-hero-2-light;
 }
 
 // Hero 3 — 40px / 110% / Regular
 .hero-3 {
-  font-family: $font-display;
-  font-size: 40px;
-  font-weight: 400;
-  line-height: 1.1;
+  @include type-hero-3;
 }
 
 // Hero 4 — 28px / 110% / Medium
 .hero-4 {
-  font-family: $font-display;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 1.1;
+  @include type-hero-4;
 }
 
 // -----------------------------------------------------------------------------
@@ -59,42 +44,27 @@
 
 // H1 — 40px / 120% / Medium
 .heading-1 {
-  font-family: $font-body;
-  font-size: 40px;
-  font-weight: 500;
-  line-height: 1.2;
+  @include type-heading-1;
 }
 
 // H2 — 28px / 140% / Medium
 .heading-2 {
-  font-family: $font-body;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 1.4;
+  @include type-heading-2;
 }
 
 // H3 — 20px / 120% / Medium
 .heading-3 {
-  font-family: $font-body;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.2;
+  @include type-heading-3;
 }
 
 // H4 — 17px / 120% / Medium
 .heading-4 {
-  font-family: $font-body;
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.2;
+  @include type-heading-4;
 }
 
 // H5 — 15px / 125% / Medium  (default for input labels)
 .heading-5 {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.25;
+  @include type-heading-5;
 }
 
 // -----------------------------------------------------------------------------
@@ -103,90 +73,54 @@
 
 // Body Large
 .body-large-regular {
-  font-family: $font-body;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 1.4;
+  @include type-body-large-regular;
 }
 
 .body-large-medium {
-  font-family: $font-body;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.4;
+  @include type-body-large-medium;
 }
 
 .body-large-bold {
-  font-family: $font-body;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.4;
+  @include type-body-large-bold;
 }
 
 // Body Default  (usage: default value for inputs or paragraphs)
 .body-default-regular {
-  font-family: $font-body;
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 1.4;
+  @include type-body-default-regular;
 }
 
 .body-default-medium {
-  font-family: $font-body;
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.4;
+  @include type-body-default-medium;
 }
 
 .body-default-bold {
-  font-family: $font-body;
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.4;
+  @include type-body-default-bold;
 }
 
 // Body Small
 .body-small-regular {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.4;
+  @include type-body-small-regular;
 }
 
 .body-small-medium {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.4;
+  @include type-body-small-medium;
 }
 
 .body-small-bold {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.4;
+  @include type-body-small-bold;
 }
 
 // Caption
 .caption-regular {
-  font-family: $font-body;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.4;
+  @include type-caption-regular;
 }
 
 .caption-bold {
-  font-family: $font-body;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.4;
+  @include type-caption-bold;
 }
 
 .caption-extrabold {
-  font-family: $font-body;
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 1.4;
+  @include type-caption-extrabold;
 }
 
 // -----------------------------------------------------------------------------
@@ -194,59 +128,35 @@
 // -----------------------------------------------------------------------------
 
 .label-large {
-  font-family: $font-body;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 1.1;
+  @include type-label-large;
 }
 
 .label-large-strong {
-  font-family: $font-body;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.1;
+  @include type-label-large-strong;
 }
 
 .label-default {
-  font-family: $font-body;
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.1;
+  @include type-label-default;
 }
 
 .label-default-strong {
-  font-family: $font-body;
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1.1;
+  @include type-label-default-strong;
 }
 
 .label-small {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.1;
+  @include type-label-small;
 }
 
 .label-small-strong {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.1;
+  @include type-label-small-strong;
 }
 
 .label-caption {
-  font-family: $font-body;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.1;
+  @include type-label-caption;
 }
 
 .label-caption-strong {
-  font-family: $font-body;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.1;
+  @include type-label-caption-strong;
 }
 
 // Base HTML element defaults live in src/styles/globals.scss (loaded via layout.tsx)

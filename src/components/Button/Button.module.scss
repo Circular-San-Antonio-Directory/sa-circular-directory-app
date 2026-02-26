@@ -1,0 +1,108 @@
+// Button — Primary / Secondary / Ghost / Accent
+// Figma source: 2026_Circular_Directory → Button/*
+// =============================================================================
+// Token map
+// =============================================================================
+// SHARED
+//   padding default  16px    → $space-4
+//   padding ghost     8px    → $space-2
+//   border-radius     4px    → $radius-sm
+//   font                     → type-label-default mixin
+//
+// PRIMARY
+//   bg default  #1E5751 → $primary-default
+//   bg hover    #092620 → $primary-hover
+//   bg active   #388A58 → $primary-active
+//   bg disabled #80B7B1 → $primary-subtle
+//   text        #FFFFFF → $text-inverse
+//
+// SECONDARY
+//   bg default  transparent
+//   bg hover    #D6D4CE → $border-default     (offWhite-400)
+//   bg active   #C1F1A1 → $fern-300
+//   border      #2F2F2F → $border-strong
+//   bdr disabled #CAC7BE → $border-medium
+//   text        #2F2F2F → $text-default
+//   text disabled #A6A29A → $text-disabled
+//
+// GHOST
+//   bg default  transparent
+//   bg hover    #EEECE8 → $surface-sunken     (offWhite-300)
+//   bg active   #D8FAC2 → $fern-200
+//   text        #1E5751 → $text-link
+//   text disabled #A6A29A → $text-disabled
+//
+// ACCENT
+//   bg default  #851926 → $secondary-default  (merlot-700)
+//   bg hover    #3A0810 → $secondary-hover    (merlot-900)
+//   bg active   #9E4868 → $secondary-active   (merlot-600)
+//   bg disabled #D4A8D8 → $secondary-subtle   (merlot-400)
+//   text        #FFFFFF → $text-inverse
+
+@import '../../styles/mixins'; // mixins already imports variables
+
+// -----------------------------------------------------------------------------
+// Shared base
+// -----------------------------------------------------------------------------
+
+.button {
+  @include type-label-default;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  border: none;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Variants
+// -----------------------------------------------------------------------------
+
+.primary {
+  background-color: $primary-default;
+  color: $text-inverse;
+
+  &:hover:not(:disabled) { background-color: $primary-hover; }
+  &:active:not(:disabled) { background-color: $primary-active; }
+  &:disabled { background-color: $primary-subtle; }
+}
+
+.secondary {
+  background-color: transparent;
+  color: $text-default;
+  border: 1px solid $border-strong;
+
+  &:hover:not(:disabled) { background-color: $border-default; }
+  &:active:not(:disabled) { background-color: $fern-300; }
+  &:disabled {
+    border-color: $border-medium;
+    color: $text-disabled;
+  }
+}
+
+.ghost {
+  padding: $space-2; // ghost uses tighter padding than default $space-4
+  background-color: transparent;
+  color: $text-link;
+
+  &:hover:not(:disabled) { background-color: $surface-sunken; }
+  &:active:not(:disabled) { background-color: $fern-200; }
+  &:disabled { color: $text-disabled; }
+}
+
+.accent {
+  background-color: $secondary-default;
+  color: $text-inverse;
+
+  &:hover:not(:disabled) { background-color: $secondary-hover; }
+  &:active:not(:disabled) { background-color: $secondary-active; }
+  &:disabled { background-color: $secondary-subtle; }
+}

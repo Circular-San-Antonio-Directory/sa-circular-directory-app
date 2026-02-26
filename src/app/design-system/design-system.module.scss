@@ -61,6 +61,10 @@
 .navSection {
   padding: 0 $space-5;
   margin: 0 0 $space-2;
+
+  .nav + & {
+    margin-top: $space-6;
+  }
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -196,6 +200,24 @@
   @extend .caption-regular;
   display: block;
   color: $text-subtle;
+}
+
+// ————————————————————————————————————————————————
+// COMPONENT SPECIMENS
+// ————————————————————————————————————————————————
+
+.componentRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-8;
+  align-items: flex-start;
+}
+
+.componentItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-3;
 }
 
 // ————————————————————————————————————————————————
