@@ -3,22 +3,22 @@
 // Loaded via layout.tsx — applies base element defaults app-wide.
 // =============================================================================
 
-@import 'variables';
-@import 'mixins';
-@import 'typography';
-@import 'tokens';
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'typography'; // side-effect only — generates global .heading-*, .hero-*, etc. classes
+@use 'tokens';    // side-effect only — generates :root custom properties
 
 // -----------------------------------------------------------------------------
 // BASE HTML ELEMENT DEFAULTS
 // -----------------------------------------------------------------------------
 
-h1 { @extend .heading-1; }
-h2 { @extend .heading-2; }
-h3 { @extend .heading-3; }
-h4 { @extend .heading-4; }
-h5 { @extend .heading-5; }
+h1 { @include type-heading-1(); }
+h2 { @include type-heading-2(); }
+h3 { @include type-heading-3(); }
+h4 { @include type-heading-4(); }
+h5 { @include type-heading-5(); }
 
 p {
-  @extend .body-default-regular;
+  @include type-body-default-regular();
   color: $text-default;
 }

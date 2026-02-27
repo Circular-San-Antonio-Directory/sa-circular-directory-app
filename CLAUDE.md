@@ -36,9 +36,13 @@ comment: `// nearest token: Figma used #388A58, mapped to $fern-600`.
 ### Import chain
 ```
 globals.scss
-  └── @import 'typography'
-        └── @import 'variables'   ← all $vars live here
-  └── @import 'tokens'            ← maps $vars → CSS custom properties (:root)
+  └── @use 'variables' as *
+  └── @use 'mixins' as *
+  └── @use 'typography'     ← generates global .heading-*, .hero-*, etc. classes
+  └── @use 'tokens'         ← maps $vars → CSS custom properties (:root)
+
+src/styles/_index.scss      ← forwarding barrel (@forward 'variables' + 'mixins')
+  └── consumed by component modules via @use '../../styles' as *
 ```
 
 ---
@@ -145,7 +149,7 @@ src/components/
 ### SCSS modules
 ```scss
 // ComponentName.module.scss
-@import '../../styles/mixins';   // relative path from src/components/ComponentName/ — mixins imports variables
+@use '../../styles' as *;   // forwards variables + mixins via _index.scss
 
 .root {
   background: $surface-base;
@@ -213,7 +217,7 @@ Three prefixes available: `fa-solid`, `fa-regular`, `fa-brands`.
 - Default body text is `$text-default` (`$mono-800`, not `$mono-900` / black)
 - Geist is loaded via `next/font` in `layout.tsx` — don't import it via CSS
 - Archivo is loaded via Google Fonts in `typography.scss` — already available globally
-- h1–h5 and `p` have global defaults set in `globals.scss` via `@extend` — don't redefine base element styles in modules unless overriding intentionally
+- h1–h5 and `p` have global defaults set in `globals.scss` via `@include` — don't redefine base element styles in modules unless overriding intentionally
 
 ---
 

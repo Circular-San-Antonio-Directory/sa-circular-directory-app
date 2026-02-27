@@ -12,7 +12,7 @@
 // Hamburger radius:     $radius-sm (4px)
 // =============================================================================
 
-@import '../../styles/mixins';
+@use '../../styles' as *;
 
 .nav {
   // Mobile: flat header bar

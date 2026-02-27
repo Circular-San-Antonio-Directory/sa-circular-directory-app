@@ -39,7 +39,7 @@
 //   bg disabled #D4A8D8 → $secondary-subtle   (merlot-400)
 //   text        #FFFFFF → $text-inverse
 
-@import '../../styles/mixins'; // mixins already imports variables
+@use '../../styles' as *;
 
 // -----------------------------------------------------------------------------
 // Shared base

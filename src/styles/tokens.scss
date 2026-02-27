@@ -1,5 +1,6 @@
 // tokens.scss – maps SCSS vars to CSS custom properties
-// Variables are available globally via @import chain (globals → typography → variables)
+@use 'variables' as *;
+
 :root {
 
   // ---------------------------------------------------------------------------

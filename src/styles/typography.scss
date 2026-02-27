@@ -4,10 +4,10 @@
 // Fonts: Archivo (display/hero), Geist (UI/body)
 // =============================================================================
 
+@use 'mixins' as *;
+
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&display=swap');
 // Note: Geist is a Vercel font — import via next/font in layout.tsx (see below)
-
-@import 'mixins'; // mixins already imports variables
 
 // -----------------------------------------------------------------------------
 // HERO STYLES  (font: Archivo)

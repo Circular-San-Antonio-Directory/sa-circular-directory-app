@@ -2,8 +2,7 @@
 // DESIGN SYSTEM PAGE STYLES
 // =============================================================================
 
-// @import brings typography classes + all variables into scope for @extend
-@import '../../styles/typography';
+@use '../../styles' as *;
 
 // ————————————————————————————————————————————————
 // LAYOUT
@@ -129,13 +128,13 @@
 }
 
 .pageTitle {
-  @extend .hero-3;
+  @include type-hero-3();
   color: $text-default;
   margin: 0 0 $space-4;
 }
 
 .pageDescription {
-  @extend .body-small-regular;
+  @include type-body-small-regular();
   color: $text-default;
   margin: 0;
 }
@@ -149,7 +148,7 @@
 }
 
 .sectionHeading {
-  @extend .label-caption-strong;
+  @include type-label-caption-strong();
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: $text-subtle;
@@ -190,14 +189,14 @@
 }
 
 .typeStyleName {
-  @extend .label-caption-strong;
+  @include type-label-caption-strong();
   display: block;
   color: $text-default;
   margin-bottom: 2px;
 }
 
 .typeSpecs {
-  @extend .caption-regular;
+  @include type-caption-regular();
   display: block;
   color: $text-subtle;
 }
@@ -250,7 +249,7 @@
 }
 
 .iconName {
-  @extend .caption-regular;
+  @include type-caption-regular();
   color: $text-subtle;
   word-break: break-all;
 }
@@ -284,20 +283,20 @@
 }
 
 .tokenName {
-  @extend .label-caption-strong;
+  @include type-label-caption-strong();
   display: block;
   color: $text-default;
   margin-bottom: 1px;
 }
 
 .tokenRef {
-  @extend .caption-regular;
+  @include type-caption-regular();
   display: block;
   color: $text-subtle;
 }
 
 .tokenHexCode {
-  @extend .caption-regular;
+  @include type-caption-regular();
   display: block;
   color: $text-subtle;
 }

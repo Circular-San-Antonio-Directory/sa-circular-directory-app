@@ -1,0 +1,8 @@
+// =============================================================================
+// STYLES INDEX — Forwarding barrel
+// Lets component modules get variables + mixins via a single @use:
+//   @use '../../styles' as *;
+// =============================================================================
+
+@forward 'variables';
+@forward 'mixins';

@@ -21,7 +21,7 @@
 // mobile sheet shadow:  $shadow-md
 // =============================================================================
 
-@import '../styles/mixins';
+@use '../styles' as *;
 
 // --- Page root ---
 
