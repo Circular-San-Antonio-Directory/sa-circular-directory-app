@@ -131,12 +131,12 @@
 .pageTitle {
   @extend .hero-3;
   color: $text-default;
-  margin: 0 0 $space-2;
+  margin: 0 0 $space-4;
 }
 
 .pageDescription {
-  @extend .body-default-regular;
-  color: $text-subtle;
+  @extend .body-small-regular;
+  color: $text-default;
   margin: 0;
 }
 
@@ -218,6 +218,41 @@
   flex-direction: column;
   align-items: flex-start;
   gap: $space-3;
+}
+
+// ————————————————————————————————————————————————
+// ICONOGRAPHY
+// ————————————————————————————————————————————————
+
+.iconGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: $space-3;
+}
+
+.iconItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-4 $space-2;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-lg;
+  background-color: $surface-raised;
+  text-align: center;
+}
+
+.iconGlyph {
+  font-size: 20px;
+  color: $text-default;
+  width: 24px;
+  text-align: center;
+}
+
+.iconName {
+  @extend .caption-regular;
+  color: $text-subtle;
+  word-break: break-all;
 }
 
 // ————————————————————————————————————————————————

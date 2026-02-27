@@ -1,0 +1,285 @@
+// Home Page — SA Circular Directory
+// =============================================================================
+// Token map
+// page bg:              $surface-base (#F9F8F5)
+// inner max-width:      1344px (1280px content + 2×32px padding)
+// inner padding:        $space-6 $space-8 (24px 32px) — Figma: py-24 px-32 ✓
+// content gap:          $space-6 (24px) — Figma: gap-24 ✓
+// sidebar width:        320px — Figma: w-320 ✓
+// sidebar border-right: $border-default (#D6D4CE) — Figma: border-gray-400 ≈
+// map area bg:          $surface-sunken (#EEECE8)
+// map area border:      $border-default
+// map area radius:      $radius-md (6px)
+// count pill bg:        $surface-sunken
+// count pill radius:    $radius-sm (4px) — Figma: base(small) = 4px ✓
+// listing card bg:      $surface-raised (#FFFFFF / near-white #FEFEFE ≈)
+// listing card border:  $border-default
+// listing card radius:  $radius-sm (4px) — Figma: base(small) = 4px ✓
+// listing card shadow:  $shadow-sm
+// mobile sheet bg:      $surface-raised (#FFFFFF)
+// mobile sheet radius:  $radius-xl $radius-xl 0 0 (12px top) — Figma: rounded-tl-12 ✓
+// mobile sheet shadow:  $shadow-md
+// =============================================================================
+
+@import '../styles/mixins';
+
+// --- Page root ---
+
+.page {
+  background: $surface-base;
+
+  // Mobile: fixed viewport height, no scroll on the page itself
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  @media (min-width: 1024px) {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    display: block;
+  }
+}
+
+// --- Padded inner wrapper (desktop only adds padding + max-width) ---
+
+.pageInner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+
+  @media (min-width: 1024px) {
+    //max-width: 1344px;
+    width: 100%;
+    margin: 0 auto;
+    padding: $space-6 $space-8; // 24px 32px
+    overflow: visible;
+    flex: none;
+    min-height: 100dvh;
+  }
+}
+
+// --- Two-column layout (sidebar + map) ---
+
+.contentArea {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+
+  @media (min-width: 1024px) {
+    gap: $space-6; // 24px
+    margin-top: $space-6;
+    overflow: visible;
+    align-items: flex-start;
+  }
+}
+
+// --- Sidebar (desktop only) ---
+
+.sidebar {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    gap: $space-5; // 20px
+    width: 360px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    // Figma shows border-bottom on the sidebar container, but visually it's
+    // the vertical divider between sidebar and map. Using border-right here.
+    border-right: 1px solid $border-default;
+    padding-right: $space-5; // 20px breathing room before divider
+    max-height: calc(100dvh - 74px - 48px - 24px);
+    // 74px ≈ nav height, 48px ≈ top+bottom page padding, 24px = gap
+  }
+}
+
+.countPill {
+  background: $surface-sunken;
+  border-radius: $radius-sm;
+  padding: 6px $space-4; // nearest: between $space-1 (4px) and $space-2 (8px); using 6px
+  flex-shrink: 0;
+}
+
+.countBold {
+  @include type-body-small-medium;
+  color: $text-default;
+}
+
+.countLight {
+  @include type-body-small-regular;
+  color: $text-subtle;
+}
+
+.sidebarHint {
+  // nearest token: type-caption-regular (13px) — Figma used 14px
+  @include type-caption-regular;
+  font-size: 14px; // override to match Figma
+  color: $text-subtle;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 $space-2;
+}
+
+// --- Listing card stack ---
+
+.listingStack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4; // 16px
+}
+
+// --- Placeholder listing card ---
+
+.listingCard {
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+.listingImageWrapper {
+  width: 100%;
+  height: 116px;
+  background: $surface-sunken;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $border-default;
+  font-size: 32px;
+}
+
+.listingBody {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1; // 4px
+  padding: $space-3 $space-4 10px; // 12px 16px 10px — Figma: pt-12 pl-16 pr-8 pb-10
+}
+
+.listingMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.listingTitle {
+  // Archivo Medium 20px — no exact mixin (nearest: type-heading-3 is Geist 20px)
+  // Using $font-display (Archivo) manually to match Figma
+  font-family: $font-display;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.4px;
+  color: $text-default;
+  margin: 0;
+}
+
+.listingAddress {
+  // nearest token: type-caption-regular (13px) — Figma used 12px
+  @include type-caption-regular;
+  font-size: 12px; // override to match Figma
+  color: $text-subtle;
+  margin: 0;
+}
+
+// --- Category badges ---
+
+.listingBadges {
+  display: flex;
+  gap: 10px; // Figma: gap-10
+  flex-wrap: wrap;
+  margin-top: $space-1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px;
+  border-radius: $radius-lg; // 8px — Figma: rounded-8 ✓
+}
+
+.badgeIcon {
+  font-size: 14px;
+  color: $primary-default;
+}
+
+.badgeLabel {
+  @include type-label-small; // 15px/500 — Figma: Geist Medium 15px ✓
+  color: $text-default;
+}
+
+// --- Map area ---
+
+.mapArea {
+  background: $surface-sunken;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex: 1;
+
+  // Mobile: no border, fills remaining height, leaves room for bottom sheet
+  padding-bottom: 72px;
+
+  @media (min-width: 1024px) {
+    min-height: 839px; // Figma desktop map height
+    border: 1px solid $border-default;
+    border-radius: $radius-md;
+    padding-bottom: 0;
+  }
+}
+
+.mapPlaceholderText {
+  @include type-body-default-regular;
+  color: $text-subtle;
+  margin: 0;
+}
+
+// --- Mobile bottom sheet ---
+
+.mobileSheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $surface-raised;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: $radius-xl $radius-xl 0 0; // 12px top corners — Figma: rounded-tl-12 ✓
+  box-shadow: $shadow-md;
+  padding: $space-3 $space-4 $space-3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+  z-index: 20;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+.sheetHandle {
+  width: 37px;
+  height: 4px;
+  background: $border-medium;
+  border-radius: $radius-lg; // 8px
+}
+
+.sheetCount {
+  @include type-label-small; // 15px/500
+  color: $text-default;
+  margin: 0;
+  padding: $space-1 0;
+}

@@ -7,6 +7,7 @@ import styles from './design-system.module.scss';
 const foundationItems = [
   { label: 'Typography', href: '/design-system/typography' },
   { label: 'Color', href: '/design-system/color' },
+  { label: 'Iconography', href: '/design-system/iconography' },
 ];
 
 const componentItems = [

@@ -1,0 +1,129 @@
+// Nav — SA Circular Directory
+// =============================================================================
+// Token map
+// Mobile nav bg:        $surface-base (#F9F8F5)
+// Desktop nav bg:       $surface-raised (#FFFFFF)
+// Desktop nav border:   $border-subtle (#EEECE8)
+// Desktop nav radius:   $radius-md (6px)
+// Nav padding:          $space-3 $space-4 (12px 16px) — Figma desktop: 12px 16px ✓
+// Nav gap right:        $space-8 (32px) — Figma: 32px ✓
+// Hamburger bg:         $surface-sunken (#EEECE8)
+// Hamburger border:     $border-medium (#CAC7BE)
+// Hamburger radius:     $radius-sm (4px)
+// =============================================================================
+
+@import '../../styles/mixins';
+
+.nav {
+  // Mobile: flat header bar
+  background: $surface-base;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px $space-4; // nearest token for 10px: between $space-2 (8px) and $space-3 (12px)
+  flex-shrink: 0;
+
+  @media (min-width: 1024px) {
+    // Desktop: raised card with border
+    background: $surface-raised;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+    padding: $space-3 $space-4; // 12px 16px
+    position: sticky;
+    top: $space-6; // sticks 24px from top within the scrolling page
+    z-index: 10;
+  }
+}
+
+// --- Left side: logo + wordmark ---
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+}
+
+.logoWrapper {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoImg {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: $text-default;
+}
+
+.wordmarkTop {
+  // nearest token: type-label-small (15px/500) — Figma used ~15px medium
+  @include type-label-small;
+  letter-spacing: -0.3px;
+}
+
+.wordmarkBottom {
+  // nearest token: type-heading-3 (20px/500) — Figma used ~21px semibold
+  @include type-heading-3;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+// --- Desktop right side ---
+
+.desktopRight {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: flex;
+    align-items: center;
+    gap: $space-8; // 32px
+  }
+}
+
+.navLink {
+  // nearest token: type-body-default-medium (17px/500) — Figma used 18px
+  @include type-body-default-medium;
+  color: $text-default;
+  text-decoration: none;
+  letter-spacing: 0.18px;
+
+  &:hover {
+    color: $text-link;
+  }
+}
+
+.joinBtn {
+  height: 48px;
+}
+
+// --- Mobile hamburger button ---
+
+.menuBtn {
+  background: $surface-sunken;
+  border: 1px solid $border-medium;
+  border-radius: $radius-sm;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $text-default;
+  font-size: 18px;
+  flex-shrink: 0;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}

@@ -50,6 +50,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: $space-2;
   padding: $space-4;
   border: none;
   border-radius: $radius-sm;
@@ -60,6 +61,24 @@
   &:disabled {
     cursor: not-allowed;
   }
+}
+
+// Icon position modifiers
+.left,
+.right {
+  // gap is already set on .button; these classes exist as hooks for future overrides
+}
+
+.only {
+  // icon-only: padding is already uniform; ensure square proportions
+  aspect-ratio: 1;
+}
+
+// Inherits current button color automatically
+.icon {
+  font-size: 1em;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 // -----------------------------------------------------------------------------

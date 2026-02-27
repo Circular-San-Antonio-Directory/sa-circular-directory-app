@@ -59,6 +59,40 @@ export default function ButtonsPage() {
       ))}
 
       <div className={styles.section}>
+        <h2 className="heading-3">Icons</h2>
+        <p className={styles.pageDescription}>
+          Pass a Font Awesome class string to the <code>icon</code> prop and set <code>iconPosition</code> to{' '}
+          <code>&apos;left&apos;</code> (default), <code>&apos;right&apos;</code>, or <code>&apos;only&apos;</code>.
+          Icon-only buttons should include an <code>aria-label</code>.
+        </p>
+
+        {([
+          { label: 'Icon Left (default)', position: 'left' as const, icon: 'fa-solid fa-arrow-right', buttonLabel: 'Explore Systems' },
+          { label: 'Icon Right', position: 'right' as const, icon: 'fa-solid fa-arrow-right', buttonLabel: 'Explore Systems' },
+          { label: 'Icon Only', position: 'only' as const, icon: 'fa-solid fa-magnifying-glass', buttonLabel: undefined },
+        ]).map(({ label, position, icon, buttonLabel }) => (
+          <div key={position} style={{ marginBottom: 'var(--space-6)' }}>
+            <span className={styles.typeSpecs} style={{ display: 'block', marginBottom: 'var(--space-3)' }}>{label}</span>
+            <div className={styles.componentRow}>
+              {variants.map(({ name, variant }) => (
+                <div key={variant} className={styles.componentItem}>
+                  <Button
+                    variant={variant}
+                    icon={icon}
+                    iconPosition={position}
+                    aria-label={position === 'only' ? `${name} action` : undefined}
+                  >
+                    {buttonLabel}
+                  </Button>
+                  <span className={styles.typeSpecs}>{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.section}>
         <h2 className="heading-3">Selector</h2>
         <p className={styles.pageDescription}>
           Toggle-style button for filter and selection UI. Two variants — Primary and Secondary —

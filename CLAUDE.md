@@ -179,13 +179,28 @@ export function ComponentName({ ...props }: ComponentNameProps) {
 
 ---
 
+## Icons
+
+Icons are provided by **Font Awesome Free** via CDN kit (no npm import needed). Render icons as:
+
+```tsx
+<i className="fa-solid fa-house" aria-hidden="true" />
+```
+
+Three prefixes available: `fa-solid`, `fa-regular`, `fa-brands`.
+
+**When a Figma design includes an icon**, use the same Font Awesome icon or the closest semantic match — unless a specific icon library is explicitly requested. Do not omit icons or use placeholder text.
+
+---
+
 ## Figma MCP Workflow
 
 1. **Fetch the node** — use the Figma MCP tool with the file key `2026_Circular_Directory`
 2. **Audit values** — for every design value (color, spacing, radius, font, shadow), identify the matching token before writing any code
 3. **Build a token map** — mentally or as a comment block: `Figma value → token`
-4. **Write the component** — no raw values, only tokens
-5. **Flag mismatches** — any value with no close token gets a `// nearest token:` comment
+4. **Map icons** — identify any icons in the design and find the closest Font Awesome Free equivalent
+5. **Write the component** — no raw values, only tokens; use FA icons as identified
+6. **Flag mismatches** — any value with no close token gets a `// nearest token:` comment
 
 ---
 
