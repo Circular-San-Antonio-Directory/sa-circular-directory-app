@@ -20,7 +20,7 @@ function readDataFile(filename) {
  * Execute SQL schema file
  */
 async function executeSchemaFile(client) {
-  const schemaPath = path.join(__dirname, '..', 'migrations', '001_create_schema.sql');
+  const schemaPath = path.join(__dirname, '..', 'migrations', '002_simplified_schema.sql');
   const schema = fs.readFileSync(schemaPath, 'utf8');
 
   console.log('📋 Creating database schema...');
@@ -71,13 +71,28 @@ async function insertLookupTable(client, tableName, dataFile, fieldMapping) {
 }
 
 /**
- * Insert businesses (main table)
+ * Convert array of Airtable IDs to array of SQL IDs
  */
-async function insertBusinesses(client) {
-  console.log('📥 Migrating businesses...');
+function mapIdsToArray(airtableIds, mapping) {
+  if (!airtableIds || !Array.isArray(airtableIds) || airtableIds.length === 0) {
+    return null;
+  }
+
+  const sqlIds = airtableIds
+    .map(airtableId => mapping[airtableId])
+    .filter(id => id !== undefined && id !== null);
+
+  return sqlIds.length > 0 ? sqlIds : null;
+}
+
+/**
+ * Insert businesses (main table) with array columns
+ */
+async function insertBusinesses(client, mappings) {
+  console.log('📥 Migrating businesses with relationship arrays...');
 
   const data = readDataFile('production-db.json');
-  const mapping = {}; // airtable_id -> sql_id
+  let insertCount = 0;
 
   for (const record of data) {
     if (!record.fields || Object.keys(record.fields).length === 0) {
@@ -85,6 +100,19 @@ async function insertBusinesses(client) {
     }
 
     const fields = record.fields;
+
+    // Map Airtable IDs to SQL ID arrays
+    const business_type_ids = mapIdsToArray(fields['Type of Business'], mappings.businessTypes);
+    const tag_ids = mapIdsToArray(fields['TAGS'], mappings.tags);
+    const input_action_ids = mapIdsToArray(fields['INPUT Action(s)'], mappings.actions);
+    const output_action_ids = mapIdsToArray(fields['OUTPUT Action(s)'], mappings.actions);
+    const service_action_ids = mapIdsToArray(fields['SERVICE Action(s)'], mappings.actions);
+    const input_category_ids = mapIdsToArray(fields['INPUT Category(s)'], mappings.categories);
+    const output_category_ids = mapIdsToArray(fields['OUTPUT Category(s) (Product Sold)'], mappings.categories);
+    const service_category_ids = mapIdsToArray(fields['SERVICE Category(s)'], mappings.categories);
+    const core_material_ids = mapIdsToArray(fields['Core Material System'], mappings.coreMaterials);
+    const enabling_system_ids = mapIdsToArray(fields['Enabling System'], mappings.enablingSystems);
+    const activity_ids = mapIdsToArray(fields['Notable Business Events/Activities'], mappings.activities);
 
     const query = `
       INSERT INTO businesses (
@@ -96,13 +124,18 @@ async function insertBusinesses(client) {
         input_notes, input_category_override,
         has_delivery, has_pickup, has_online_shop, online_shop_link,
         volunteer_opportunities, volunteer_notes,
-        airtable_created_at
+        airtable_created_at,
+        business_type_ids, tag_ids,
+        input_action_ids, output_action_ids, service_action_ids,
+        input_category_ids, output_category_ids, service_category_ids,
+        core_material_ids, enabling_system_ids, activity_ids
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
         $11, $12, $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25
+        $19, $20, $21, $22, $23, $24, $25,
+        $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36
       )
-      RETURNING id, airtable_id
+      RETURNING id
     `;
 
     const values = [
@@ -130,78 +163,34 @@ async function insertBusinesses(client) {
       fields['If online shop, Link'] || null,
       fields['VOLUNTEER Opportunities'] || false,
       fields['VOLUNTEER - Notes Field'] || null,
-      record.createdTime || null
+      record.createdTime || null,
+      // Array columns
+      business_type_ids,
+      tag_ids,
+      input_action_ids,
+      output_action_ids,
+      service_action_ids,
+      input_category_ids,
+      output_category_ids,
+      service_category_ids,
+      core_material_ids,
+      enabling_system_ids,
+      activity_ids
     ];
 
-    const result = await client.query(query, values);
-    mapping[record.id] = {
-      sqlId: result.rows[0].id,
-      fields: fields
-    };
+    await client.query(query, values);
+    insertCount++;
   }
 
-  console.log(`   ✅ Inserted ${Object.keys(mapping).length} businesses\n`);
-  return mapping;
-}
-
-/**
- * Insert junction table relationships
- */
-async function insertJunctionTable(client, tableName, businessMapping, lookupMapping, businessData, airtableFieldName) {
-  console.log(`🔗 Creating ${tableName} relationships...`);
-
-  let count = 0;
-
-  for (const [airtableId, businessInfo] of Object.entries(businessMapping)) {
-    const fields = businessInfo.fields;
-    const airtableIds = fields[airtableFieldName];
-
-    if (airtableIds && Array.isArray(airtableIds)) {
-      for (const lookupAirtableId of airtableIds) {
-        const lookupSqlId = lookupMapping[lookupAirtableId];
-
-        if (lookupSqlId) {
-          const query = `
-            INSERT INTO ${tableName} (business_id, ${getJunctionColumnName(tableName)})
-            VALUES ($1, $2)
-            ON CONFLICT DO NOTHING
-          `;
-
-          await client.query(query, [businessInfo.sqlId, lookupSqlId]);
-          count++;
-        }
-      }
-    }
-  }
-
-  console.log(`   ✅ Created ${count} ${tableName} links\n`);
-}
-
-/**
- * Get the second column name for junction tables
- */
-function getJunctionColumnName(tableName) {
-  const mapping = {
-    'business_business_types': 'business_type_id',
-    'business_tags': 'tag_id',
-    'business_input_actions': 'action_id',
-    'business_output_actions': 'action_id',
-    'business_service_actions': 'action_id',
-    'business_input_categories': 'category_id',
-    'business_output_categories': 'category_id',
-    'business_service_categories': 'category_id',
-    'business_core_materials': 'material_id',
-    'business_enabling_systems': 'system_id',
-    'business_activity_events': 'activity_id'
-  };
-  return mapping[tableName] || 'related_id';
+  console.log(`   ✅ Inserted ${insertCount} businesses with relationship arrays\n`);
+  return insertCount;
 }
 
 /**
  * Main migration function
  */
 async function migrate() {
-  console.log('\n🚀 Starting Airtable → PostgreSQL Migration\n');
+  console.log('\n🚀 Starting Airtable → PostgreSQL Migration (Simplified Schema)\n');
   console.log('================================================\n');
 
   // Validate DATABASE_URL
@@ -228,7 +217,7 @@ async function migrate() {
     // 1. Execute schema
     await executeSchemaFile(client);
 
-    // 2. Insert lookup tables
+    // 2. Insert lookup tables and collect mappings
     const businessTypesMapping = await insertLookupTable(
       client,
       'business_types',
@@ -278,108 +267,16 @@ async function migrate() {
       { 'Name': 'name', 'Description': 'description' }
     );
 
-    // 3. Insert businesses
-    const businessMapping = await insertBusinesses(client);
-
-    // 4. Insert junction table relationships
-    await insertJunctionTable(
-      client,
-      'business_business_types',
-      businessMapping,
-      businessTypesMapping,
-      null,
-      'Type of Business'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_tags',
-      businessMapping,
-      tagsMapping,
-      null,
-      'TAGS'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_input_actions',
-      businessMapping,
-      actionsMapping,
-      null,
-      'INPUT Action(s)'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_output_actions',
-      businessMapping,
-      actionsMapping,
-      null,
-      'OUTPUT Action(s)'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_service_actions',
-      businessMapping,
-      actionsMapping,
-      null,
-      'SERVICE Action(s)'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_input_categories',
-      businessMapping,
-      categoriesMapping,
-      null,
-      'INPUT Category(s)'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_output_categories',
-      businessMapping,
-      categoriesMapping,
-      null,
-      'OUTPUT Category(s) (Product Sold)'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_service_categories',
-      businessMapping,
-      categoriesMapping,
-      null,
-      'SERVICE Category(s)'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_core_materials',
-      businessMapping,
-      coreMaterialsMapping,
-      null,
-      'Core Material System'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_enabling_systems',
-      businessMapping,
-      enablingSystemsMapping,
-      null,
-      'Enabling System'
-    );
-
-    await insertJunctionTable(
-      client,
-      'business_activity_events',
-      businessMapping,
-      activitiesMapping,
-      null,
-      'Notable Business Events/Activities'
-    );
+    // 3. Insert businesses with array columns
+    const businessCount = await insertBusinesses(client, {
+      businessTypes: businessTypesMapping,
+      categories: categoriesMapping,
+      tags: tagsMapping,
+      actions: actionsMapping,
+      coreMaterials: coreMaterialsMapping,
+      enablingSystems: enablingSystemsMapping,
+      activities: activitiesMapping
+    });
 
     // Commit transaction
     await client.query('COMMIT');
@@ -394,7 +291,18 @@ async function migrate() {
     console.log(`   - Core Materials: ${Object.keys(coreMaterialsMapping).length}`);
     console.log(`   - Enabling Systems: ${Object.keys(enablingSystemsMapping).length}`);
     console.log(`   - Business Activities: ${Object.keys(activitiesMapping).length}`);
-    console.log(`   - Businesses: ${Object.keys(businessMapping).length}`);
+    console.log(`   - Businesses: ${businessCount}`);
+    console.log('\n📋 Schema Info:');
+    console.log('   - Total Tables: 8 (no junction tables!)');
+    console.log('   - Using PostgreSQL arrays for relationships');
+    console.log('   - GIN indexes created for fast array searches');
+    console.log('\n💡 Example Queries:');
+    console.log('   -- Find businesses with tag_id 1:');
+    console.log('   SELECT * FROM businesses WHERE tag_ids @> ARRAY[1];');
+    console.log('\n   -- Find businesses with ANY of tags [1,2,3]:');
+    console.log('   SELECT * FROM businesses WHERE tag_ids && ARRAY[1,2,3];');
+    console.log('\n   -- Get business with expanded names:');
+    console.log('   SELECT * FROM businesses_complete WHERE id = 1;');
     console.log('\n================================================\n');
 
   } catch (error) {
