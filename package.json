@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "fetch:airtable": "node scripts/fetchAirtable.js",
-    "fetch:airtable:all": "node scripts/fetchAirtable.js --all"
+    "migrate:sql": "node scripts/migrateToSQL.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -29,6 +29,7 @@
     "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "pg": "^8.19.0",
     "sass": "^1.97.3",
     "typescript": "^5"
   }
