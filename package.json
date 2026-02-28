@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "fetch:airtable": "node scripts/fetchAirtable.js",
-    "migrate:sql": "node scripts/migrateToSQL.js"
+    "migrate:sql": "node scripts/migrateToSQL.js",
+    "db:reset": "node scripts/resetDatabase.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
