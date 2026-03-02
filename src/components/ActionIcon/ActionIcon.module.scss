@@ -1,0 +1,48 @@
+@use '../../styles' as *;
+
+.iconWrapper {
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.iconWrapperLg {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.badge {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Badge color variants — 300-level surface of each action's colorway
+.donate      { background-color: $blue-300; }
+.buy         { background-color: $fern-300; }
+.sell        { background-color: $violet-300; }
+.trade       { background-color: $spruce-300; }
+.repair      { background-color: $orange-300; }
+.recycle     { background-color: $merlot-300; }
+.compost     { background-color: $blue-300; }
+.volunteer   { background-color: $fern-300; }
+.refill      { background-color: $mintChoc-300; }
+.dineOrDrink { background-color: $offWhite-300; }
