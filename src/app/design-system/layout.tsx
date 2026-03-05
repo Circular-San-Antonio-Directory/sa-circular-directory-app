@@ -13,6 +13,7 @@ const foundationItems = [
 const componentItems = [
   { label: 'Buttons', href: '/design-system/buttons' },
   { label: 'Action Icons', href: '/design-system/action-icons' },
+  { label: 'Pills', href: '/design-system/pills' },
 ];
 
 export default function DesignSystemLayout({ children }: { children: React.ReactNode }) {

@@ -1,0 +1,88 @@
+@use '../../styles' as *;
+
+// =============================================================================
+// PILL
+// =============================================================================
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; // nearest token: between $space-1 (4px) and $space-2 (8px); Figma used 6px
+
+  // Size: small (default)
+  padding: $space-1 $space-2;   // 4px 8px
+  border-radius: $radius-lg;    // 8px
+  @include type-label-small();
+
+  // Size: large
+  &.large {
+    padding: $space-1 10px;     // 8px 10px; horizontal nearest token: between $space-2 (8px) and $space-3 (12px)
+    border-radius: $radius-xl;  // 12px
+    @include type-label-default();
+  }
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+}
+
+// =============================================================================
+// COLORWAYS  (bg: *-200, text: *-800)
+// =============================================================================
+
+.colorBlue {
+  background-color: $blue-200;
+  color: $blue-800;
+}
+
+.colorOrange {
+  background-color: $orange-200;
+  color: $orange-800;
+}
+
+.colorMerlot {
+  background-color: $merlot-200;
+  color: $merlot-800;
+}
+
+.colorFern {
+  background-color: $fern-200;
+  color: $fern-800;
+}
+
+.colorViolet {
+  background-color: $violet-200;
+  color: $violet-800;
+}
+
+.colorSpruce {
+  background-color: $spruce-200;
+  color: $spruce-800;
+}
+
+.colorMintChoc {
+  background-color: $mintChoc-200;
+  color: $mintChoc-800;
+}
+
+.colorRedAdobe {
+  background-color: $redAdobe-200;
+  color: $redAdobe-800;
+}
+
+.colorMono {
+  background-color: $mono-300;
+  color: $mono-800;
+}
+
+.colorOffWhite {
+  background-color: $offWhite-200;
+  color: $offWhite-800; // nearest token: Figma used #454330, mapped to $offWhite-800 (#544F41)
+}

@@ -102,7 +102,7 @@ async function insertBusinesses(client, mappings) {
     const fields = record.fields;
 
     // Map Airtable IDs to SQL ID arrays
-    const business_type_ids = mapIdsToArray(fields['Type of Business'], mappings.businessTypes);
+    const business_type_ids = mapIdsToArray(fields['Type of Listing'], mappings.businessTypes);
     const tag_ids = mapIdsToArray(fields['TAGS'], mappings.tags);
     const input_action_ids = mapIdsToArray(fields['INPUT Action(s)'], mappings.actions);
     const output_action_ids = mapIdsToArray(fields['OUTPUT Action(s)'], mappings.actions);
@@ -122,8 +122,11 @@ async function insertBusinesses(client, mappings) {
         instagram_url_1, instagram_url_2, facebook_url, linkedin_url,
         google_hours_accurate, business_hours,
         input_notes, input_category_override,
+        output_notes, output_category_override,
+        service_notes, service_category_override,
         has_delivery, has_pickup, has_online_shop, online_shop_link,
         volunteer_opportunities, volunteer_notes,
+        listing_photo_url,
         airtable_created_at,
         business_type_ids, tag_ids,
         input_action_ids, output_action_ids, service_action_ids,
@@ -132,8 +135,9 @@ async function insertBusinesses(client, mappings) {
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
         $11, $12, $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25,
-        $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36
+        $19, $20, $21, $22, $23, $24, $25, $26,
+        $27, $28, $29, $30,
+        $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41
       )
       RETURNING id
     `;
@@ -157,12 +161,17 @@ async function insertBusinesses(client, mappings) {
       fields['Business Hours'] || null,
       fields['INPUT - Notes Field'] || null,
       fields['INPUT Category - Override (Unique items or category)'] || null,
+      fields['OUTPUT - Notes Field'] || null,
+      fields['OUTPUT Category - Override (Unique items or category)'] || null,
+      fields['SERVICE - Notes Field'] || null,
+      fields['SERVICE Category - Override (Unique items or category)'] || null,
       fields['Has Delivery services'] || false,
       fields['Has Pick Up service'] || false,
       fields['Has Online Shop'] || false,
       fields['If online shop, Link'] || null,
       fields['VOLUNTEER Opportunities'] || false,
       fields['VOLUNTEER - Notes Field'] || null,
+      fields['Listing Photo']?.[0]?.url || null, // Extract URL from first Airtable attachment
       record.createdTime || null,
       // Array columns
       business_type_ids,

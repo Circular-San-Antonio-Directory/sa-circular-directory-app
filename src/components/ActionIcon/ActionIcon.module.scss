@@ -35,10 +35,26 @@
   justify-content: center;
 }
 
+// Icon with label
+.iconWithLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px;
+  border-radius: $radius-lg; // 8px — Figma: rounded-8 ✓
+}
+
+.iconWithLabelText {
+  @include type-label-small; // Geist Medium 15px — Figma: Body/Small-Medium 15px/500 ✓
+  color: $text-default; // #2F2F2F — nearest token: Figma used #272727
+  white-space: nowrap;
+}
+
 // Badge color variants — 300-level surface of each action's colorway
 .donate      { background-color: $blue-300; }
 .buy         { background-color: $fern-300; }
 .sell        { background-color: $violet-300; }
+.consign     { background-color: $spruce-300; }
 .trade       { background-color: $spruce-300; }
 .repair      { background-color: $orange-300; }
 .recycle     { background-color: $merlot-300; }

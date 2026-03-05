@@ -14,6 +14,7 @@ class BusinessRecord {
       // Basic Business Information
       businessName: fields['Business Name'] || '',
       businessDescription: fields['Business Descriptios'] || '', // Note: Typo in Airtable field name
+      listingPhoto: fields['Listing Photo'] || [], // Airtable attachment array; use [0].url for display
       address: fields['Address'] || '',
       businessEmail: fields['Business Email'] || '',
       businessPhone: fields['Business Phone'] || '',
@@ -31,7 +32,7 @@ class BusinessRecord {
       linkedInUrl: fields['SOCIAL - LinkedIn URL'] || '',
 
       // Business Classification (Airtable record IDs)
-      typeOfBusiness: fields['Type of Business'] || [],
+      typeOfBusiness: fields['Type of Listing'] || [],
       tags: fields['TAGS'] || [],
 
       // Business Hours
@@ -50,9 +51,13 @@ class BusinessRecord {
 
       outputActions: fields['OUTPUT Action(s)'] || [],
       outputCategories: fields['OUTPUT Category(s) (Product Sold)'] || [],
+      outputCategoryOverride: fields['OUTPUT Category - Override (Unique items or category)'] || [],
+      outputNotes: fields['OUTPUT - Notes Field'] || '',
 
       serviceActions: fields['SERVICE Action(s)'] || [],
       serviceCategories: fields['SERVICE Category(s)'] || [],
+      serviceCategoryOverride: fields['SERVICE Category - Override (Unique items or category)'] || [],
+      serviceNotes: fields['SERVICE - Notes Field'] || '',
 
       // Events & Activities (Airtable record IDs)
       notableBusinessEvents: fields['Notable Business Events/Activities'] || [],
@@ -66,6 +71,10 @@ class BusinessRecord {
       // Volunteer Opportunities
       volunteerOpportunities: fields['VOLUNTEER Opportunities'] || false,
       volunteerNotes: fields['VOLUNTEER - Notes Field'] || '',
+
+      // Classification
+      category: fields['Category'] || '',
+      tiktokHandle: fields['Tiktok Handle'] || '',
     };
   }
 
@@ -98,7 +107,8 @@ class BusinessRecord {
       id: this.id,
       fields: {
         'Business Name': this.fields.businessName,
-        'Business Descriptios': this.fields.businessDescription,
+        'Business Description': this.fields.businessDescription,
+        'Listing Photo': this.fields.listingPhoto,
         'Address': this.fields.address,
         'Business Email': this.fields.businessEmail,
         'Business Phone': this.fields.businessPhone,
@@ -110,7 +120,7 @@ class BusinessRecord {
         'SOCIAL- Instagram URL 2': this.fields.instagramUrl2,
         'SOCIAL - Facebook URL': this.fields.facebookUrl,
         'SOCIAL - LinkedIn URL': this.fields.linkedInUrl,
-        'Type of Business': this.fields.typeOfBusiness,
+        'Type of Listing': this.fields.typeOfBusiness,
         'TAGS': this.fields.tags,
         'Google listed hours accurate?': this.fields.googleHoursAccurate,
         'Business Hours': this.fields.businessHours,
@@ -122,8 +132,12 @@ class BusinessRecord {
         'INPUT - Notes Field': this.fields.inputNotes,
         'OUTPUT Action(s)': this.fields.outputActions,
         'OUTPUT Category(s) (Product Sold)': this.fields.outputCategories,
+        'OUTPUT Category - Override (Unique items or category)': this.fields.outputCategoryOverride,
+        'OUTPUT - Notes Field': this.fields.outputNotes,
         'SERVICE Action(s)': this.fields.serviceActions,
         'SERVICE Category(s)': this.fields.serviceCategories,
+        'SERVICE Category - Override (Unique items or category)': this.fields.serviceCategoryOverride,
+        'SERVICE - Notes Field': this.fields.serviceNotes,
         'Notable Business Events/Activities': this.fields.notableBusinessEvents,
         'Has Delivery services': this.fields.hasDelivery,
         'Has Pick Up service': this.fields.hasPickUp,
@@ -131,6 +145,8 @@ class BusinessRecord {
         'If online shop, Link': this.fields.onlineShopLink,
         'VOLUNTEER Opportunities': this.fields.volunteerOpportunities,
         'VOLUNTEER - Notes Field': this.fields.volunteerNotes,
+        'Category': this.fields.category,
+        'Tiktok Handle': this.fields.tiktokHandle,
       },
       createdTime: this.createdTime
     };

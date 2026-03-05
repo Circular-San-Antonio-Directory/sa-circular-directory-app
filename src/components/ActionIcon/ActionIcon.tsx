@@ -4,6 +4,7 @@ export type ActionName =
   | 'donate'
   | 'buy'
   | 'sell'
+  | 'consign'
   | 'trade'
   | 'repair'
   | 'recycle'
@@ -12,7 +13,7 @@ export type ActionName =
   | 'refill'
   | 'dineOrDrink';
 
-export type ActionIconVariant = 'icon' | 'badge';
+export type ActionIconVariant = 'icon' | 'badge' | 'icon-with-label';
 
 interface ActionIconProps {
   action: ActionName;
@@ -23,6 +24,7 @@ const ACTION_MAP: Record<ActionName, { iconFile: string; label: string }> = {
   donate:      { iconFile: 'Action-3', label: 'Donate' },
   buy:         { iconFile: 'Action-10', label: 'Buy' },
   sell:        { iconFile: 'Action-9', label: 'Sell' },
+  consign:     { iconFile: 'Action-6', label: 'Consign' },
   trade:       { iconFile: 'Action-4', label: 'Trade' },
   repair:      { iconFile: 'Action-5', label: 'Repair' },
   recycle:     { iconFile: 'Action-11', label: 'Recycle' },
@@ -43,6 +45,16 @@ export function ActionIcon({ action, variant = 'icon' }: ActionIconProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={label} width={18} height={18} />
         </div>
+      </div>
+    );
+  }
+
+  if (variant === 'icon-with-label') {
+    return (
+      <div className={styles.iconWithLabel}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" aria-hidden="true" width={15} height={15} />
+        <span className={styles.iconWithLabelText}>{label}</span>
       </div>
     );
   }
