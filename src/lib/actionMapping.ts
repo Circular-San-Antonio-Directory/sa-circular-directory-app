@@ -22,7 +22,9 @@ export const CSV_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
   'composts':                'compost',
   'recycles':                'recycle',
   'trade':                   'trade',
-  // Deferred (no SVG yet): 'sells (b2b)', 'processes', 'rents'
+  'sells (b2b)':             'buyB2B',
+  'processes':               'process',
+  'rents':                   'rent',
 };
 
 /**

@@ -9,14 +9,16 @@
   align-items: center;
   gap: 6px; // nearest token: between $space-1 (4px) and $space-2 (8px); Figma used 6px
 
-  // Size: small (default)
-  padding: $space-1 $space-2;   // 4px 8px
+  // Size: small (default) — fixed height keeps both icon/no-icon variants identical
+  height: 24px;                 // 4px×2 padding + ~16px content line from Figma
+  padding: 0 $space-2;          // horizontal only; vertical handled by height + align-items
   border-radius: $radius-lg;    // 8px
   @include type-label-small();
 
   // Size: large
   &.large {
-    padding: $space-1 10px;     // 8px 10px; horizontal nearest token: between $space-2 (8px) and $space-3 (12px)
+    height: 30px;               // 8px×2 padding + ~18px content line from Figma
+    padding: 0 10px;            // nearest token: between $space-2 (8px) and $space-3 (12px)
     border-radius: $radius-xl;  // 12px
     @include type-label-default();
   }

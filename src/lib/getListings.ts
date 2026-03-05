@@ -37,6 +37,7 @@ export interface Listing {
     inputActions: string[];
     inputCategories: string[];
     inputCategoryOverride: string;
+    inputNotes: string;
     outputActions: string[];
     outputCategories: string[];
     outputCategoryOverride: string;
@@ -145,6 +146,12 @@ function toActionsArray(val: string): ActionName[] {
     .filter((a): a is ActionName => a !== null);
 }
 
+// ─── Slug ─────────────────────────────────────────────────────────────────────
+
+export function slugify(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export async function getListings(): Promise<Listing[]> {
@@ -170,8 +177,14 @@ export async function getListings(): Promise<Listing[]> {
       const outputActions = toActionsArray(get(row, 'OUTPUT Action(s)'));
       const serviceActions = toActionsArray(get(row, 'SERVICE Action(s)'));
 
-      // Deduplicate combined action names
-      const allActionNames = [...new Set([...inputActions, ...outputActions, ...serviceActions])];
+      // Deduplicate and sort actions by canonical display order
+      const ACTION_ORDER: ActionName[] = [
+        'donate', 'buy', 'buyB2B', 'recycle', 'sell', 'repair', 'consign',
+        'compost', 'refill', 'rent', 'trade', 'process', 'dineOrDrink', 'volunteer',
+      ];
+      const allActionsSet = new Set<ActionName>([...inputActions, ...outputActions, ...serviceActions]);
+      const allActionNames = ACTION_ORDER.filter(a => allActionsSet.has(a))
+        .concat([...allActionsSet].filter(a => !ACTION_ORDER.includes(a)));
 
       return {
         id: `sheet-${index}`,
@@ -204,6 +217,7 @@ export async function getListings(): Promise<Listing[]> {
           inputActions:          toArray(get(row, 'INPUT Action(s)')),
           inputCategories:       toArray(get(row, 'INPUT Category(s)')),
           inputCategoryOverride: get(row, 'INPUT Category - Override (Unique items or category)'),
+          inputNotes:            get(row, 'INPUT - Notes Field'),
           outputActions:         toArray(get(row, 'OUTPUT Action(s)')),
           outputCategories:      toArray(get(row, 'OUTPUT Category(s) (Product Sold)')),
           outputCategoryOverride: get(row, 'OUTPUT Category - Override (Unique items or category)'),

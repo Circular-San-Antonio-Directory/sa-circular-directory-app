@@ -3,6 +3,7 @@ import styles from './ActionIcon.module.scss';
 export type ActionName =
   | 'donate'
   | 'buy'
+  | 'buyB2B'
   | 'sell'
   | 'consign'
   | 'trade'
@@ -11,6 +12,8 @@ export type ActionName =
   | 'compost'
   | 'volunteer'
   | 'refill'
+  | 'rent'
+  | 'process'
   | 'dineOrDrink';
 
 export type ActionIconVariant = 'icon' | 'badge' | 'icon-with-label';
@@ -23,6 +26,7 @@ interface ActionIconProps {
 const ACTION_MAP: Record<ActionName, { iconFile: string; label: string }> = {
   donate:      { iconFile: 'Action-3', label: 'Donate' },
   buy:         { iconFile: 'Action-10', label: 'Buy' },
+  buyB2B:      { iconFile: 'Action-10', label: 'Buy (B2B)' }, // TODO: replace with real icon
   sell:        { iconFile: 'Action-9', label: 'Sell' },
   consign:     { iconFile: 'Action-6', label: 'Consign' },
   trade:       { iconFile: 'Action-4', label: 'Trade' },
@@ -31,6 +35,8 @@ const ACTION_MAP: Record<ActionName, { iconFile: string; label: string }> = {
   compost:     { iconFile: 'Action-7', label: 'Compost' },
   volunteer:   { iconFile: 'Action-8', label: 'Volunteer' },
   refill:      { iconFile: 'Action-2', label: 'Refill' },
+  rent:        { iconFile: 'Action-4', label: 'Rent' },        // TODO: replace with real icon
+  process:     { iconFile: 'Action-11', label: 'Process' },   // TODO: replace with real icon
   dineOrDrink: { iconFile: 'Action-1', label: 'Dine or Drink' },
 };
 
