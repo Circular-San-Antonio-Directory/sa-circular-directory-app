@@ -6,7 +6,7 @@ import styles from './Nav.module.scss';
 export function Nav() {
   return (
     <nav className={styles.nav}>
-      <div className={styles.left}>
+      <Link href="/" className={styles.left}>
         <div className={styles.logoWrapper}>
           <Image
             src="/images/DirectoryLogo.svg"
@@ -20,20 +20,24 @@ export function Nav() {
           <span className={styles.wordmarkTop}>San Antonio</span>
           <span className={styles.wordmarkBottom}>Circular Directory</span>
         </div>
-      </div>
+      </Link>
 
       {/* Desktop nav links */}
       <div className={styles.desktopRight}>
-        <Link href="/about" className={styles.navLink}>About</Link>
-        <Link href="/explore" className={styles.navLink}>Explore Systems</Link>
-        <Button
-          variant="accent"
-          icon="fa-solid fa-arrow-right-long"
-          iconPosition="right"
-          className={styles.joinBtn}
+        <a
+          href="https://www.circularsanantonio.org/projects/directory"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.joinLink}
         >
-          Join the Directory
-        </Button>
+          <Button
+            variant="accent"
+            icon="fa-solid fa-arrow-right-long"
+            iconPosition="right"
+          >
+            Join the Directory
+          </Button>
+        </a>
       </div>
 
       {/* Mobile hamburger */}
