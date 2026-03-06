@@ -17,17 +17,68 @@
   }
 }
 
-// ─── Two-column layout ────────────────────────────────────────────────────────
+// ─── Mobile / tablet layout (≤900px) ─────────────────────────────────────────
+
+.mobileLayout {
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+  }
+}
+
+.mobileHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-5 $space-4 $space-3;
+
+  // Override hero-2-strong (50px) → hero-4 (28px/500) on mobile
+  .businessName {
+    @include type-hero-4();
+  }
+
+  // Override body-default-regular → body-small-regular on mobile
+  .address {
+    @include type-body-small-regular();
+  }
+}
+
+.pillRowHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  padding-top: $space-1;
+  padding-bottom: $space-3;
+}
+
+.mobilePhoto {
+  display: block;
+  width: calc(100% - #{$space-4 * 2});
+  margin: 0 $space-4;
+  height: 240px;
+  object-fit: cover;
+  border-radius: $radius-md;
+
+  @media (min-width: 600px) {
+    height: 284px;
+  }
+}
+
+// ─── Desktop two-column layout (>900px) ───────────────────────────────────────
+
+.desktopLayout {
+  display: block;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
 
 .body {
   display: flex;
   align-items: flex-start;
   width: 100%;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-    padding: $space-4;
-  }
 }
 
 .main {
@@ -35,13 +86,6 @@
   min-width: 0;
   padding: $space-8;
   border-right: 1px solid $border-subtle;
-
-  @media (max-width: 900px) {
-    flex: none;
-    width: 100%;
-    padding: $space-4 0;
-    border-right: none;
-  }
 }
 
 .mainInner {
@@ -62,14 +106,6 @@
 
   @media (min-width: 1200px) {
     padding: $space-8 $space-14;
-  }
-
-  @media (max-width: 900px) {
-    flex: none;
-    width: 100%;
-    min-width: unset;
-    padding: $space-4 0;
-    border-top: 1px solid $border-subtle;
   }
 }
 
