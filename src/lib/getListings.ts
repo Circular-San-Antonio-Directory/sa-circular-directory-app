@@ -75,7 +75,7 @@ interface BusinessRow {
   google_hours_accurate: string | null;
   business_hours: string | null;
   input_notes: string | null;
-  input_category_override: string[] | string | null;
+  input_category_override: string | null;
   output_notes: string | null;
   output_category_override: string | null;
   service_notes: string | null;
@@ -132,10 +132,7 @@ function rowToListing(row: BusinessRow): Listing {
   if (row.volunteer_opportunities) allActionsSet.add('volunteer');
   const allActionNames = ACTION_ORDER.filter(a => allActionsSet.has(a));
 
-  // input_category_override is TEXT[] in the schema — join to a single string for the UI
-  const inputCategoryOverride = Array.isArray(row.input_category_override)
-    ? row.input_category_override.join(', ')
-    : toStr(row.input_category_override as string | null);
+  const inputCategoryOverride = toStr(row.input_category_override);
 
   return {
     id: row.airtable_id,

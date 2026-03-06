@@ -156,9 +156,16 @@ CREATE TABLE businesses (
   enabling_system_ids INTEGER[],     -- References enabling_systems(id)
   activity_ids INTEGER[],            -- References business_activities(id)
 
-  -- Input Notes
+  -- Input/Output/Service Notes & Overrides
   input_notes TEXT,
-  input_category_override TEXT[],
+  input_category_override TEXT,
+  output_notes TEXT,
+  output_category_override TEXT,
+  service_notes TEXT,
+  service_category_override TEXT,
+
+  -- Media
+  listing_photo_url VARCHAR(500),
 
   -- Services & Features
   has_delivery BOOLEAN DEFAULT FALSE,
