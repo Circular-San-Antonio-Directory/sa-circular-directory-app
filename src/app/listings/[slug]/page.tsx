@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { notFound } from 'next/navigation';
 import { getListings, slugify } from '@/lib/getListings';
 import type { Listing } from '@/lib/getListings';
