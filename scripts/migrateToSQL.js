@@ -252,7 +252,7 @@ async function migrate() {
       client,
       'business_actions',
       'business-actions.json',
-      { 'Action': 'action' }
+      { 'Action': 'action', 'Corresponding Action': 'corresponding_action', 'Order for Display': 'display_order' }
     );
 
     const coreMaterialsMapping = await insertLookupTable(

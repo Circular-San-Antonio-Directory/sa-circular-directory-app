@@ -239,7 +239,7 @@ export async function runSync(): Promise<SyncResult> {
       upsertLookup('business_types',        data.businessTypes,   { Name: 'name' }),
       upsertLookup('categories',            data.categories,      { Category: 'category', Notes: 'notes' }),
       upsertLookup('tags',                  data.tags,            { Name: 'name', Description: 'description' }),
-      upsertLookup('business_actions',      data.businessActions, { Action: 'action' }),
+      upsertLookup('business_actions',      data.businessActions, { Action: 'action', 'Corresponding Action': 'corresponding_action', 'Order for Display': 'display_order' }),
       upsertLookup('core_material_systems', data.coreMaterials,   { Name: 'name', Description: 'description' }),
       upsertLookup('enabling_systems',      data.enablingSystems, { Name: 'name', Description: 'description' }),
       upsertLookup('business_activities',   data.activities,      { Name: 'name', Description: 'description' }),

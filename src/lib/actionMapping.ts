@@ -1,13 +1,12 @@
 import type { ActionName } from '@/components/ActionIcon/ActionIcon';
 
 /**
- * Maps raw CSV action values (business perspective, lowercase) to ActionName
+ * Maps raw Airtable "Action" values (business perspective) to ActionName
  * (user-facing perspective) for display in the listing component.
  *
- * CSV value       → user sees
- * Accepts Dropoff → Donate
- * Sells           → Buy
- * Consigns        → Consign
+ * Action (Airtable)       → ActionName
+ * "Accepts Dropoff"       → donate
+ * "Sells"                 → buy
  * etc.
  */
 export const CSV_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
@@ -24,12 +23,40 @@ export const CSV_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
   'trade':                   'trade',
   'sells (b2b)':             'buyB2B',
   'processes':               'process',
+  'processes (?)':           'process',
   'rents':                   'rent',
+  'needs volunteers':        'volunteer',
+  'has restaurant or bar':   'dineOrDrink',
 };
 
 /**
- * Converts a raw CSV action string to an ActionName, or null if unmapped.
+ * Maps "Corresponding Action" values (from Airtable) to ActionName.
+ * These are the canonical user-facing labels stored in business_actions.corresponding_action.
+ */
+export const CORRESPONDING_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
+  'donate':        'donate',
+  'buy':           'buy',
+  'buy (b2b)':     'buyB2B',
+  'sell':          'sell',
+  'consign':       'consign',
+  'trade':         'trade',
+  'repair':        'repair',
+  'recycle':       'recycle',
+  'compost':       'compost',
+  'volunteer':     'volunteer',
+  'refill':        'refill',
+  'rent':          'rent',
+  'process':       'process',
+  'dine or drink': 'dineOrDrink',
+};
+
+/**
+ * Converts a raw Airtable action string to an ActionName, or null if unmapped.
+ * Tries the "Action" field mapping first, then falls back to "Corresponding Action" mapping.
  */
 export function csvActionToActionName(csvValue: string): ActionName | null {
-  return CSV_ACTION_TO_ACTION_NAME[csvValue.trim().toLowerCase()] ?? null;
+  const lower = csvValue.trim().toLowerCase();
+  return CSV_ACTION_TO_ACTION_NAME[lower]
+    ?? CORRESPONDING_ACTION_TO_ACTION_NAME[lower]
+    ?? null;
 }
