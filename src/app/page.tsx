@@ -1,6 +1,7 @@
+import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
 import { Nav } from '@/components/Nav';
-import { getListings } from '@/lib/getListings';
+import { getListings, slugify } from '@/lib/getListings';
 import styles from './page.module.scss';
 
 export const dynamic = 'force-dynamic';
@@ -30,7 +31,7 @@ export default async function Home() {
 
             <div className={styles.listingStack}>
               {listings.map((listing) => (
-                <div key={listing.id} className={styles.listingCard}>
+                <Link key={listing.id} href={`/listings/${slugify(listing.fields.businessName)}`} className={styles.listingCard}>
                   <div className={styles.listingImageWrapper}>
                     {listing.fields.listingPhoto[0] ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -50,7 +51,7 @@ export default async function Home() {
                       ))}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </aside>
