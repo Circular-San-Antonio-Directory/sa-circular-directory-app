@@ -7,6 +7,15 @@ description: >
   writing any component, even for small UI pieces.
 ---
 
+# SA Circular Directory — Claude Instructions
+
+## Architecture & Data Flow
+
+Full system architecture, data flow, tech stack decisions, and environment strategy are documented in:
+**`docs/architecture.md`** — read this before making any changes to data sync, database schema, API routes, or environment configuration.
+
+---
+
 # Figma → Component: SA Circular Directory
 
 ## ⚠️ Prime Directive — Always Use Design Tokens
