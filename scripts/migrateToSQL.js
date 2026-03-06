@@ -171,7 +171,7 @@ async function insertBusinesses(client, mappings) {
       fields['If online shop, Link'] || null,
       fields['VOLUNTEER Opportunities'] || false,
       fields['VOLUNTEER - Notes Field'] || null,
-      fields['Listing Photo']?.[0]?.url || null, // Extract URL from first Airtable attachment
+      fields['Listing Photo'] || null,
       record.createdTime || null,
       // Array columns
       business_type_ids,

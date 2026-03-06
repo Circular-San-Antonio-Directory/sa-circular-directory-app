@@ -208,7 +208,7 @@ async function upsertBusinesses(
         f['If online shop, Link'] ?? null,
         f['VOLUNTEER Opportunities'] ?? false,
         f['VOLUNTEER - Notes Field'] ?? null,
-        (f['Listing Photo'] as Array<{ url: string }>)?.[0]?.url ?? null,
+        (f['Listing Photo'] as string) || null,
         record.createdTime ?? null,
         mapIds(f['Type of Listing'],                         mappings.businessTypes),
         mapIds(f['TAGS'],                                    mappings.tags),
