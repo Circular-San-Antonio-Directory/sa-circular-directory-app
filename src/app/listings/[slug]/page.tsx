@@ -9,6 +9,7 @@ import { ActionIcon } from '@/components/ActionIcon';
 import { Pill } from '@/components/Pill';
 import styles from './page.module.scss';
 import { CopyEmailButton } from './CopyEmailButton';
+import { ListingTabs } from './ListingTabs';
 
 // ─── Action helpers ───────────────────────────────────────────────────────────
 
@@ -41,6 +42,16 @@ function getActionContent(action: ActionName, f: Listing['fields']) {
     return { categories: [],                  override: '',                        notes: f.volunteerNotes };
   // service actions: repair, recycle, compost, refill, dineOrDrink
   return   { categories: f.serviceCategories, override: f.serviceCategoryOverride, notes: f.serviceNotes  };
+}
+
+// ─── Tag color picker (deterministic, no mono/offWhite) ───────────────────────
+
+const TAG_COLORS = ['blue', 'orange', 'merlot', 'fern', 'violet', 'spruce', 'mintChoc', 'redAdobe'] as const;
+
+function tagColor(tag: string): typeof TAG_COLORS[number] {
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) hash = (hash * 31 + tag.charCodeAt(i)) >>> 0;
+  return TAG_COLORS[hash % TAG_COLORS.length];
 }
 
 // ─── Social URL helpers ───────────────────────────────────────────────────────
@@ -84,6 +95,45 @@ export default async function ListingPage({ params }: Props) {
         <Nav />
       </div>
 
+      {/* ── Mobile / tablet layout (≤900px) ─────────────────────────── */}
+      <div className={styles.mobileLayout}>
+        {/* Header: name + address + tags (no description) */}
+        <div className={styles.mobileHeader}>
+          <div className={styles.nameAddress}>
+            <h1 className={`hero-2-strong ${styles.businessName}`}>{f.businessName}</h1>
+            {f.address && (
+              <p className={`body-default-regular ${styles.address}`}>{f.address}</p>
+            )}
+          </div>
+          {f.tags.length > 0 && (
+            <div className={styles.pillRowHeader}>
+              {f.tags.map((tag) => (
+                <Pill key={tag} label={tag} color={tagColor(tag)} size="small" />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Photo */}
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={photo}
+            alt={f.businessName}
+            className={styles.mobilePhoto}
+          />
+        ) : (
+          <div className={styles.photoPlaceholder}>
+            <i className="fa-regular fa-image" aria-hidden="true" />
+          </div>
+        )}
+
+        {/* Tab layout */}
+        <ListingTabs fields={f} mapsUrl={mapsUrl} />
+      </div>
+
+      {/* ── Desktop layout (>900px) ──────────────────────────────────── */}
+      <div className={styles.desktopLayout}>
       <div className={styles.body}>
         {/* ── Main content ─────────────────────────────────────────── */}
         <main className={styles.main}>
@@ -180,7 +230,7 @@ export default async function ListingPage({ params }: Props) {
                 <p className={styles.sectionLabel}>What you&apos;ll find</p>
                 <div className={styles.pillRow}>
                   {f.tags.map((tag) => (
-                    <Pill key={tag} label={tag} color="mono" size="small" />
+                    <Pill key={tag} label={tag} color={tagColor(tag)} size="small" />
                   ))}
                 </div>
               </div>
@@ -383,6 +433,7 @@ export default async function ListingPage({ params }: Props) {
 
         </aside>
       </div>
+      </div>{/* end desktopLayout */}
     </div>
   );
 }

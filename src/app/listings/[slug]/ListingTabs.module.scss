@@ -1,0 +1,457 @@
+@use '../../../styles' as *;
+
+// =============================================================================
+// LISTING TABS — mobile/tablet layout (≤900px)
+// =============================================================================
+
+// ─── Tab bar ─────────────────────────────────────────────────────────────────
+
+.tabs {
+  margin: $space-4 $space-4 0;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid $border-default;
+  background: $surface-raised;
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid $border-default;
+  padding: $space-5 $space-4;
+  cursor: pointer;
+  @include type-heading-4();
+  color: $text-subtle;
+  text-align: center;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  margin-bottom: -1px; // overlap the tabBar border-bottom
+
+  &:hover {
+    color: $text-default;
+  }
+}
+
+.tabActive {
+  color: $primary-default;
+  border-bottom-color: $primary-default;
+}
+
+// ─── Tab content wrapper ──────────────────────────────────────────────────────
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  padding: $space-6 $space-4;
+}
+
+// ─── Section wrapper ─────────────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.sectionLabel {
+  @include type-heading-3();
+  color: $text-default;
+  margin: 0;
+  padding-bottom: $space-2;
+}
+
+.sectionHeading {
+  @include type-body-default-medium();
+  color: $text-default;
+  margin: 0;
+}
+
+// ─── Contact grid: Website + Directions ──────────────────────────────────────
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-2;
+}
+
+.contactCard {
+  background: $surface-sunken;
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: $space-5 $space-3 $space-4;
+  text-decoration: none;
+  color: $text-default;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $border-default;
+  }
+}
+
+.contactCardFull {
+  grid-column: 1 / -1;
+}
+
+.contactCardIcon {
+  font-size: 20px;
+  color: $text-default;
+}
+
+.contactCardLabel {
+  @include type-body-small-regular();
+  color: $text-default;
+}
+
+// ─── Hours accordion ─────────────────────────────────────────────────────────
+
+.hoursDetails {
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+}
+
+.hoursSummary {
+  background: $primary-default;
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: $shadow-sm;
+}
+
+.hoursText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.hoursEyebrow {
+  @include type-label-caption-strong();
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hoursValue {
+  @include type-body-small-regular();
+  color: #ffffff;
+}
+
+.hoursChevron {
+  color: #ffffff;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.hoursContent {
+  @include type-body-small-regular();
+  color: $text-subtle;
+  padding: $space-3 $space-2 0;
+  white-space: pre-line;
+}
+
+// ─── Action accordions ────────────────────────────────────────────────────────
+
+.actionsBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.actionRow {
+  border-bottom: 1px solid $border-default;
+
+  &:first-child {
+    border-radius: $radius-md $radius-md 0 0;
+  }
+
+  border-radius: 0;
+
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.actionSummary {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-5;
+  cursor: pointer;
+  user-select: none;
+}
+
+.actionLabel {
+  @include type-heading-4();
+  color: $text-default;
+  flex: 1;
+}
+
+.actionChevron {
+  color: $text-subtle;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.actionContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  background-color: $offWhite-200;
+  margin: 0 $space-4 $space-4 16px;
+  padding: $space-4;
+  border-radius: $radius-md;
+}
+
+.actionOverrideBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.actionOverrideLabel {
+  color: $text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.actionCategories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}
+
+.actionNote {
+  @include type-body-small-regular();
+  color: $text-default;
+  margin: 0;
+}
+
+// ─── Systems Mapping ──────────────────────────────────────────────────────────
+
+.systemsBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.systemRow {
+  border-bottom: 1px solid $border-default;
+
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.systemSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-5;
+  cursor: pointer;
+  user-select: none;
+}
+
+.systemSummaryLabel {
+  @include type-heading-5();
+  color: $text-default;
+}
+
+.systemChevron {
+  color: $text-subtle;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.systemContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  background-color: $offWhite-200;
+  margin: 0 $space-4 $space-4 $space-4;
+  padding: $space-4;
+  border-radius: $radius-md;
+}
+
+// ─── Description ─────────────────────────────────────────────────────────────
+
+.description {
+  color: $text-default;
+  margin: 0;
+}
+
+// ─── Social links ─────────────────────────────────────────────────────────────
+
+.socialRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.socialLabel {
+  @include type-body-default-medium();
+  color: $text-default;
+}
+
+.socialLinks {
+  display: flex;
+  gap: $space-2 + 2px; // nearest token: 10px, between $space-2 (8px) and $space-3 (12px)
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+
+  &.instagram {
+    background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+  }
+
+  &.facebook {
+    background: $blue-600; // nearest token: Figma used #2563eb
+  }
+
+  &.linkedin {
+    background: #0077b5; // TODO: token needed? No LinkedIn color token exists
+  }
+
+  &.tiktok {
+    background: $mono-800;
+  }
+}
+
+// ─── Contact rows ─────────────────────────────────────────────────────────────
+
+.contactRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 0;
+  border-bottom: 1px dashed $border-default;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.contactKey {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.contactValue {
+  @include type-body-small-regular();
+  color: $text-default;
+  text-decoration: none;
+}
+
+.contactValueEmpty {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+// ─── Services ────────────────────────────────────────────────────────────────
+
+.serviceRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 0;
+  border-bottom: 1px dashed $border-default;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.serviceKey {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.serviceValue {
+  @include type-body-small-regular();
+  color: $text-default;
+}
+
+.serviceLink {
+  @include type-body-small-regular();
+  color: $text-link;
+  text-decoration: none;
+  border: 1px solid $text-link;
+  border-radius: $radius-md;
+  padding: $space-1 $space-3;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: $text-link;
+    color: $text-inverse;
+  }
+}
+
+// ─── Pills ────────────────────────────────────────────────────────────────────
+
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}

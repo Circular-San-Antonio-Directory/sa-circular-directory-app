@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
 import { Nav } from '@/components/Nav';
 import { getListings, slugify } from '@/lib/getListings';
+import { MobileBottomSheet } from './MobileBottomSheet';
 import styles from './page.module.scss';
 
 export const dynamic = 'force-dynamic';
@@ -65,15 +66,8 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Mobile bottom sheet — fixed, shown only on mobile */}
-      <div className={styles.mobileSheet}>
-        <div className={styles.sheetHandle} />
-        <p className={styles.sheetCount}>
-          <span className={styles.countBold}>{listings.length} Listings</span>
-          {' '}
-          <span className={styles.countLight}>in this area</span>
-        </p>
-      </div>
+      {/* Mobile bottom sheet — interactive, shown only on mobile */}
+      <MobileBottomSheet listings={listings} />
 
     </div>
   );
