@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "sync": "tsx scripts/sync.ts",
     "fetch:airtable": "node scripts/fetchAirtable.js",
     "migrate:sql": "node scripts/migrateToSQL.js",
     "db:reset": "node scripts/resetDatabase.js"
@@ -17,17 +18,18 @@
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.2.0",
+    "airtable": "^0.12.2",
     "next": "16.1.6",
     "pg": "^8.19.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "tsx": "^4.19.3"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/pg": "^8",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "airtable": "^0.12.2",
     "airtable-mcp-server": "^1.12.0",
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv": "^17.3.1",
