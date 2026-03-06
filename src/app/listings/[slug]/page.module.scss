@@ -22,10 +22,7 @@
 .body {
   display: flex;
   align-items: flex-start;
-  gap: 0;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: $space-6 $space-8;
+  width: 100%;
 
   @media (max-width: 900px) {
     flex-direction: column;
@@ -36,35 +33,42 @@
 .main {
   flex: 1 1 0;
   min-width: 0;
-  margin: $space-8;
-  padding: $space-8 $space-10;
-    border-right: 1px solid $border-subtle;
-
+  padding: $space-8;
+  border-right: 1px solid $border-subtle;
 
   @media (max-width: 900px) {
+    flex: none;
+    width: 100%;
     padding: $space-4 0;
+    border-right: none;
   }
 }
 
 .mainInner {
   display: flex;
   flex-direction: column;
-  gap: $space-10;
-  max-width: 900px;
+  gap: $space-5;
+  max-width: 1100px;
+  //margin: 0 auto;
 }
 
 .sidebar {
-  flex-shrink: 0;
-  width: 320px;
-  padding: $space-8;
+  flex: 0 0 30%;
+  min-width: 320px;
+  padding: $space-8 $space-6;
   display: flex;
   flex-direction: column;
   gap: $space-6;
 
+  @media (min-width: 1200px) {
+    padding: $space-8 $space-14;
+  }
+
   @media (max-width: 900px) {
+    flex: none;
     width: 100%;
+    min-width: unset;
     padding: $space-4 0;
-    border-left: none;
     border-top: 1px solid $border-subtle;
   }
 }
@@ -127,7 +131,7 @@
   display: flex;
   flex-direction: column;
   gap: $space-3;
-  padding: $space-8 0;
+  padding: $space-5 0;
   //border-top: 1px solid $border-default;
 
   &:first-child {
@@ -136,7 +140,7 @@
 }
 
 .sectionLabel {
-  @include type-label-large-strong();
+  @include type-heading-3();
   color: $text-default;
   margin: 0;
   padding-bottom: $space-3;
@@ -281,7 +285,7 @@
 }
 
 .systemSummaryLabel {
-  @include type-heading-4();
+  @include type-heading-5();
   color: $text-default;
 }
 
@@ -329,6 +333,10 @@
   &:hover {
     background: $border-default;
   }
+}
+
+.contactCardFull {
+  grid-column: 1 / -1;
 }
 
 .contactCardIcon {
@@ -395,6 +403,77 @@
   }
 }
 
+// ─── Sidebar: Contact (Phone + Email) ────────────────────────────────────────
+
+.contactSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.contactHeading {
+  @include type-body-default-medium();
+  color: $text-default;
+  margin: 0;
+}
+
+.contactRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 0;
+  border-bottom: 1px dashed $border-default;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.contactKey {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.contactValue {
+  @include type-body-small-regular();
+  color: $text-default;
+  text-decoration: none;
+}
+
+.contactValueEmpty {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.copyEmailButton {
+  @include type-body-small-regular();
+  color: $text-default;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  text-align: left;
+
+  &:hover {
+    color: $text-link;
+  }
+}
+
+.copyEmailIcon {
+  color: $text-subtle;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
 // ─── Sidebar: Service Options ────────────────────────────────────────────────
 
 .serviceOptions {
@@ -412,15 +491,14 @@
 .serviceRows {
   display: flex;
   flex-direction: column;
-  gap: $space-3;
 }
 
 .serviceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: $space-3;
-  border-bottom: 1px solid $border-subtle;
+  padding: $space-3 0;
+  border-bottom: 1px dashed $border-default;
 
   &:last-child {
     border-bottom: none;
@@ -442,9 +520,14 @@
   @include type-body-small-regular();
   color: $text-link;
   text-decoration: none;
+  border: 1px solid $text-link;
+  border-radius: $radius-md;
+  padding: $space-1 $space-3;
+  transition: background 0.15s ease, color 0.15s ease;
 
   &:hover {
-    text-decoration: underline;
+    background: $text-link;
+    color: $text-inverse;
   }
 }
 

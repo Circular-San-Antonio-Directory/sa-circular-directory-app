@@ -8,6 +8,7 @@ import { Nav } from '@/components/Nav';
 import { ActionIcon } from '@/components/ActionIcon';
 import { Pill } from '@/components/Pill';
 import styles from './page.module.scss';
+import { CopyEmailButton } from './CopyEmailButton';
 
 // ─── Action helpers ───────────────────────────────────────────────────────────
 
@@ -226,20 +227,8 @@ export default async function ListingPage({ params }: Props) {
         {/* ── Sidebar ──────────────────────────────────────────────── */}
         <aside className={styles.sidebar}>
 
-          {/* Quick contact grid */}
+          {/* Quick links: Website + Directions */}
           <div className={styles.contactGrid}>
-            {f.businessPhone && (
-              <a href={`tel:${f.businessPhone}`} className={styles.contactCard}>
-                <i className={`fa-solid fa-phone ${styles.contactCardIcon}`} aria-hidden="true" />
-                <span className={styles.contactCardLabel}>Call</span>
-              </a>
-            )}
-            {f.businessEmail && (
-              <a href={`mailto:${f.businessEmail}`} className={styles.contactCard}>
-                <i className={`fa-solid fa-envelope ${styles.contactCardIcon}`} aria-hidden="true" />
-                <span className={styles.contactCardLabel}>Email</span>
-              </a>
-            )}
             {f.website && (
               <a href={f.website} target="_blank" rel="noopener noreferrer" className={styles.contactCard}>
                 <i className={`fa-solid fa-globe ${styles.contactCardIcon}`} aria-hidden="true" />
@@ -247,8 +236,13 @@ export default async function ListingPage({ params }: Props) {
               </a>
             )}
             {mapsUrl && (
-              <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className={styles.contactCard}>
-                <i className={`fa-solid fa-location-dot ${styles.contactCardIcon}`} aria-hidden="true" />
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${styles.contactCard} ${!f.website ? styles.contactCardFull : ''}`}
+              >
+                <i className={`fa-solid fa-diamond-turn-right ${styles.contactCardIcon}`} aria-hidden="true" />
                 <span className={styles.contactCardLabel}>Directions</span>
               </a>
             )}
@@ -312,9 +306,34 @@ export default async function ListingPage({ params }: Props) {
             </>
           )}
 
-          {/* Service Options */}
+          {/* Contact: Phone + Email */}
+          <div className={styles.contactSection}>
+            <p className={styles.contactHeading}>Contact</p>
+            <div className={styles.contactRows}>
+              <div className={styles.contactRow}>
+                <span className={styles.contactKey}>Phone</span>
+                {f.businessPhone ? (
+                  <a href={`tel:${f.businessPhone}`} className={styles.contactValue}>{f.businessPhone}</a>
+                ) : (
+                  <span className={styles.contactValueEmpty}>—</span>
+                )}
+              </div>
+              <div className={styles.contactRow}>
+                <span className={styles.contactKey}>Email</span>
+                {f.businessEmail ? (
+                  <CopyEmailButton email={f.businessEmail} />
+                ) : (
+                  <span className={styles.contactValueEmpty}>—</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <hr className={styles.sidebarDivider} />
+
+          {/* Services */}
           <div className={styles.serviceOptions}>
-            <p className={styles.serviceHeading}>Service Options</p>
+            <p className={styles.serviceHeading}>Services</p>
             <div className={styles.serviceRows}>
               <div className={styles.serviceRow}>
                 <span className={styles.serviceKey}>Pickup</span>
