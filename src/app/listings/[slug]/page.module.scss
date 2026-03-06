@@ -1,0 +1,507 @@
+@use '../../../styles' as *;
+
+// =============================================================================
+// LISTING DETAIL PAGE
+// =============================================================================
+
+.page {
+  min-height: 100vh;
+  background: $surface-base;
+}
+
+.navWrapper {
+  padding: $space-6 $space-8;
+
+  @media (max-width: 900px) {
+    padding: $space-4;
+  }
+}
+
+// ─── Two-column layout ────────────────────────────────────────────────────────
+
+.body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: $space-6 $space-8;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    padding: $space-4;
+  }
+}
+
+.main {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: $space-8;
+  padding: $space-8 $space-10;
+    border-right: 1px solid $border-subtle;
+
+
+  @media (max-width: 900px) {
+    padding: $space-4 0;
+  }
+}
+
+.mainInner {
+  display: flex;
+  flex-direction: column;
+  gap: $space-10;
+  max-width: 900px;
+}
+
+.sidebar {
+  flex-shrink: 0;
+  width: 320px;
+  padding: $space-8;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    padding: $space-4 0;
+    border-left: none;
+    border-top: 1px solid $border-subtle;
+  }
+}
+
+// ─── Header section ───────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  padding: 0 $space-2;
+}
+
+.nameAddress {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.businessName {
+  // Uses global .hero-2-light class — Archivo 50px/300
+  margin: 0;
+  line-height: 1;
+}
+
+.address {
+  color: $text-subtle;
+  margin: 0;
+}
+
+.description {
+  color: $text-default;
+  margin: 0;
+}
+
+// ─── Photo ────────────────────────────────────────────────────────────────────
+
+.photo {
+  width: 100%;
+  height: 284px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  display: block;
+}
+
+.photoPlaceholder {
+  width: 100%;
+  height: 284px;
+  border-radius: $radius-sm;
+  background: $surface-sunken;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-disabled;
+}
+
+// ─── Sections (shared) ────────────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-8 0;
+  //border-top: 1px solid $border-default;
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.sectionLabel {
+  @include type-label-large-strong();
+  color: $text-default;
+  margin: 0;
+  padding-bottom: $space-3;
+}
+
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}
+
+// ─── Action accordions ────────────────────────────────────────────────────────
+
+.actionsBlock {
+  display: flex;
+  flex-direction: column;
+  // background-color: $surface-raised;
+  // border-radius: $radius-md;
+  
+}
+
+.actionRow {
+  border-bottom: 1px solid $border-default;
+
+  //Border Radius depending on child
+  //First
+      &:first-child {
+          border-radius:$radius-md $radius-md 0 0;
+      }
+    //Middle
+      border-radius: 0;
+    //Last
+      // &:last-child {
+      //     border-radius: 0 0 $radius-md $radius-md;
+      // }
+
+
+  // Remove default <details> marker
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.actionSummary {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-5;
+  cursor: pointer;
+  user-select: none;
+}
+
+.actionLabel {
+  @include type-heading-4();
+  color: $text-default;
+  flex: 1;
+}
+
+.actionChevron {
+  color: $text-subtle;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.actionContent {
+ // padding: $space-2 0 $space-6 calc(44px + #{$space-3}); // indent past icon
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  background-color: $offWhite-200;
+  margin: 0 $space-4 $space-4 16px;
+ // margin-bottom: $space-4;
+  padding: $space-4;
+  border-radius: $radius-md;
+}
+
+.actionOverrideBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.actionOverrideLabel {
+  // Uses global .caption-bold class
+  color: $text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.actionCategories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}
+
+.actionNote {
+  @include type-body-small-regular();
+  color: $text-default;
+  margin: 0;
+}
+
+// ─── Systems Mapping ─────────────────────────────────────────────────────────
+
+.systemsBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.systemRow {
+  border-bottom: 1px solid $border-default;
+
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.systemSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-5;
+  cursor: pointer;
+  user-select: none;
+}
+
+.systemSummaryLabel {
+  @include type-heading-4();
+  color: $text-default;
+}
+
+.systemChevron {
+  color: $text-subtle;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.systemContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  background-color: $offWhite-200;
+  margin: 0 $space-4 $space-4 $space-4;
+  padding: $space-4;
+  border-radius: $radius-md;
+}
+
+// ─── Sidebar: Quick contact grid ─────────────────────────────────────────────
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-2;
+}
+
+.contactCard {
+  background: $surface-sunken;
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: $space-5 $space-3 $space-4;
+  text-decoration: none;
+  color: $text-default;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $border-default;
+  }
+}
+
+.contactCardIcon {
+  font-size: 20px;
+  color: $text-default;
+}
+
+.contactCardLabel {
+  @include type-body-small-regular();
+  color: $text-default;
+}
+
+// ─── Sidebar: Divider ────────────────────────────────────────────────────────
+
+.sidebarDivider {
+  border: none;
+  border-top: 1px solid $border-default;
+  margin: 0;
+}
+
+// ─── Sidebar: Social (Keep Up) ───────────────────────────────────────────────
+
+.socialRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.socialLabel {
+  @include type-body-default-medium();
+  color: $text-default;
+}
+
+.socialLinks {
+  display: flex;
+  gap: $space-2 + 2px; // nearest token: 10px, between $space-2 (8px) and $space-3 (12px)
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+
+  &.instagram {
+    background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+  }
+
+  &.facebook {
+    background: $blue-600; // nearest token: Figma used #2563eb
+  }
+
+  &.linkedin {
+    background: #0077b5; // TODO: token needed? No LinkedIn color token exists
+  }
+
+  &.tiktok {
+    background: $mono-800;
+  }
+}
+
+// ─── Sidebar: Service Options ────────────────────────────────────────────────
+
+.serviceOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.serviceHeading {
+  @include type-body-default-medium();
+  color: $text-default;
+  margin: 0;
+}
+
+.serviceRows {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.serviceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $border-subtle;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.serviceKey {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.serviceValue {
+  @include type-body-small-regular();
+  color: $text-default;
+}
+
+.serviceLink {
+  @include type-body-small-regular();
+  color: $text-link;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ─── Sidebar: Hours accordion ────────────────────────────────────────────────
+
+.hoursDetails {
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+}
+
+.hoursSummary {
+  background: $primary-default;
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: $shadow-sm;
+}
+
+.hoursText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.hoursEyebrow {
+  @include type-label-caption-strong();
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hoursValue {
+  @include type-body-small-regular();
+  color: #ffffff;
+}
+
+.hoursChevron {
+  color: #ffffff;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.hoursContent {
+  @include type-body-small-regular();
+  color: $text-subtle;
+  padding: $space-3 $space-2 0;
+  white-space: pre-line;
+}
