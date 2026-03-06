@@ -1,10 +1,8 @@
 import type { ActionName } from '@/components/ActionIcon/ActionIcon';
 import { csvActionToActionName } from './actionMapping';
+import pool from './db';
 
-const CSV_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9eN6f9S1JgdPuAqIIqLFmcWqdv8Bhxym_yDVvjdHhfYMlJnp_EiOl-HRVtbMSwI9opJtEygSjwMIH/pub?output=csv';
-
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Listing {
   id: string;
@@ -53,97 +51,49 @@ export interface Listing {
   };
 }
 
-// ─── CSV parser ───────────────────────────────────────────────────────────────
+// ─── DB row type (from businesses_complete view) ──────────────────────────────
 
-/**
- * Minimal RFC 4180-compliant CSV parser.
- * Handles quoted fields (including commas and newlines inside quotes).
- */
-function parseCSV(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = '';
-  let inQuotes = false;
-  let i = 0;
-
-  while (i < text.length) {
-    const ch = text[i];
-
-    if (inQuotes) {
-      if (ch === '"') {
-        if (text[i + 1] === '"') {
-          // Escaped quote
-          field += '"';
-          i += 2;
-        } else {
-          inQuotes = false;
-          i++;
-        }
-      } else {
-        field += ch;
-        i++;
-      }
-    } else {
-      if (ch === '"') {
-        inQuotes = true;
-        i++;
-      } else if (ch === ',') {
-        row.push(field);
-        field = '';
-        i++;
-      } else if (ch === '\r' && text[i + 1] === '\n') {
-        row.push(field);
-        rows.push(row);
-        row = [];
-        field = '';
-        i += 2;
-      } else if (ch === '\n') {
-        row.push(field);
-        rows.push(row);
-        row = [];
-        field = '';
-        i++;
-      } else {
-        field += ch;
-        i++;
-      }
-    }
-  }
-
-  // Last field/row
-  if (field || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-
-  return rows;
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Converts a Google Drive sharing URL to a directly embeddable thumbnail URL.
- * Input:  https://drive.google.com/file/d/{ID}/view?usp=sharing
- * Output: https://drive.google.com/thumbnail?id={ID}&sz=w800
- */
-function driveViewToImageUrl(url: string): string {
-  const match = url.match(/\/file\/d\/([^/]+)/);
-  if (!match) return url;
-  return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800`;
-}
-
-function toBool(val: string): boolean {
-  return val.trim().toLowerCase() === 'yes';
-}
-
-function toArray(val: string): string[] {
-  return val ? val.split(',').map((s) => s.trim()).filter(Boolean) : [];
-}
-
-function toActionsArray(val: string): ActionName[] {
-  return toArray(val)
-    .map(csvActionToActionName)
-    .filter((a): a is ActionName => a !== null);
+interface BusinessRow {
+  airtable_id: string;
+  business_name: string | null;
+  business_description: string | null;
+  listing_photo_url: string | null;
+  address: string | null;
+  business_email: string | null;
+  business_phone: string | null;
+  website: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  instagram_url_1: string | null;
+  facebook_url: string | null;
+  linkedin_url: string | null;
+  tiktok_handle: string | null;
+  has_delivery: boolean | null;
+  has_pickup: boolean | null;
+  has_online_shop: boolean | null;
+  online_shop_link: string | null;
+  google_hours_accurate: string | null;
+  business_hours: string | null;
+  input_notes: string | null;
+  input_category_override: string | null;
+  output_notes: string | null;
+  output_category_override: string | null;
+  service_notes: string | null;
+  service_category_override: string | null;
+  volunteer_opportunities: boolean | null;
+  volunteer_notes: string | null;
+  // Expanded name arrays from businesses_complete view
+  business_type_names: string[] | null;
+  tag_names: string[] | null;
+  input_action_names: string[] | null;
+  output_action_names: string[] | null;
+  service_action_names: string[] | null;
+  input_category_names: string[] | null;
+  output_category_names: string[] | null;
+  service_category_names: string[] | null;
+  core_material_names: string[] | null;
+  enabling_system_names: string[] | null;
+  activity_names: string[] | null;
 }
 
 // ─── Slug ─────────────────────────────────────────────────────────────────────
@@ -152,84 +102,92 @@ export function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// ─── Row → Listing ────────────────────────────────────────────────────────────
+
+const ACTION_ORDER: ActionName[] = [
+  'donate', 'buy', 'buyB2B', 'recycle', 'sell', 'repair', 'consign',
+  'compost', 'refill', 'rent', 'trade', 'process', 'dineOrDrink', 'volunteer',
+];
+
+function toActionNames(raw: string[] | null): ActionName[] {
+  return (raw ?? [])
+    .map(csvActionToActionName)
+    .filter((a): a is ActionName => a !== null);
+}
+
+function toStr(val: string | null): string {
+  return val ?? '';
+}
+
+function toArr(val: string[] | null): string[] {
+  return val ?? [];
+}
+
+function rowToListing(row: BusinessRow): Listing {
+  const inputActions  = toActionNames(row.input_action_names);
+  const outputActions = toActionNames(row.output_action_names);
+  const serviceActions = toActionNames(row.service_action_names);
+
+  const allActionsSet = new Set<ActionName>([...inputActions, ...outputActions, ...serviceActions]);
+  if (row.volunteer_opportunities) allActionsSet.add('volunteer');
+  const allActionNames = ACTION_ORDER.filter(a => allActionsSet.has(a));
+
+  const inputCategoryOverride = toStr(row.input_category_override);
+
+  return {
+    id: row.airtable_id,
+    fields: {
+      businessName:            toStr(row.business_name),
+      businessDescription:     toStr(row.business_description),
+      listingPhoto:            row.listing_photo_url ? [row.listing_photo_url] : [],
+      address:                 toStr(row.address),
+      businessEmail:           toStr(row.business_email),
+      businessPhone:           toStr(row.business_phone),
+      website:                 toStr(row.website),
+      contactName:             toStr(row.contact_name),
+      contactEmail:            toStr(row.contact_email),
+      instagramUrl1:           toStr(row.instagram_url_1),
+      facebookUrl:             toStr(row.facebook_url),
+      linkedInUrl:             toStr(row.linkedin_url),
+      tiktokHandle:            toStr(row.tiktok_handle),
+      hasDelivery:             row.has_delivery ?? false,
+      hasPickUp:               row.has_pickup ?? false,
+      hasOnlineShop:           row.has_online_shop ?? false,
+      onlineShopLink:          toStr(row.online_shop_link),
+      category:                '',
+      typeOfBusiness:          toArr(row.business_type_names),
+      coreMaterialSystem:      toArr(row.core_material_names),
+      enablingSystem:          toArr(row.enabling_system_names),
+      tags:                    toArr(row.tag_names),
+      notableBusinessEvents:   toArr(row.activity_names),
+      googleHoursAccurate:     toStr(row.google_hours_accurate),
+      businessHours:           toStr(row.business_hours),
+      inputActions:            toArr(row.input_action_names),
+      inputCategories:         toArr(row.input_category_names),
+      inputCategoryOverride,
+      inputNotes:              toStr(row.input_notes),
+      outputActions:           toArr(row.output_action_names),
+      outputCategories:        toArr(row.output_category_names),
+      outputCategoryOverride:  toStr(row.output_category_override),
+      outputNotes:             toStr(row.output_notes),
+      serviceActions:          toArr(row.service_action_names),
+      serviceCategories:       toArr(row.service_category_names),
+      serviceCategoryOverride: toStr(row.service_category_override),
+      serviceNotes:            toStr(row.service_notes),
+      volunteerOpportunities:  row.volunteer_opportunities ?? false,
+      volunteerNotes:          toStr(row.volunteer_notes),
+      allActionNames,
+    },
+  };
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export async function getListings(): Promise<Listing[]> {
-  const res = await fetch(CSV_URL, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`Failed to fetch listings CSV: ${res.status}`);
-
-  const text = await res.text();
-  const [headerRow, ...dataRows] = parseCSV(text);
-
-  // Build a column-name → index map (case-insensitive, trimmed)
-  const col: Record<string, number> = {};
-  headerRow.forEach((name, i) => {
-    col[name.trim()] = i;
-  });
-
-  const get = (row: string[], name: string): string =>
-    (row[col[name]] ?? '').trim();
-
-  return dataRows
-    .filter((row) => row.some((cell) => cell.trim())) // skip empty rows
-    .map((row, index) => {
-      const inputActions  = toActionsArray(get(row, 'INPUT Action(s)'));
-      const outputActions = toActionsArray(get(row, 'OUTPUT Action(s)'));
-      const serviceActions = toActionsArray(get(row, 'SERVICE Action(s)'));
-
-      // Deduplicate and sort actions by canonical display order
-      const ACTION_ORDER: ActionName[] = [
-        'donate', 'buy', 'buyB2B', 'recycle', 'sell', 'repair', 'consign',
-        'compost', 'refill', 'rent', 'trade', 'process', 'dineOrDrink', 'volunteer',
-      ];
-      const allActionsSet = new Set<ActionName>([...inputActions, ...outputActions, ...serviceActions]);
-      const allActionNames = ACTION_ORDER.filter(a => allActionsSet.has(a))
-        .concat([...allActionsSet].filter(a => !ACTION_ORDER.includes(a)));
-
-      return {
-        id: `sheet-${index}`,
-        fields: {
-          businessName:          get(row, 'Business Name'),
-          businessDescription:   get(row, 'Business Description'),
-          listingPhoto:          get(row, 'Listing Photo') ? [driveViewToImageUrl(get(row, 'Listing Photo'))] : [],
-          address:               get(row, 'Address'),
-          businessEmail:         get(row, 'Business Email'),
-          businessPhone:         get(row, 'Business Phone'),
-          website:               get(row, 'Website'),
-          contactName:           get(row, 'Contact Name'),
-          contactEmail:          get(row, 'Contact Email'),
-          instagramUrl1:         get(row, 'Instagram Handle'),
-          facebookUrl:           get(row, 'Facebook URL'),
-          linkedInUrl:           get(row, 'LinkedIn URL'),
-          tiktokHandle:          get(row, 'Tiktok Handle'),
-          hasDelivery:           toBool(get(row, 'Has Delivery Services')),
-          hasPickUp:             toBool(get(row, 'Has Pickup Services')),
-          hasOnlineShop:         toBool(get(row, 'Has Online Shop')),
-          onlineShopLink:        get(row, 'If online shop, Link'),
-          category:              get(row, 'Category'),
-          typeOfBusiness:        toArray(get(row, 'Type of Listing')),
-          coreMaterialSystem:    toArray(get(row, 'Core Material System')),
-          enablingSystem:        toArray(get(row, 'Enabling System')),
-          tags:                  toArray(get(row, 'TAGS')),
-          notableBusinessEvents: toArray(get(row, 'Notable Business Events/Activities')),
-          googleHoursAccurate:   get(row, 'Google listed hours accurate?'),
-          businessHours:         get(row, 'Business Hours'),
-          inputActions:          toArray(get(row, 'INPUT Action(s)')),
-          inputCategories:       toArray(get(row, 'INPUT Category(s)')),
-          inputCategoryOverride: get(row, 'INPUT Category - Override (Unique items or category)'),
-          inputNotes:            get(row, 'INPUT - Notes Field'),
-          outputActions:         toArray(get(row, 'OUTPUT Action(s)')),
-          outputCategories:      toArray(get(row, 'OUTPUT Category(s) (Product Sold)')),
-          outputCategoryOverride: get(row, 'OUTPUT Category - Override (Unique items or category)'),
-          outputNotes:           get(row, 'OUTPUT - Notes Field'),
-          serviceActions:        toArray(get(row, 'SERVICE Action(s)')),
-          serviceCategories:     toArray(get(row, 'SERVICE Category(s)')),
-          serviceCategoryOverride: get(row, 'SERVICE Category - Override (Unique items or category)'),
-          serviceNotes:          get(row, 'SERVICE - Notes Field'),
-          volunteerOpportunities: toBool(get(row, 'VOLUNTEER Opportunities')),
-          volunteerNotes:        get(row, 'VOLUNTEER - Notes Field'),
-          allActionNames,
-        },
-      };
-    });
+  const result = await pool.query<BusinessRow>(
+    `SELECT * FROM businesses_complete
+     WHERE business_name IS NOT NULL
+     ORDER BY business_name`
+  );
+  return result.rows.map(rowToListing);
 }

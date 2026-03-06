@@ -3,6 +3,8 @@ import { Nav } from '@/components/Nav';
 import { getListings } from '@/lib/getListings';
 import styles from './page.module.scss';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const listings = await getListings();
 
