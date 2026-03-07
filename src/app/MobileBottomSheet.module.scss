@@ -88,13 +88,15 @@ $sheet-height: 88dvh;
   padding: $space-3 $space-4; // 12px 16px
   cursor: pointer; // tappable to open when collapsed
 
-  // When open, switch to row layout for back btn + count
+  // When open, switch to grid layout: back btn | count (centered) | spacer
   .sheetOpen & {
-    flex-direction: row;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: 36px 1fr 36px;
+    flex-direction: unset;
+    justify-content: unset;
     cursor: default;
     border-bottom: 1px solid $border-subtle;
-    gap: $space-3; // 12px
+    gap: 0;
   }
 }
 
@@ -134,6 +136,7 @@ $sheet-height: 88dvh;
 
 .count {
   margin: 0;
+  text-align: center;
 }
 
 .countBold {

@@ -142,10 +142,16 @@
   box-shadow: $shadow-sm;
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 150ms ease;
+  transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
 
   &:hover {
     box-shadow: $shadow-md;
+    transform: translateY(-2px);
+    border-color: $border-medium;
+
+    .listingImageWrapper img {
+      transform: scale(1.04);
+    }
   }
 }
 
@@ -164,6 +170,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 300ms ease;
   }
 }
 
@@ -213,9 +220,7 @@
 
 .mapArea {
   background: $surface-sunken;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   overflow: hidden;
   flex: 1;
 
@@ -223,17 +228,20 @@
   padding-bottom: 72px;
 
   @media (min-width: 1024px) {
-    min-height: 839px; // Figma desktop map height
+    height: 83vh;
     border: 1px solid $border-default;
     border-radius: $radius-md;
     padding-bottom: 0;
   }
 }
 
-.mapPlaceholderText {
-  @include type-body-default-regular;
-  color: $text-subtle;
-  margin: 0;
+.mapPlaceholderImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 // --- Mobile bottom sheet ---

@@ -182,7 +182,7 @@ async function upsertBusinesses(
       [
         record.id,
         f['Business Name'] ?? null,
-        f['Business Descriptios'] ?? null,
+        f['Business Description'] ?? null,
         f['Address'] ?? null,
         f['Business Email'] ?? null,
         f['Business Phone'] ?? null,
@@ -208,7 +208,7 @@ async function upsertBusinesses(
         f['If online shop, Link'] ?? null,
         f['VOLUNTEER Opportunities'] ?? false,
         f['VOLUNTEER - Notes Field'] ?? null,
-        (f['Listing Photo'] as string) || null,
+        (f['Listing Photo'] as string) ?? null,
         record.createdTime ?? null,
         mapIds(f['Type of Listing'],                         mappings.businessTypes),
         mapIds(f['TAGS'],                                    mappings.tags),
@@ -249,6 +249,15 @@ export async function runSync(): Promise<SyncResult> {
     businessTypes, categories, tags, actions,
     coreMaterials, enablingSystems, activities,
   });
+
+  // Delete businesses that no longer exist in Airtable
+  const activeIds = data.productionDb.map(r => r.id);
+  if (activeIds.length > 0) {
+    await pool.query(
+      `DELETE FROM businesses WHERE airtable_id != ALL($1::text[])`,
+      [activeIds],
+    );
+  }
 
   return {
     syncedAt: new Date().toISOString(),

@@ -2,15 +2,14 @@ export const dynamic = 'force-dynamic';
 
 import { notFound } from 'next/navigation';
 import { getListings, slugify } from '@/lib/getListings';
-import { Nav } from '@/components/Nav';
-import styles from './page.module.scss';
-import { ListingContent } from './ListingContent';
+import { ListingModal } from '@/components/ListingModal';
+import { ListingContent } from '@/app/listings/[slug]/ListingContent';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export default async function ListingPage({ params }: Props) {
+export default async function ListingModalPage({ params }: Props) {
   const { slug } = await params;
   const listings = await getListings();
   const listing = listings.find(l => slugify(l.fields.businessName) === slug);
@@ -18,11 +17,8 @@ export default async function ListingPage({ params }: Props) {
   if (!listing) notFound();
 
   return (
-    <div className={styles.page}>
-      <div className={styles.navWrapper}>
-        <Nav />
-      </div>
-      <ListingContent listing={listing} />
-    </div>
+    <ListingModal>
+      <ListingContent listing={listing} isModal />
+    </ListingModal>
   );
 }

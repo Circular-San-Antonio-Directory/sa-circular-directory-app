@@ -13,7 +13,10 @@
   padding: $space-6 $space-8;
 
   @media (max-width: 900px) {
-    padding: $space-4;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 }
 
@@ -27,20 +30,58 @@
   }
 }
 
-.mobileHeader {
+.mobilePhotoWrapper {
+  position: relative;
+}
+
+.mobilePhoto {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+
+  @media (min-width: 600px) {
+    height: 240px;
+  }
+}
+
+.mobilePhotoPlaceholder {
+  width: 100%;
+  height: 200px;
+  background: $surface-sunken;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-disabled;
+
+  @media (min-width: 600px) {
+    height: 240px;
+  }
+}
+
+.mobileCard {
+  position: relative;
+  z-index: 1;
+  margin-top: -$space-10; // overlap photo by ~40px
+  margin-left: $space-3;
+  margin-right: $space-3;
+  margin-bottom: $space-4;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg $radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+.mobileCardHeader {
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  padding: $space-5 $space-4 $space-3;
+  padding: $space-4;
 
   // Override hero-2-strong (50px) → hero-4 (28px/500) on mobile
   .businessName {
     @include type-hero-4();
-  }
-
-  // Override body-default-regular → body-small-regular on mobile
-  .address {
-    @include type-body-small-regular();
   }
 }
 
@@ -48,21 +89,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: $space-1;
-  padding-top: $space-1;
-  padding-bottom: $space-3;
-}
-
-.mobilePhoto {
-  display: block;
-  width: calc(100% - #{$space-4 * 2});
-  margin: 0 $space-4;
-  height: 240px;
-  object-fit: cover;
-  border-radius: $radius-md;
-
-  @media (min-width: 600px) {
-    height: 284px;
-  }
+  padding-top: $space-2;
+  padding-bottom: $space-2;
 }
 
 // ─── Desktop two-column layout (>900px) ───────────────────────────────────────

@@ -1,0 +1,58 @@
+@use '../../../styles' as *;
+
+// ─── Sticky back bar ──────────────────────────────────────────────────────────
+// Sits at the top of the scroll container (modal .content).
+// Uses margin-bottom: -56px to overlap the hero photo below it.
+// When transparent, the button appears to float over the image (Zillow pattern).
+// Once the hero scrolls past ~160px the bar fades to $surface-raised.
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 56px;
+  margin-bottom: -56px; // pull photo up so it sits behind the transparent bar
+  display: flex;
+  align-items: center;
+  padding: 0 $space-4;
+  background: transparent;
+  pointer-events: none; // let touches pass through to content behind
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+
+  &.scrolled {
+    background: $surface-raised;
+    box-shadow: $shadow-xs;
+  }
+}
+
+// ─── Back button ──────────────────────────────────────────────────────────────
+
+.button {
+  pointer-events: all;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 16px;
+  transition: background 0.25s ease, color 0.25s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+// Modifier applied when scrolled — icon stays, circle bg fades
+.buttonScrolled {
+  background: transparent;
+  color: $text-default;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
