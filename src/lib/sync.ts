@@ -23,6 +23,7 @@ export interface SyncResult {
   syncedAt: string;
   counts: {
     businesses: number;
+    geocoded: number;
     businessTypes: number;
     categories: number;
     tags: number;
@@ -144,6 +145,22 @@ async function upsertBusinesses(
         business_name             = EXCLUDED.business_name,
         business_description      = EXCLUDED.business_description,
         address                   = EXCLUDED.address,
+        -- Reset geocoding if the address has changed so it gets re-geocoded
+        geocoded_at               = CASE
+                                      WHEN businesses.address IS DISTINCT FROM EXCLUDED.address
+                                      THEN NULL
+                                      ELSE businesses.geocoded_at
+                                    END,
+        latitude                  = CASE
+                                      WHEN businesses.address IS DISTINCT FROM EXCLUDED.address
+                                      THEN NULL
+                                      ELSE businesses.latitude
+                                    END,
+        longitude                 = CASE
+                                      WHEN businesses.address IS DISTINCT FROM EXCLUDED.address
+                                      THEN NULL
+                                      ELSE businesses.longitude
+                                    END,
         business_email            = EXCLUDED.business_email,
         business_phone            = EXCLUDED.business_phone,
         website                   = EXCLUDED.website,
@@ -229,6 +246,54 @@ async function upsertBusinesses(
   return count;
 }
 
+// ─── Geocoding ────────────────────────────────────────────────────────────────
+
+async function geocodeBusinesses(): Promise<number> {
+  const token = process.env.MAPBOX_SECRET_TOKEN;
+  if (!token) {
+    console.warn('[sync] MAPBOX_SECRET_TOKEN not set — skipping geocoding');
+    return 0;
+  }
+
+  const { rows } = await pool.query<{ id: number; address: string }>(
+    `SELECT id, address FROM businesses WHERE geocoded_at IS NULL AND address IS NOT NULL AND address != ''`
+  );
+
+  let geocodedCount = 0;
+
+  for (const row of rows) {
+    const query = encodeURIComponent(`${row.address}, San Antonio, TX`);
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&country=us&proximity=-98.4936,29.4241&limit=1`;
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        console.warn(`[sync] Geocoding HTTP ${res.status} for business id=${row.id}`);
+        continue;
+      }
+      const data = await res.json() as { features?: Array<{ center?: [number, number] }> };
+      const center = data.features?.[0]?.center;
+      if (!center) {
+        console.warn(`[sync] No geocoding result for business id=${row.id}, address="${row.address}"`);
+        continue;
+      }
+      const [lng, lat] = center;
+      await pool.query(
+        `UPDATE businesses SET longitude=$1, latitude=$2, geocoded_at=NOW() WHERE id=$3`,
+        [lng, lat, row.id],
+      );
+      geocodedCount++;
+    } catch (err) {
+      console.warn(`[sync] Geocoding error for business id=${row.id}:`, err);
+    }
+
+    // Rate-limit safety: ~100ms between requests
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  return geocodedCount;
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export async function runSync(): Promise<SyncResult> {
@@ -259,10 +324,13 @@ export async function runSync(): Promise<SyncResult> {
     );
   }
 
+  const geocodedCount = await geocodeBusinesses();
+
   return {
     syncedAt: new Date().toISOString(),
     counts: {
       businesses:    businessCount,
+      geocoded:      geocodedCount,
       businessTypes: Object.keys(businessTypes).length,
       categories:    Object.keys(categories).length,
       tags:          Object.keys(tags).length,

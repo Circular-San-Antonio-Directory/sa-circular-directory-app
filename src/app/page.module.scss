@@ -155,6 +155,11 @@
   }
 }
 
+.listingCardSelected {
+  border-color: $primary-default;
+  box-shadow: 0 0 0 1px $primary-default, $shadow-sm;
+}
+
 .listingImageWrapper {
   width: 100%;
   height: 116px;
@@ -228,20 +233,11 @@
   padding-bottom: 72px;
 
   @media (min-width: 1024px) {
-    height: 83vh;
+    height: 839px; // Figma desktop map height — must be `height` (not min-height) so child height:100% resolves
     border: 1px solid $border-default;
     border-radius: $radius-md;
     padding-bottom: 0;
   }
-}
-
-.mapPlaceholderImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 // --- Mobile bottom sheet ---

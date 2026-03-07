@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import { ActionIcon } from '@/components/ActionIcon';
 import { Nav } from '@/components/Nav';
-import { getListings, slugify } from '@/lib/getListings';
+import { getListings } from '@/lib/getListings';
+import { DirectoryClient } from './DirectoryClient';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import styles from './page.module.scss';
 
@@ -18,50 +17,7 @@ export default async function Home() {
         <Nav />
 
         <div className={styles.contentArea}>
-          {/* Sidebar — desktop only */}
-          <aside className={styles.sidebar}>
-            <div className={styles.countPill}>
-              <span className={styles.countBold}>{listings.length} Listings</span>
-              {' '}
-              <span className={styles.countLight}>in this area</span>
-            </div>
-
-            <p className={styles.sidebarHint}>
-              Get started by searching for an item, category, or business.
-            </p>
-
-            <div className={styles.listingStack}>
-              {listings.map((listing) => (
-                <Link key={listing.id} href={`/listings/${slugify(listing.fields.businessName)}`} className={styles.listingCard}>
-                  <div className={styles.listingImageWrapper}>
-                    {listing.fields.listingPhoto[0] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={listing.fields.listingPhoto[0]} alt={listing.fields.businessName} />
-                    ) : (
-                      <i className="fa-regular fa-image" aria-hidden="true" />
-                    )}
-                  </div>
-                  <div className={styles.listingBody}>
-                    <div className={styles.listingMeta}>
-                      <p className={styles.listingTitle}>{listing.fields.businessName}</p>
-                      <p className={styles.listingAddress}>{listing.fields.address}</p>
-                    </div>
-                    <div className={styles.listingBadges}>
-                      {listing.fields.allActionNames.map((action) => (
-                        <ActionIcon key={action} action={action} variant="icon-with-label" />
-                      ))}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </aside>
-
-          {/* Map placeholder */}
-          <div className={styles.mapArea}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/map-placeholder.png" alt="Map placeholder" className={styles.mapPlaceholderImage} />
-          </div>
+          <DirectoryClient listings={listings} />
         </div>
       </div>
 

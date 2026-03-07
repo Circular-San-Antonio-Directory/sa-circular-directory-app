@@ -20,7 +20,7 @@ function readDataFile(filename) {
  * Execute SQL schema file
  */
 async function executeSchemaFile(client) {
-  const schemaPath = path.join(__dirname, '..', 'migrations', '002_simplified_schema.sql');
+  const schemaPath = path.join(__dirname, '..', 'migrations', 'current_schema.sql');
   const schema = fs.readFileSync(schemaPath, 'utf8');
 
   console.log('📋 Creating database schema...');

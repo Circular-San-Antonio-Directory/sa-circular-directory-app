@@ -1,6 +1,7 @@
 import type { ActionName } from '@/components/ActionIcon/ActionIcon';
 import { csvActionToActionName } from './actionMapping';
 import pool from './db';
+export { slugify } from './slugify';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -11,6 +12,8 @@ export interface Listing {
     businessDescription: string;
     listingPhoto: string[];
     address: string;
+    latitude: number | null;
+    longitude: number | null;
     businessEmail: string;
     businessPhone: string;
     website: string;
@@ -59,6 +62,8 @@ interface BusinessRow {
   business_description: string | null;
   listing_photo_url: string | null;
   address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   business_email: string | null;
   business_phone: string | null;
   website: string | null;
@@ -94,12 +99,6 @@ interface BusinessRow {
   core_material_names: string[] | null;
   enabling_system_names: string[] | null;
   activity_names: string[] | null;
-}
-
-// ─── Slug ─────────────────────────────────────────────────────────────────────
-
-export function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
 // ─── Row → Listing ────────────────────────────────────────────────────────────
@@ -143,6 +142,8 @@ function rowToListing(row: BusinessRow): Listing {
       businessDescription:     toStr(row.business_description),
       listingPhoto:            row.listing_photo_url ? [row.listing_photo_url] : [],
       address:                 toStr(row.address),
+      latitude:                row.latitude ?? null,
+      longitude:               row.longitude ?? null,
       businessEmail:           toStr(row.business_email),
       businessPhone:           toStr(row.business_phone),
       website:                 toStr(row.website),

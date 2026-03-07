@@ -1,5 +1,5 @@
 -- SA Circular Directory Database Schema
--- Migration: 002 - Simplified Array-Based Schema
+-- Canonical full schema — keep this up to date; used by db:reset + migrate:sql for fresh installs
 -- Description: Uses PostgreSQL arrays instead of junction tables for relationships
 
 -- Drop existing tables (in reverse order of dependencies)
@@ -178,6 +178,11 @@ CREATE TABLE businesses (
   -- Volunteer Opportunities
   volunteer_opportunities BOOLEAN DEFAULT FALSE,
   volunteer_notes TEXT,
+
+  -- Geocoding (populated by sync pipeline via Mapbox Geocoding API)
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  geocoded_at TIMESTAMPTZ,
 
   -- Timestamps
   airtable_created_at TIMESTAMP,

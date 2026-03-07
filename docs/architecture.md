@@ -69,7 +69,7 @@ graph TB
 |---|---|---|
 | **Trigger** | Push to `main` branch | Git tag release (e.g. `v1.0.0`) |
 | **Database** | Staging PostgreSQL | Production PostgreSQL |
-| **Airtable sync** | Daily cron + on-demand via Railway dashboard | Promoted from staging only |
+| **Airtable sync** | Daily cron + manual via Railway dashboard "Deploy Now" | Promoted from staging only |
 | **Purpose** | QA & verification | Live to end users |
 
 ### Deploy flow
@@ -118,33 +118,24 @@ Airtable is **read-only from the app's perspective.** All data edits happen in A
 
 ### How it works
 
-Sync logic lives in `src/lib/sync.ts` and is shared between two entry points:
+Sync logic lives in `src/lib/sync.ts` and is called by one active entry point:
 
 | Entry point | When to use |
 |---|---|
-| `scripts/sync.ts` + `npm run sync` | Railway Cron service, or local testing |
-| `POST /api/admin/sync` | On-demand HTTP trigger (requires `Authorization: Bearer <SYNC_SECRET>`) |
+| `scripts/sync.ts` + `npm run sync` | Railway Cron service (primary), or local testing |
 
-The sync fetches all 8 Airtable tables into memory, upserts lookup tables in parallel, then upserts businesses. All upserts use `ON CONFLICT (airtable_id) DO UPDATE` so re-running is safe.
+The sync fetches all 8 Airtable tables into memory, upserts lookup tables in parallel, upserts businesses, then geocodes any un-geocoded addresses via the Mapbox Geocoding API. All upserts use `ON CONFLICT (airtable_id) DO UPDATE` so re-running is safe.
+
 
 ### Railway Cron service (`airtable-sync`)
 
 - **Service name:** `airtable-sync` (ID: `1ae4e62e-9793-4678-a2e5-858efe4aeb47`)
 - **Schedule:** `0 6 * * *` (6am UTC = midnight CT)
 - **Start command:** `npm run sync`
-- **Manual trigger:** click "Deploy Now" in the Railway dashboard on the `airtable-sync` service
-- **Env vars required:** `DATABASE_URL`, `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `NODE_ENV=production`
+- **Manual trigger:** click **"Deploy Now"** in the Railway dashboard on the `airtable-sync` service
+- **Env vars required:** `DATABASE_URL`, `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `MAPBOX_SECRET_TOKEN`, `NODE_ENV=production`
 
 > **`NODE_ENV=production` is required** on the cron service so `src/lib/db.ts` enables SSL for the Railway internal Postgres connection.
-
-### HTTP on-demand trigger
-
-```bash
-curl -X POST https://<app-url>/api/admin/sync \
-  -H "Authorization: Bearer <SYNC_SECRET>"
-```
-
-`SYNC_SECRET` must be set in Railway env vars for the app service. If unset, the endpoint returns 401 for all requests.
 
 ### Production promotion (Staging DB → Production DB)
 
@@ -160,8 +151,9 @@ Schema is managed with plain SQL migration files in `migrations/`. There is no O
 
 | File | Purpose |
 |---|---|
-| `migrations/002_simplified_schema.sql` | Full schema for fresh installs (drops and recreates all tables) |
+| `migrations/current_schema.sql` | Canonical full schema — keep this up to date; used by `db:reset` + `migrate:sql` for fresh installs |
 | `migrations/003_add_action_columns.sql` | Incremental: adds `corresponding_action` + `display_order` to `business_actions`, updates `businesses_complete` view |
+| `migrations/004_add_geocoding.sql` | Incremental: adds `latitude`, `longitude`, `geocoded_at` to `businesses` for Mapbox map integration |
 
 ### Key design decisions
 
@@ -191,21 +183,37 @@ Schema is managed with plain SQL migration files in `migrations/`. There is no O
 sa-circular-directory-app/
   src/
     app/                    # Next.js App Router pages
-      api/admin/sync/       # POST /api/admin/sync — on-demand sync trigger
-    components/             # UI components (ActionIcon, Nav, Pill, etc.)
+      DirectoryClient.tsx   # Client wrapper: map + sidebar interaction state
+    components/
+      ActionIcon/           # Action icon component
+      MapView/              # Mapbox GL JS map + floating search bar (client component)
+      Nav/                  # Navigation bar
     lib/
-      sync.ts               # Core sync logic (shared between cron + API route)
+      sync.ts               # Core sync logic: Airtable upsert + Mapbox geocoding
       db.ts                 # pg Pool singleton
       getListings.ts        # DB → Listing type mapping; queries businesses_complete view
+      slugify.ts            # slugify() utility (separate file to avoid client-bundle pg import)
       actionMapping.ts      # Airtable action string → ActionName mapping
   scripts/
     sync.ts                 # Standalone entry point for Railway Cron (calls src/lib/sync.ts)
   migrations/
     002_simplified_schema.sql
     003_add_action_columns.sql
+    004_add_geocoding.sql   # Adds latitude, longitude, geocoded_at to businesses
   docs/
     architecture.md         # This file
 ```
+
+### Environment variables
+
+| Variable | Service | Purpose |
+|---|---|---|
+| `DATABASE_URL` | All | Railway Postgres connection string |
+| `AIRTABLE_API_KEY` | `airtable-sync` cron | Airtable read access |
+| `AIRTABLE_BASE_ID` | `airtable-sync` cron | Airtable base (`apppd7CyLPeDWBkLz`) |
+| `MAPBOX_SECRET_TOKEN` | `airtable-sync` cron | Server-side geocoding API (never exposed to browser) |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Next.js app | Client-side map rendering (public, safe to expose) |
+| `NODE_ENV` | `airtable-sync` cron | Must be `production` to enable SSL on DB connection |
 
 ---
 

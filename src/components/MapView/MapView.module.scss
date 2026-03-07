@@ -1,0 +1,172 @@
+// MapView — SA Circular Directory
+// =============================================================================
+// Token map
+// root bg:              (transparent — map fills it)
+// map border:           $border-default (handled by parent .mapArea)
+// search bar bg:        $surface-sunken (#EEECE8)
+// search bar border:    $border-default
+// search bar radius:    $radius-lg (8px)
+// intent pill bg:       $primary-default ($fern-700, #1E5751)
+// intent inner bg:      $fern-300 (#C1F1A1) — nearest token: $fern-300
+// search input bg:      $surface-raised (white)
+// search input border:  $border-default
+// filters btn bg:       $surface-raised (white)
+// filters btn border:   $border-strong
+// marker fill:          $primary-default ($fern-700, #1E5751)
+// marker selected:      $secondary-default ($merlot-700, #851926)
+// =============================================================================
+
+@use '../../styles' as *;
+
+.root {
+  // position: absolute + inset: 0 bypasses the Next.js dynamic() wrapper div
+  // which has no height, causing height: 100% to collapse to 0.
+  // .mapArea (the parent) is position: relative, so this fills it reliably.
+  position: absolute;
+  inset: 0;
+}
+
+// --- Markers ---
+
+.marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $primary-default;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+.markerSelected {
+  background: $secondary-default;
+  transform: scale(1.2);
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+// --- Floating search bar ---
+
+.searchBar {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: $space-2; // 8px
+  align-items: center;
+  background: $surface-sunken;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  padding: $space-3; // 12px
+  width: 530px;
+  max-width: calc(100% - 32px);
+  box-shadow: 0 1px 2px rgba(10, 13, 18, 0.05);
+  z-index: 10;
+}
+
+// "I want to" action selector pill
+.intentPill {
+  display: flex;
+  align-items: center;
+  gap: $space-1; // 4px
+  width: 134px;
+  height: 44px;
+  padding: 6px;
+  background: $primary-default;
+  border: none;
+  border-radius: $radius-sm; // 4px
+  cursor: pointer;
+  flex-shrink: 0;
+
+  i {
+    color: $text-inverse;
+    font-size: 14px;
+  }
+}
+
+.intentInner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: $space-2; // 8px
+  background: #c1f1a1; // $fern-300 — nearest token: TODO: add $fern-300 to token table
+  border-radius: 4px;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 500;
+  color: #092620; // $fern-900
+  white-space: nowrap;
+}
+
+// Search input
+.searchInput {
+  display: flex;
+  align-items: center;
+  gap: $space-2; // 8px (approx — Figma: gap-10)
+  flex: 1;
+  height: 44px;
+  padding: $space-3; // 12px
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm; // 4px
+  cursor: text;
+
+  i {
+    color: $text-subtle;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: $font-body;
+    font-size: 16px;
+    font-weight: 500;
+    color: $text-default;
+    outline: none;
+    min-width: 0;
+
+    &::placeholder {
+      color: $text-disabled;
+    }
+  }
+}
+
+// Filters button
+.filtersButton {
+  display: flex;
+  align-items: center;
+  gap: $space-2; // 8px — Figma: gap-10, nearest: $space-2
+  height: 44px;
+  padding: $space-3; // 12px
+  background: $surface-raised;
+  border: 1px solid $border-strong;
+  border-radius: $radius-sm; // 4px
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  i {
+    color: $text-default;
+    font-size: 16px;
+  }
+
+  span {
+    font-family: $font-body;
+    font-size: 16px;
+    font-weight: 500;
+    color: $text-default;
+    letter-spacing: 0.16px;
+  }
+}
