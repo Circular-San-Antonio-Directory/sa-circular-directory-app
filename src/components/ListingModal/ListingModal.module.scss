@@ -1,0 +1,98 @@
+@use '../../styles' as *;
+
+// ─── Overlay / Backdrop ───────────────────────────────────────────────────────
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.20);
+  z-index: 100;
+
+  // Desktop: flex-center the modal card
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: $space-8 $space-4;
+  overflow-y: auto;
+
+  // Mobile: plain backdrop — the modal positions itself
+  @media (max-width: 900px) {
+    padding: 0;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+}
+
+// ─── Modal container ──────────────────────────────────────────────────────────
+
+.modal {
+  position: relative;
+  background: $surface-base;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+
+  // Desktop: centered card with rounded corners
+  border-radius: $radius-xl;
+  overflow: hidden;
+  margin: auto 0;
+
+  // Mobile: bottom sheet
+  @media (max-width: 900px) {
+    border-radius: $radius-xl $radius-xl 0 0;
+    height: 88dvh;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+// ─── Scrollable content area ──────────────────────────────────────────────────
+
+.content {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-height: 0; // required for flex + overflow-y to work correctly
+}
+
+// ─── Desktop: floating X button ───────────────────────────────────────────────
+
+.closeButton {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: $space-4 $space-4 0;
+  pointer-events: none;
+
+  // Hidden on mobile (back button used instead)
+  @media (max-width: 900px) {
+    display: none;
+  }
+
+  button {
+    pointer-events: all;
+    background: $surface-raised;
+    border: 1px solid $border-default;
+    border-radius: $radius-md;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $text-subtle;
+    font-size: 14px;
+    box-shadow: $shadow-sm;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: $surface-sunken;
+      color: $text-default;
+    }
+  }
+}
+

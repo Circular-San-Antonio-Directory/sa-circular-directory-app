@@ -86,7 +86,7 @@ export function ListingTabs({ fields: f, mapsUrl }: ListingTabsProps) {
       {activeTab === 'overview' && (
         <div className={styles.tabContent}>
 
-          {/* Contact grid: Website + Directions */}
+          {/* Quick actions: Website + Directions */}
           {(f.website || mapsUrl) && (
             <div className={styles.contactGrid}>
               {f.website && (

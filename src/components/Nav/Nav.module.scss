@@ -15,13 +15,17 @@
 @use '../../styles' as *;
 
 .nav {
-  // Mobile: flat header bar
-  background: $surface-base;
+  // Mobile: sticky header bar
+  background: $surface-raised;
+  border-bottom: 1px solid $border-subtle;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px $space-4; // nearest token for 10px: between $space-2 (8px) and $space-3 (12px)
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 
   @media (min-width: 1024px) {
     // Desktop: raised card with border

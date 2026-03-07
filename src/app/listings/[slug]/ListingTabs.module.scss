@@ -7,16 +7,14 @@
 // ─── Tab bar ─────────────────────────────────────────────────────────────────
 
 .tabs {
-  margin: $space-4 $space-4 0;
-  background: $surface-raised;
-  border: 1px solid $border-default;
-  border-radius: $radius-md;
-  overflow: hidden;
+  // Card styling is now on mobileCard in page.module.scss
 }
 
 .tabBar {
   display: flex;
   border-bottom: 1px solid $border-default;
+  border-top: 1px solid $border-subtle;
+
   background: $surface-raised;
 }
 
@@ -24,7 +22,7 @@
   flex: 1;
   background: none;
   border: none;
-  border-bottom: 2px solid $border-default;
+  border-bottom: 3px solid transparent;
   padding: $space-5 $space-4;
   cursor: pointer;
   @include type-heading-4();
@@ -39,7 +37,7 @@
 }
 
 .tabActive {
-  color: $primary-default;
+  color: $primary-hover;
   border-bottom-color: $primary-default;
 }
 
@@ -82,20 +80,20 @@
 }
 
 .contactCard {
-  background: $surface-sunken;
+  background: $surface-base;
   border-radius: $radius-md;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 11px;
-  padding: $space-5 $space-3 $space-4;
+  gap: $space-3;
+  padding: $space-3 $space-4;
   text-decoration: none;
   color: $text-default;
   transition: background 0.15s ease;
 
   &:hover {
-    background: $border-default;
+    background: $surface-sunken;
   }
 }
 
@@ -123,7 +121,7 @@
 }
 
 .hoursSummary {
-  background: $primary-default;
+  background: $success-surface-dark; // nearest token: $fern-600 (#388A58)
   border-radius: $radius-sm;
   padding: $space-3 $space-4;
   display: flex;

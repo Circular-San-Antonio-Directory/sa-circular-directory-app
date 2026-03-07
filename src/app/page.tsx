@@ -59,9 +59,8 @@ export default async function Home() {
 
           {/* Map placeholder */}
           <div className={styles.mapArea}>
-            <p className={styles.mapPlaceholderText}>
-              Map will go here, for placeholder only
-            </p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/map-placeholder.png" alt="Map placeholder" className={styles.mapPlaceholderImage} />
           </div>
         </div>
       </div>
