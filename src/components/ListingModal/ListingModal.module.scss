@@ -65,8 +65,9 @@
   z-index: 10;
   display: flex;
   justify-content: flex-end;
-  padding: $space-4 $space-4 0;
+  padding: $space-3 $space-7;
   pointer-events: none;
+  border-bottom: 1px solid $border-subtle;
 
   // Hidden on mobile (back button used instead)
   @media (max-width: 900px) {
@@ -75,24 +76,6 @@
 
   button {
     pointer-events: all;
-    background: $surface-raised;
-    border: 1px solid $border-default;
-    border-radius: $radius-md;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: $text-subtle;
-    font-size: 14px;
-    box-shadow: $shadow-sm;
-    transition: background 0.15s ease, color 0.15s ease;
-
-    &:hover {
-      background: $surface-sunken;
-      color: $text-default;
-    }
   }
 }
 

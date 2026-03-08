@@ -14,6 +14,7 @@ const componentItems = [
   { label: 'Buttons', href: '/design-system/buttons' },
   { label: 'Action Icons', href: '/design-system/action-icons' },
   { label: 'Pills', href: '/design-system/pills' },
+  { label: 'Modal Action Button', href: '/design-system/modal-action-button' },
 ];
 
 export default function DesignSystemLayout({ children }: { children: React.ReactNode }) {

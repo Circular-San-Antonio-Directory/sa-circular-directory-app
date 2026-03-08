@@ -79,21 +79,22 @@ $sheet-height: 88dvh;
 
 .header {
   flex-shrink: 0;
-  min-height: $peek-height;
+  //min-height: $peek-height;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: $space-2; // 8px
-  padding: $space-3 $space-4; // 12px 16px
+  height: 58px;
+  padding: 0 $space-4; // 12px 16px
   cursor: pointer; // tappable to open when collapsed
 
-  // When open, switch to grid layout: back btn | count (centered) | spacer
+  // When open, switch to flex: count (left) | button (right)
   .sheetOpen & {
-    display: grid;
-    grid-template-columns: 36px 1fr 36px;
-    flex-direction: unset;
-    justify-content: unset;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     cursor: default;
     border-bottom: 1px solid $border-subtle;
     gap: 0;
@@ -110,33 +111,11 @@ $sheet-height: 88dvh;
   flex-shrink: 0;
 }
 
-// ─── Back button ──────────────────────────────────────────────────────────────
-
-.backButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: transparent;
-  color: $text-default;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: $radius-md;
-  flex-shrink: 0;
-  transition: background 150ms ease;
-
-  &:hover {
-    background: $surface-sunken;
-  }
-}
-
 // ─── Count text ───────────────────────────────────────────────────────────────
 
 .count {
   margin: 0;
-  text-align: center;
+  text-align: left;
 }
 
 .countBold {

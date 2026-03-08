@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
+import { ModalActionButton } from '@/components/ModalActionButton';
 import type { Listing } from '@/lib/getListings';
 
 function slugify(name: string): string {
@@ -61,23 +62,22 @@ export function MobileBottomSheet({ listings }: Props) {
           onTouchStart={isOpen ? handleTouchStart : undefined}
           onTouchEnd={isOpen ? handleTouchEnd : undefined}
         >
-          {isOpen ? (
-            <button
-              className={styles.backButton}
-              onClick={(e) => { e.stopPropagation(); close(); }}
-              aria-label="Close listings"
-            >
-              <i className="fa-solid fa-arrow-left" aria-hidden="true" />
-            </button>
-          ) : (
-            <div className={styles.handle} aria-hidden="true" />
-          )}
+          {!isOpen && <div className={styles.handle} aria-hidden="true" />}
 
           <p className={styles.count}>
             <span className={styles.countBold}>{listings.length} Listings</span>
             {' '}
             <span className={styles.countLight}>in this area</span>
           </p>
+
+          {isOpen && (
+            <ModalActionButton
+              icon="fa-solid fa-arrow-left"
+              surface="transparent"
+              onClick={(e) => { e.stopPropagation(); close(); }}
+              aria-label="Close listings"
+            />
+          )}
         </div>
 
         {/* Scrollable listing content */}

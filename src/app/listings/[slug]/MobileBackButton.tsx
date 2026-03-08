@@ -2,9 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { ModalActionButton } from '@/components/ModalActionButton';
 import styles from './MobileBackButton.module.scss';
 
-export function MobileBackButton() {
+interface MobileBackButtonProps {
+  name?: string;
+}
+
+export function MobileBackButton({ name }: MobileBackButtonProps) {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
@@ -20,7 +25,7 @@ export function MobileBackButton() {
     if (!el) return;
 
     const scrollEl = el;
-    const onScroll = () => setScrolled(scrollEl.scrollTop > 160);
+    const onScroll = () => setScrolled(scrollEl.scrollTop > 4);
     scrollEl.addEventListener('scroll', onScroll, { passive: true });
     return () => scrollEl.removeEventListener('scroll', onScroll);
   }, []);
@@ -30,13 +35,14 @@ export function MobileBackButton() {
       ref={barRef}
       className={`${styles.bar}${scrolled ? ` ${styles.scrolled}` : ''}`}
     >
-      <button
-        className={`${styles.button}${scrolled ? ` ${styles.buttonScrolled}` : ''}`}
+      {name && <span className={`${styles.name}${scrolled ? ` ${styles.nameVisible}` : ''} label-small`}>{name}</span>}
+      <ModalActionButton
+        icon="fa-solid fa-xmark"
+        surface="transparent"
+        className={scrolled ? undefined : styles.photoOverlay}
         onClick={() => router.back()}
-        aria-label="Back"
-      >
-        <i className="fa-solid fa-arrow-left" aria-hidden="true" />
-      </button>
+        aria-label="Close"
+      />
     </div>
   );
 }

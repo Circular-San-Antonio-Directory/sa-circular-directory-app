@@ -10,10 +10,11 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  height: 56px;
-  margin-bottom: -56px; // pull photo up so it sits behind the transparent bar
+  height: 58px;
+  margin-bottom: -58px; // pull photo up so it sits behind the transparent bar
   display: flex;
   align-items: center;
+  justify-content: flex-end; // button flush right
   padding: 0 $space-4;
   background: transparent;
   pointer-events: none; // let touches pass through to content behind
@@ -25,34 +26,37 @@
   }
 }
 
-// ─── Back button ──────────────────────────────────────────────────────────────
+// ─── Listing name ─────────────────────────────────────────────────────────────
 
-.button {
-  pointer-events: all;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 0, 0, 0.32);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #ffffff;
-  font-size: 16px;
-  transition: background 0.25s ease, color 0.25s ease;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.5);
-  }
+.name {
+  flex: 1;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-// Modifier applied when scrolled — icon stays, circle bg fades
-.buttonScrolled {
-  background: transparent;
-  color: $text-default;
+.nameVisible {
+  opacity: 1;
+}
 
-  &:hover {
-    background: $surface-sunken;
-  }
+// ─── Photo overlay state ──────────────────────────────────────────────────────
+// Applied when the bar is transparent (button floats over hero photo).
+// Overrides ModalActionButton's transparent surface defaults.
+
+.photoOverlay {
+  pointer-events: all;
+  background: rgba(0, 0, 0, 0.32);
+  color: #ffffff;
+
+  &:hover { background: rgba(0, 0, 0, 0.5); }
+}
+
+// When scrolled, ModalActionButton's surface="transparent" handles all styling;
+// pointer-events are re-enabled via the bar losing pointer-events: none.
+// We just need the button to be interactive once the bar has a background.
+.bar.scrolled button {
+  pointer-events: all;
 }
