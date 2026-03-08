@@ -49,16 +49,3 @@
   color: $text-default; // #2F2F2F — nearest token: Figma used #272727
   white-space: nowrap;
 }
-
-// Badge color variants — 300-level surface of each action's colorway
-.donate      { background-color: $blue-300; }
-.buy         { background-color: $fern-300; }
-.sell        { background-color: $violet-300; }
-.consign     { background-color: $spruce-300; }
-.trade       { background-color: $spruce-300; }
-.repair      { background-color: $orange-300; }
-.recycle     { background-color: $merlot-300; }
-.compost     { background-color: $blue-300; }
-.volunteer   { background-color: $fern-300; }
-.refill      { background-color: $mintChoc-300; }
-.dineOrDrink { background-color: $offWhite-300; }
