@@ -6,17 +6,9 @@ export const metadata: Metadata = {
   title: 'Action Icons — Design System',
 };
 
-const actions: { name: ActionName; label: string; color: string; iconFile: string }[] = [
-  { name: 'donate',      label: 'Donate',       color: 'Blue',     iconFile: 'Action-3' },
-  { name: 'buy',         label: 'Buy',           color: 'Fern', iconFile: 'Action-2' },
-  { name: 'sell',        label: 'Sell',          color: 'Violet',   iconFile: 'Action-9' },
-  { name: 'trade',       label: 'Trade',         color: 'Spruce',   iconFile: 'Action-4' },
-  { name: 'repair',      label: 'Repair',        color: 'Orange',   iconFile: 'Action-5' },
-  { name: 'recycle',     label: 'Recycle',       color: 'Merlot',   iconFile: 'Action-6' },
-  { name: 'compost',     label: 'Compost',       color: 'Blue',     iconFile: 'Action-7' },
-  { name: 'volunteer',   label: 'Volunteer',     color: 'Fern', iconFile: 'Action-8' },
-  { name: 'refill',      label: 'Refill',        color: 'Mint Choc',   iconFile: 'Action-2' },
-  { name: 'dineOrDrink', label: 'Dine or Drink', color: 'OffWhite', iconFile: 'Action-1' },
+const actions: ActionName[] = [
+  'donate', 'buy', 'buyB2B', 'sell', 'consign', 'trade', 'repair',
+  'recycle', 'compost', 'volunteer', 'refill', 'rent', 'process', 'dineOrDrink',
 ];
 
 export default function ActionIconsPage() {
@@ -34,11 +26,10 @@ export default function ActionIconsPage() {
       <div className={styles.section}>
         <p className={styles.sectionHeading}>Icon</p>
         <div className={styles.componentRow}>
-          {actions.map(({ name, label, iconFile }) => (
+          {actions.map((name) => (
             <div key={name} className={styles.componentItem}>
               <ActionIcon action={name} variant="icon" />
-              <span className={styles.typeSpecs}>{label}</span>
-              <span className={styles.typeSpecs}>{iconFile}</span>
+              <span className={styles.typeSpecs}>{name}</span>
             </div>
           ))}
         </div>
@@ -47,11 +38,10 @@ export default function ActionIconsPage() {
       <div className={styles.section}>
         <p className={styles.sectionHeading}>Badge</p>
         <div className={styles.componentRow}>
-          {actions.map(({ name, label, color, iconFile }) => (
+          {actions.map((name) => (
             <div key={name} className={styles.componentItem}>
               <ActionIcon action={name} variant="badge" />
-              <span className={styles.typeSpecs}>{label}</span>
-              <span className={styles.typeSpecs}>{color}-300 · {iconFile}</span>
+              <span className={styles.typeSpecs}>{name}</span>
             </div>
           ))}
         </div>
