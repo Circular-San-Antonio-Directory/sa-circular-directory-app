@@ -84,7 +84,7 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
       {/* ── Mobile / tablet layout (≤900px) ─────────────────────────── */}
       <div className={styles.mobileLayout}>
         {/* Scroll-aware sticky back bar — overlaps hero photo via negative margin */}
-        {isModal && <MobileBackButton />}
+        {isModal && <MobileBackButton name={f.businessName} />}
 
         {/* Photo (full-bleed) */}
         <div className={styles.mobilePhotoWrapper}>
@@ -132,6 +132,20 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
           <main className={styles.main}>
             <div className={styles.mainInner}>
 
+              {/* Photo */}
+              {photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={photo}
+                  alt={f.businessName}
+                  className={styles.photo}
+                />
+              ) : (
+                <div className={styles.photoPlaceholder}>
+                  <i className="fa-regular fa-image" aria-hidden="true" />
+                </div>
+              )}              
+
               {/* Header */}
               <div className={styles.header}>
                 <div className={styles.nameAddress}>
@@ -151,20 +165,6 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
                   <p className={`body-default-regular ${styles.description}`}>{f.businessDescription}</p>
                 )}
               </div>
-
-              {/* Photo */}
-              {photo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={photo}
-                  alt={f.businessName}
-                  className={styles.photo}
-                />
-              ) : (
-                <div className={styles.photoPlaceholder}>
-                  <i className="fa-regular fa-image" aria-hidden="true" />
-                </div>
-              )}
 
               {/* Actions */}
               {f.allActionNames.length > 0 && (

@@ -133,7 +133,7 @@
   gap: $space-6;
 
   @media (min-width: 1200px) {
-    padding: $space-8 $space-14;
+    padding: $space-8 $space-8;
   }
 }
 
@@ -172,7 +172,7 @@
 
 .photo {
   width: 100%;
-  height: 284px;
+  height: 260px;
   object-fit: cover;
   border-radius: $radius-sm;
   display: block;
@@ -180,7 +180,7 @@
 
 .photoPlaceholder {
   width: 100%;
-  height: 284px;
+  height: 260px;
   border-radius: $radius-sm;
   background: $surface-sunken;
   display: flex;

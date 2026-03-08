@@ -3,6 +3,7 @@
 import { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './ListingModal.module.scss';
+import { ModalActionButton } from '@/components/ModalActionButton';
 
 interface ListingModalProps {
   children: React.ReactNode;
@@ -37,9 +38,7 @@ export function ListingModal({ children }: ListingModalProps) {
       >
         {/* Desktop: floating X button */}
         <div className={styles.closeButton}>
-          <button onClick={close} aria-label="Close">
-            <i className="fa-solid fa-xmark" aria-hidden="true" />
-          </button>
+          <ModalActionButton surface="sunken" onClick={close} />
         </div>
 
         <div className={styles.content}>

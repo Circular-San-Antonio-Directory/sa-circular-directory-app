@@ -1,0 +1,53 @@
+// ModalActionButton
+// Figma source: 2026_Circular_Directory → Modal Action Button
+// =============================================================================
+// Token map
+// =============================================================================
+// bg initial (base)          #f9f8f5  → $surface-base
+// bg initial (sunken)        #eeece8  → $surface-sunken
+// bg initial (transparent)   none     → transparent
+// bg hover (base/sunken)     #d6d4ce  → $border-default ($offWhite-400)
+// bg hover (transparent)     #eeece8  → $surface-sunken ($offWhite-300)
+// bg pressed (all surfaces)  #b9b4a6  → $offWhite-600 (nearest token: no semantic match)
+// border-radius 20px   → 50% (full circle; no matching $radius-* token)
+// padding 8px          → $space-2
+// icon size 20px       → hardcoded 20px (no matching $space-* token)
+
+@use '../../styles' as *;
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2;
+  width: 40px;
+  height: 40px;
+  background-color: $surface-base;
+  border: none;
+  border-radius: 50%; // nearest token: Figma used 20px; 50% achieves same circle
+  cursor: pointer;
+  color: $text-default;
+  transition: background-color 150ms ease;
+
+  i {
+    font-size: 20px; // Figma spec: 20px — no matching $space-* token
+    line-height: 1;
+  }
+
+  &:hover:not(:disabled) { background-color: $border-default; }
+  &:active:not(:disabled) { background-color: $offWhite-600; } // nearest token: Figma #b9b4a6
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.sunken {
+  background-color: $surface-sunken;
+}
+
+.transparent {
+  background-color: transparent;
+
+  &:hover:not(:disabled) { background-color: $surface-sunken; } // offWhite-300
+}
