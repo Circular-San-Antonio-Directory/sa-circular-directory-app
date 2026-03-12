@@ -233,7 +233,7 @@
   padding-bottom: 72px;
 
   @media (min-width: 1024px) {
-    height: 839px; // Figma desktop map height — must be `height` (not min-height) so child height:100% resolves
+    height: calc(100dvh - 74px - 48px - 24px); // nav + page padding + gap — matches sidebar max-height calc; must be `height` (not min-height) so child height:100% resolves
     border: 1px solid $border-default;
     border-radius: $radius-md;
     padding-bottom: 0;
