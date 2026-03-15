@@ -37,6 +37,7 @@ function capitalize(s: string): string {
 
 interface MapViewProps {
   listings: Listing[];
+  filteredListings: Listing[];
   categories: Category[];
   selectedId: string | null;
   onSelectListing: (id: string) => void;
@@ -48,6 +49,7 @@ interface MapViewProps {
 
 export function MapView({
   listings,
+  filteredListings,
   categories,
   selectedId,
   onSelectListing,
@@ -216,16 +218,16 @@ export function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ─── Show/hide markers based on action filter ────────────────────────────────
+  // ─── Show/hide markers based on filtered listings (search + action filter) ───
+  // filteredListings is the single source of truth from DirectoryClient — this
+  // replaces separate effects for search and actionFilter.
 
   useEffect(() => {
+    const visibleIds = new Set(filteredListings.map((l) => l.id));
     markersRef.current.forEach((marker, id) => {
-      const listing = listingsByIdRef.current.get(id);
-      const visible =
-        !actionFilter || (listing?.fields.allActionNames.includes(actionFilter) ?? false);
-      marker.getElement().classList.toggle(styles.markerHidden, !visible);
+      marker.getElement().classList.toggle(styles.markerHidden, !visibleIds.has(id));
     });
-  }, [actionFilter]);
+  }, [filteredListings]);
 
   // ─── Highlight selected marker and fly to it ─────────────────────────────────
 
