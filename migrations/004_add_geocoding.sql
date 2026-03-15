@@ -1,6 +1,6 @@
 -- Migration 004: Add geocoding columns to businesses
--- The businesses_complete view uses SELECT b.* so it picks up these columns automatically.
--- No view recreation needed.
+-- NOTE: PostgreSQL expands SELECT b.* at view creation time, so the view does NOT
+-- automatically pick up new columns. Run migration 005 to recreate the view.
 
 ALTER TABLE businesses
   ADD COLUMN IF NOT EXISTS latitude    DOUBLE PRECISION,
