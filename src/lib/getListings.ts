@@ -37,14 +37,17 @@ export interface Listing {
     businessHours: string;
     inputActions: string[];
     inputCategories: string[];
+    inputCategoryIcons: string[];
     inputCategoryOverride: string;
     inputNotes: string;
     outputActions: string[];
     outputCategories: string[];
+    outputCategoryIcons: string[];
     outputCategoryOverride: string;
     outputNotes: string;
     serviceActions: string[];
     serviceCategories: string[];
+    serviceCategoryIcons: string[];
     serviceCategoryOverride: string;
     serviceNotes: string;
     volunteerOpportunities: boolean;
@@ -96,6 +99,9 @@ interface BusinessRow {
   input_category_names: string[] | null;
   output_category_names: string[] | null;
   service_category_names: string[] | null;
+  input_category_icons: string[] | null;
+  output_category_icons: string[] | null;
+  service_category_icons: string[] | null;
   core_material_names: string[] | null;
   enabling_system_names: string[] | null;
   activity_names: string[] | null;
@@ -167,14 +173,17 @@ function rowToListing(row: BusinessRow): Listing {
       businessHours:           toStr(row.business_hours),
       inputActions:            toArr(row.input_action_names),
       inputCategories:         toArr(row.input_category_names),
+      inputCategoryIcons:      toArr(row.input_category_icons),
       inputCategoryOverride,
       inputNotes:              toStr(row.input_notes),
       outputActions:           toArr(row.output_action_names),
       outputCategories:        toArr(row.output_category_names),
+      outputCategoryIcons:     toArr(row.output_category_icons),
       outputCategoryOverride:  toStr(row.output_category_override),
       outputNotes:             toStr(row.output_notes),
       serviceActions:          toArr(row.service_action_names),
       serviceCategories:       toArr(row.service_category_names),
+      serviceCategoryIcons:    toArr(row.service_category_icons),
       serviceCategoryOverride: toStr(row.service_category_override),
       serviceNotes:            toStr(row.service_notes),
       volunteerOpportunities:  row.volunteer_opportunities ?? false,

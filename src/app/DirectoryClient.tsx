@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
+import type { Category } from '@/lib/getCategories';
 import { slugify } from '@/lib/slugify';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import styles from './page.module.scss';
@@ -17,9 +18,10 @@ const MapView = dynamic(
 
 interface DirectoryClientProps {
   listings: Listing[];
+  categories: Category[];
 }
 
-export function DirectoryClient({ listings }: DirectoryClientProps) {
+export function DirectoryClient({ listings, categories }: DirectoryClientProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState<ActionName | null>(null);
@@ -29,12 +31,29 @@ export function DirectoryClient({ listings }: DirectoryClientProps) {
     let result = listings;
 
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (l) =>
-          l.fields.businessName.toLowerCase().includes(q) ||
-          l.fields.address.toLowerCase().includes(q),
+      const q = searchQuery.toLowerCase().trim();
+
+      // Find categories whose items contain the query as a substring
+      const matchedCategories = new Set(
+        categories
+          .filter((cat) => cat.items.some((item) => item.includes(q)))
+          .map((cat) => cat.category),
       );
+
+      result = result.filter((l) => {
+        const nameOrAddress =
+          l.fields.businessName.toLowerCase().includes(q) ||
+          l.fields.address.toLowerCase().includes(q);
+
+        const allCategories = [
+          ...l.fields.inputCategories,
+          ...l.fields.outputCategories,
+          ...l.fields.serviceCategories,
+        ];
+        const categoryItemMatch = allCategories.some((cat) => matchedCategories.has(cat));
+
+        return nameOrAddress || categoryItemMatch;
+      });
     }
 
     if (actionFilter) {
@@ -42,7 +61,7 @@ export function DirectoryClient({ listings }: DirectoryClientProps) {
     }
 
     return result;
-  }, [listings, searchQuery, actionFilter]);
+  }, [listings, categories, searchQuery, actionFilter]);
 
   const handleSelectListing = useCallback((id: string) => {
     setSelectedId(id);

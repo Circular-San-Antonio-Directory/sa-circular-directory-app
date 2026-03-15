@@ -35,6 +35,8 @@ CREATE TABLE categories (
   airtable_id VARCHAR(50) UNIQUE NOT NULL,
   category VARCHAR(100) NOT NULL,
   notes TEXT,
+  items TEXT,             -- comma-separated list of specific items (search metadata)
+  fa_icon VARCHAR(100),   -- Font Awesome Free icon name for UI display
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -288,7 +290,10 @@ SELECT
   ARRAY(SELECT c.category FROM categories c WHERE c.id = ANY(b.service_category_ids)) as service_category_names,
   ARRAY(SELECT cm.name FROM core_material_systems cm WHERE cm.id = ANY(b.core_material_ids)) as core_material_names,
   ARRAY(SELECT es.name FROM enabling_systems es WHERE es.id = ANY(b.enabling_system_ids)) as enabling_system_names,
-  ARRAY(SELECT ba.name FROM business_activities ba WHERE ba.id = ANY(b.activity_ids)) as activity_names
+  ARRAY(SELECT ba.name FROM business_activities ba WHERE ba.id = ANY(b.activity_ids)) as activity_names,
+  ARRAY(SELECT c.fa_icon FROM categories c WHERE c.id = ANY(b.input_category_ids)) as input_category_icons,
+  ARRAY(SELECT c.fa_icon FROM categories c WHERE c.id = ANY(b.output_category_ids)) as output_category_icons,
+  ARRAY(SELECT c.fa_icon FROM categories c WHERE c.id = ANY(b.service_category_ids)) as service_category_icons
 FROM businesses b;
 
 -- ============================================
