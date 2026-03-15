@@ -162,6 +162,84 @@
   }
 }
 
+// Autocomplete dropdown — positioned relative to .searchBar (position: absolute creates containing block)
+.autocomplete {
+  position: absolute;
+  top: calc(100% + $space-2); // 8px below the search bar
+  left: 0;
+  right: 0;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  z-index: 20;
+  overflow: hidden; // clip children to border-radius
+}
+
+.autocompleteItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3; // 12px
+  width: 100%;
+  padding: $space-3 $space-4; // 12px 16px
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  text-align: left;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.autocompleteIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: $surface-sunken;
+  border-radius: $radius-md; // 6px
+  color: $text-subtle;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.autocompleteText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0; // allow text to truncate
+}
+
+.autocompleteMain {
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocompleteSub {
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 400;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 // Action filter dropdown
 .dropdown {
   position: absolute;

@@ -125,6 +125,7 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
       <div className={styles.mapArea}>
         <MapView
           listings={listings}
+          categories={categories}
           selectedId={selectedId}
           onSelectListing={handleSelectListing}
           searchQuery={searchQuery}
