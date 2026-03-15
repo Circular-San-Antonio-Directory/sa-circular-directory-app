@@ -38,6 +38,12 @@ function resultKey(result: AutocompleteResult): string {
   return result.type === 'business' ? `b:${result.id}` : `i:${result.item}`;
 }
 
+// Marker size scales inversely with zoom: more zoomed out → larger, zoomed in → smaller.
+// Range: 24px at zoom 8 → 6px at zoom 17+.
+function getMarkerSize(zoom: number): number {
+  return Math.round(Math.max(6, Math.min(24, 40 - zoom * 2)));
+}
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface MapViewProps {
@@ -228,6 +234,17 @@ export function MapView({
       resizeObserver = new ResizeObserver(() => map.resize());
       resizeObserver.observe(container);
 
+      function applyMarkerSizes(zoom: number) {
+        const size = getMarkerSize(zoom);
+        markersRef.current.forEach((marker) => {
+          const el = marker.getElement();
+          el.style.width = `${size}px`;
+          el.style.height = `${size}px`;
+        });
+      }
+
+      map.on('zoom', () => applyMarkerSizes(map.getZoom()));
+
       map.on('load', () => {
         map.resize();
         listings.forEach((listing) => {
@@ -247,6 +264,9 @@ export function MapView({
           el.addEventListener('click', () => onSelectListing(listing.id));
           markersRef.current.set(listing.id, marker);
         });
+
+        // Set initial sizes once all markers exist
+        applyMarkerSizes(map.getZoom());
       });
     });
 
