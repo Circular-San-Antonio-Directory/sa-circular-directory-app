@@ -30,6 +30,7 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
+  const listingsByIdRef = useRef<Map<string, Listing>>(new Map());
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -78,6 +79,8 @@ export function MapView({
       map.on('load', () => {
         map.resize();
         listings.forEach((listing) => {
+          listingsByIdRef.current.set(listing.id, listing);
+
           const { latitude, longitude } = listing.fields;
           if (latitude == null || longitude == null) return;
 
@@ -105,6 +108,16 @@ export function MapView({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Show/hide markers based on action filter
+  useEffect(() => {
+    markersRef.current.forEach((marker, id) => {
+      const listing = listingsByIdRef.current.get(id);
+      const visible =
+        !actionFilter || (listing?.fields.allActionNames.includes(actionFilter) ?? false);
+      marker.getElement().classList.toggle(styles.markerHidden, !visible);
+    });
+  }, [actionFilter]);
 
   // Highlight selected marker and fly to it
   useEffect(() => {

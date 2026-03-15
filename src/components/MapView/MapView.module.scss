@@ -42,6 +42,10 @@
   }
 }
 
+.markerHidden {
+  display: none;
+}
+
 .markerSelected {
   background: $secondary-default;
   transform: scale(1.2);
