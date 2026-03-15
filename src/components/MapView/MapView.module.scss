@@ -176,6 +176,17 @@
   overflow: hidden; // clip children to border-radius
 }
 
+.autocompleteSectionLabel {
+  padding: $space-2 $space-4;
+  font-family: $font-body;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $text-disabled;
+  border-bottom: 1px solid $border-subtle;
+}
+
 .autocompleteItem {
   display: flex;
   align-items: center;

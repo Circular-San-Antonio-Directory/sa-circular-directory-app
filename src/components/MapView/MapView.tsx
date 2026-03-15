@@ -28,9 +28,14 @@ type ItemResult = {
 type AutocompleteResult = BusinessResult | ItemResult;
 
 const MAX_EACH = 4;
+const MAX_RECENTS = 5;
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function resultKey(result: AutocompleteResult): string {
+  return result.type === 'business' ? `b:${result.id}` : `i:${result.item}`;
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -69,6 +74,7 @@ export function MapView({
 
   // Autocomplete dropdown
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<AutocompleteResult[]>([]);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
   // ─── Autocomplete suggestions ───────────────────────────────────────────────
@@ -108,6 +114,31 @@ export function MapView({
     return [...businessResults, ...itemResults];
   }, [listings, categories, searchQuery]);
 
+  // Default suggestions shown when focused with an empty query and no recents
+  const defaultSuggestions = useMemo((): AutocompleteResult[] => {
+    const businessDefaults: BusinessResult[] = listings.slice(0, 2).map((l) => ({
+      type: 'business',
+      id: l.id,
+      name: l.fields.businessName,
+      address: l.fields.address,
+    }));
+
+    const itemDefaults: ItemResult[] = [];
+    for (const cat of categories) {
+      if (itemDefaults.length >= 2) break;
+      if (cat.items.length > 0) {
+        itemDefaults.push({
+          type: 'item',
+          item: capitalize(cat.items[0]),
+          category: cat.category,
+          faIcon: cat.faIcon,
+        });
+      }
+    }
+
+    return [...businessDefaults, ...itemDefaults];
+  }, [listings, categories]);
+
   // ─── Click-outside: action filter dropdown ──────────────────────────────────
 
   useEffect(() => {
@@ -134,22 +165,34 @@ export function MapView({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isAutocompleteOpen]);
 
+  // ─── Recent searches ─────────────────────────────────────────────────────────
+
+  function addToRecents(result: AutocompleteResult) {
+    setRecentSearches((prev) => {
+      const key = resultKey(result);
+      const deduped = prev.filter((r) => resultKey(r) !== key);
+      return [result, ...deduped].slice(0, MAX_RECENTS);
+    });
+  }
+
   // ─── Search input handler ────────────────────────────────────────────────────
 
   function handleSearchChange(value: string) {
     onSearchChange(value);
-    setIsAutocompleteOpen(value.trim().length > 0);
+    setIsAutocompleteOpen(true);
   }
 
   // ─── Autocomplete selection handlers ────────────────────────────────────────
 
   function handleSelectBusiness(result: BusinessResult) {
+    addToRecents(result);
     onSearchChange(result.name);
     onSelectListing(result.id);
     setIsAutocompleteOpen(false);
   }
 
   function handleSelectItem(result: ItemResult) {
+    addToRecents(result);
     onSearchChange(result.item);
     setIsAutocompleteOpen(false);
   }
@@ -313,65 +356,75 @@ export function MapView({
             placeholder="Item or category..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
-            onFocus={() => {
-              if (searchQuery.trim().length > 0 && suggestions.length > 0) {
-                setIsAutocompleteOpen(true);
-              }
-            }}
+            onFocus={() => setIsAutocompleteOpen(true)}
           />
         </label>
 
         {/* Autocomplete dropdown — position: absolute relative to .searchBar */}
-        {isAutocompleteOpen && suggestions.length > 0 && (
-          <div className={styles.autocomplete} role="listbox" aria-label="Search suggestions">
-            {suggestions.map((result, i) =>
-              result.type === 'business' ? (
-                <button
-                  key={`business-${result.id}`}
-                  className={styles.autocompleteItem}
-                  role="option"
-                  aria-selected={false}
-                  onMouseDown={(e) => {
-                    // mousedown fires before blur; prevent input from losing focus oddly
-                    e.preventDefault();
-                    handleSelectBusiness(result);
-                  }}
-                >
-                  <span className={styles.autocompleteIcon}>
-                    <i className="fa-solid fa-location-dot" aria-hidden="true" />
-                  </span>
-                  <span className={styles.autocompleteText}>
-                    <span className={styles.autocompleteMain}>{result.name}</span>
-                    <span className={styles.autocompleteSub}>{result.address}</span>
-                  </span>
-                </button>
-              ) : (
-                <button
-                  key={`item-${i}-${result.item}`}
-                  className={styles.autocompleteItem}
-                  role="option"
-                  aria-selected={false}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    handleSelectItem(result);
-                  }}
-                >
-                  <span className={styles.autocompleteIcon}>
-                    {result.faIcon ? (
-                      <i className={`fa-solid fa-${result.faIcon}`} aria-hidden="true" />
-                    ) : (
-                      <i className="fa-solid fa-tag" aria-hidden="true" />
-                    )}
-                  </span>
-                  <span className={styles.autocompleteText}>
-                    <span className={styles.autocompleteMain}>{result.item}</span>
-                    <span className={styles.autocompleteSub}>{result.category}</span>
-                  </span>
-                </button>
-              ),
-            )}
-          </div>
-        )}
+        {(() => {
+          const isEmpty = searchQuery.trim().length === 0;
+          const displayResults = isEmpty
+            ? (recentSearches.length > 0 ? recentSearches : defaultSuggestions)
+            : suggestions;
+          const sectionLabel = isEmpty
+            ? (recentSearches.length > 0 ? 'Recent' : 'Suggestions')
+            : null;
+
+          if (!isAutocompleteOpen || displayResults.length === 0) return null;
+
+          return (
+            <div className={styles.autocomplete} role="listbox" aria-label="Search suggestions">
+              {sectionLabel && (
+                <div className={styles.autocompleteSectionLabel}>{sectionLabel}</div>
+              )}
+              {displayResults.map((result, i) =>
+                result.type === 'business' ? (
+                  <button
+                    key={`business-${result.id}`}
+                    className={styles.autocompleteItem}
+                    role="option"
+                    aria-selected={false}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSelectBusiness(result);
+                    }}
+                  >
+                    <span className={styles.autocompleteIcon}>
+                      <i className="fa-solid fa-location-dot" aria-hidden="true" />
+                    </span>
+                    <span className={styles.autocompleteText}>
+                      <span className={styles.autocompleteMain}>{result.name}</span>
+                      <span className={styles.autocompleteSub}>{result.address}</span>
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    key={`item-${i}-${result.item}`}
+                    className={styles.autocompleteItem}
+                    role="option"
+                    aria-selected={false}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSelectItem(result);
+                    }}
+                  >
+                    <span className={styles.autocompleteIcon}>
+                      {result.faIcon ? (
+                        <i className={`fa-solid fa-${result.faIcon}`} aria-hidden="true" />
+                      ) : (
+                        <i className="fa-solid fa-tag" aria-hidden="true" />
+                      )}
+                    </span>
+                    <span className={styles.autocompleteText}>
+                      <span className={styles.autocompleteMain}>{result.item}</span>
+                      <span className={styles.autocompleteSub}>{result.category}</span>
+                    </span>
+                  </button>
+                ),
+              )}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
