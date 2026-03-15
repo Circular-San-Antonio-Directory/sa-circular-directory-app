@@ -303,7 +303,10 @@ export function MapView({
             type="button"
             aria-label="Select action type"
             aria-expanded={isActionDropdownOpen}
-            onClick={() => setIsActionDropdownOpen((v) => !v)}
+            onClick={() => {
+              setIsActionDropdownOpen((v) => !v);
+              setIsAutocompleteOpen(false);
+            }}
           >
             <span className={styles.intentInner}>
               {actionFilter ? getActionLabel(actionFilter) : 'I want to'}
