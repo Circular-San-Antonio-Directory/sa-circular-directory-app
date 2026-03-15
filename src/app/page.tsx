@@ -1,7 +1,6 @@
 import { Nav } from '@/components/Nav';
 import { getListings } from '@/lib/getListings';
 import { DirectoryClient } from './DirectoryClient';
-import { MobileBottomSheet } from './MobileBottomSheet';
 import styles from './page.module.scss';
 
 export const dynamic = 'force-dynamic';
@@ -20,9 +19,6 @@ export default async function Home() {
           <DirectoryClient listings={listings} />
         </div>
       </div>
-
-      {/* Mobile bottom sheet — interactive, shown only on mobile */}
-      <MobileBottomSheet listings={listings} />
 
     </div>
   );

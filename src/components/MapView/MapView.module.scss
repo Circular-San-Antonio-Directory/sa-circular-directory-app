@@ -78,6 +78,10 @@
 .intentPillWrapper {
   position: relative;
   flex-shrink: 0;
+
+  @media (max-width: 1023px) {
+    display: none;
+  }
 }
 
 // "I want to" action selector pill
@@ -85,8 +89,8 @@
   display: flex;
   align-items: center;
   gap: $space-1; // 4px
-  width: 134px;
-  height: 44px;
+  min-width: 134px;
+  min-height: 44px;
   padding: 6px;
   background: $primary-default;
   border: none;
@@ -97,6 +101,7 @@
   i {
     color: $text-inverse;
     font-size: 14px;
+    flex-shrink: 0;
   }
 }
 
@@ -110,7 +115,6 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
   padding: $space-2; // 8px
   background: #c1f1a1; // $fern-300 — nearest token: TODO: add $fern-300 to token table
   border-radius: 4px;
@@ -118,7 +122,8 @@
   font-size: 16px;
   font-weight: 500;
   color: #092620; // $fern-900
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 // Search input

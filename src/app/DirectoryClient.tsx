@@ -7,6 +7,7 @@ import { ActionIcon } from '@/components/ActionIcon';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import { slugify } from '@/lib/slugify';
+import { MobileBottomSheet } from './MobileBottomSheet';
 import styles from './page.module.scss';
 
 const MapView = dynamic(
@@ -113,6 +114,9 @@ export function DirectoryClient({ listings }: DirectoryClientProps) {
           onActionFilterChange={setActionFilter}
         />
       </div>
+
+      {/* Mobile bottom sheet — receives filtered listings so filters apply on mobile too */}
+      <MobileBottomSheet listings={filteredListings} />
     </>
   );
 }
