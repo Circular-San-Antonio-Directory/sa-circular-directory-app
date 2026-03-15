@@ -86,6 +86,12 @@ const ACTION_MAP: Record<ActionName, { iconFile: string; label: string; colorFam
   dineOrDrink: { iconFile: 'Action-1',  label: 'Dine or Drink', colorFamily: 'mono' }, // nearest token: offWhite-800 for primary; consider 'mono' if contrast is insufficient
 };
 
+export function getActionLabel(action: ActionName): string {
+  return ACTION_MAP[action].label;
+}
+
+export const ALL_ACTIONS = Object.keys(ACTION_MAP) as ActionName[];
+
 interface ActionIconProps {
   action: ActionName;
   variant?: ActionIconVariant;

@@ -97,7 +97,7 @@ Airtable is **read-only from the app's perspective.** All data edits happen in A
 |---|---|---|
 | `Production DB` | `businesses` | Main listing records |
 | `Business Actions` | `business_actions` | Has `Corresponding Action` (user-facing label) and `Order for Display` (sort order) |
-| `Categories` | `categories` | |
+| `Categories` | `categories` | Has `Items` (comma-separated item strings) and `FA Icon` (Font Awesome icon name, no prefix) |
 | `Business Type` | `business_types` | |
 | `Core Material System` | `core_material_systems` | |
 | `Enabling Systems` | `enabling_systems` | |
@@ -154,12 +154,15 @@ Schema is managed with plain SQL migration files in `migrations/`. There is no O
 | `migrations/current_schema.sql` | Canonical full schema — keep this up to date; used by `db:reset` + `migrate:sql` for fresh installs |
 | `migrations/003_add_action_columns.sql` | Incremental: adds `corresponding_action` + `display_order` to `business_actions`, updates `businesses_complete` view |
 | `migrations/004_add_geocoding.sql` | Incremental: adds `latitude`, `longitude`, `geocoded_at` to `businesses` for Mapbox map integration |
+| `migrations/006_add_category_items_and_icon.sql` | Incremental: adds `items TEXT` and `fa_icon VARCHAR(100)` to `categories`; recreates `businesses_complete` view with `*_category_icons` arrays appended at end |
 
 ### Key design decisions
 
 - **PostgreSQL arrays for relationships** — instead of junction tables, `businesses` stores `input_action_ids INTEGER[]`, `tag_ids INTEGER[]`, etc. GIN indexes enable fast array searches.
 - **`businesses_complete` view** — joins all array columns to their name strings; this is what `getListings()` queries. Action name arrays are ordered by `business_actions.display_order`.
 - **Action name mapping** — `src/lib/actionMapping.ts` maps Airtable action strings to the app's `ActionName` type. `ACTION_ORDER` in `src/lib/getListings.ts` controls display sort order and should mirror `Order for Display` in the `Business Actions` Airtable table.
+- **`CREATE OR REPLACE VIEW` column ordering** — PostgreSQL does not allow changing or inserting column positions in an existing view. New columns must always be appended at the end of the SELECT list. Inserting a column in the middle causes a fatal error: `cannot change name of view column 'X' to 'Y'`. When recreating `businesses_complete`, always append new columns after the last existing column.
+- **`categories.items`** — stored as a comma-separated string in PostgreSQL (mirroring Airtable). `getCategories()` parses them into a lowercased string array. Search matching is done by substring (`item.includes(query)`), not exact match.
 
 ---
 
@@ -182,26 +185,31 @@ Schema is managed with plain SQL migration files in `migrations/`. There is no O
 ```
 sa-circular-directory-app/
   src/
-    app/                    # Next.js App Router pages
-      DirectoryClient.tsx   # Client wrapper: map + sidebar interaction state
+    app/                      # Next.js App Router pages
+      DirectoryClient.tsx     # Client wrapper: all filter state (search, actionFilter); single source of truth for filteredListings
+      MobileBottomSheet.tsx   # Mobile listing drawer — receives filteredListings from DirectoryClient
+      MobileSearchSheet.tsx   # Mobile search/filter bottom sheet with autocomplete and action filter pills
+      page.tsx                # Server component: fetches listings + categories in parallel
     components/
-      ActionIcon/           # Action icon component
-      MapView/              # Mapbox GL JS map + floating search bar (client component)
-      Nav/                  # Navigation bar
+      ActionIcon/             # ActionIcon component; exports getActionLabel() and ALL_ACTIONS for use in dropdowns
+      MapView/                # Mapbox GL JS map + floating search bar (client component, desktop-primary)
+      Nav/                    # Navigation bar
     lib/
-      sync.ts               # Core sync logic: Airtable upsert + Mapbox geocoding
-      db.ts                 # pg Pool singleton
-      getListings.ts        # DB → Listing type mapping; queries businesses_complete view
-      slugify.ts            # slugify() utility (separate file to avoid client-bundle pg import)
-      actionMapping.ts      # Airtable action string → ActionName mapping
+      sync.ts                 # Core sync logic: Airtable upsert + Mapbox geocoding
+      db.ts                   # pg Pool singleton
+      getListings.ts          # DB → Listing type mapping; queries businesses_complete view
+      getCategories.ts        # DB → Category[] (category, items[], faIcon); used for search matching
+      slugify.ts              # slugify() utility (separate file to avoid client-bundle pg import)
+      actionMapping.ts        # Airtable action string → ActionName mapping
   scripts/
-    sync.ts                 # Standalone entry point for Railway Cron (calls src/lib/sync.ts)
+    sync.ts                   # Standalone entry point for Railway Cron (calls src/lib/sync.ts)
   migrations/
     002_simplified_schema.sql
     003_add_action_columns.sql
-    004_add_geocoding.sql   # Adds latitude, longitude, geocoded_at to businesses
+    004_add_geocoding.sql     # Adds latitude, longitude, geocoded_at to businesses
+    006_add_category_items_and_icon.sql  # Adds items, fa_icon to categories; updates businesses_complete view
   docs/
-    architecture.md         # This file
+    architecture.md           # This file
 ```
 
 ### Environment variables
@@ -214,6 +222,45 @@ sa-circular-directory-app/
 | `MAPBOX_SECRET_TOKEN` | `airtable-sync` cron | Server-side geocoding API (never exposed to browser) |
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | Next.js app | Client-side map rendering (public, safe to expose) |
 | `NODE_ENV` | `airtable-sync` cron | Must be `production` to enable SSL on DB connection |
+
+---
+
+## Search & Filtering Architecture
+
+Filtering is computed entirely client-side in `DirectoryClient.tsx` — no search API calls.
+
+### Filter state
+`DirectoryClient` owns two filter state values:
+- `searchQuery: string` — text entered by user
+- `actionFilter: ActionName | null` — selected action pill (Donate, Buy, Repair, etc.)
+
+`filteredListings` is a `useMemo` that applies both filters. All downstream components receive `filteredListings`, never the raw `listings` array.
+
+### Search matching logic
+A listing matches a `searchQuery` if **any** of these are true (OR logic):
+1. `businessName` contains the query (substring, case-insensitive)
+2. `address` contains the query
+3. Any of the listing's `inputCategories`, `outputCategories`, or `serviceCategories` names belong to a category whose `items` array contains the query as a substring
+
+Step 3 requires `categories` to be fetched alongside `listings` in `page.tsx` and passed down to `DirectoryClient`.
+
+### Component roles
+| Component | Role |
+|---|---|
+| `DirectoryClient` | Owns `searchQuery`, `actionFilter`, `filteredListings`. Single source of truth. |
+| `MapView` | Receives `filteredListings`; toggles `markerHidden` CSS class by diffing against a `visibleIds` Set. Does not compute its own filters. Also owns the desktop search input and action filter dropdown; calls `onSearchChange` / `onActionFilterChange` to update parent state. |
+| `MobileBottomSheet` | Receives `filteredListings` directly — no independent filtering. |
+| `MobileSearchSheet` | Modal sheet for mobile. Has local draft state (`localSearch`, `localActionFilter`). Computes a live `filteredCount` for the "Show Results (N)" button. On submit, calls `onApply` to push state up to `DirectoryClient`. |
+
+### Autocomplete
+Both `MapView` (desktop) and `MobileSearchSheet` (mobile) have autocomplete. Two result types:
+- **Business** — matches on `businessName` substring, links directly to that listing
+- **Item** — matches on category item strings; selecting one sets the search query and (in MobileSearchSheet) shows a category badge
+
+MapView stores `recentSearches` in component state (session-only, max 5) and shows them when the input is focused but empty. MobileSearchSheet shows at most 5 autocomplete results total.
+
+### Mobile search flow
+On mobile (`window.innerWidth < 1024`), tapping the MapView search input blurs it and opens `MobileSearchSheet` instead (via `onMobileSearchOpen` callback). The sheet slides up from the bottom, user sets filters locally, then taps "Show Results" to apply.
 
 ---
 

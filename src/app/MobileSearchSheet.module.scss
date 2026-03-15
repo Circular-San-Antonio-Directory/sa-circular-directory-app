@@ -1,0 +1,386 @@
+// MobileSearchSheet — SA Circular Directory
+// =============================================================================
+// Token map
+// backdrop:               rgba(0,0,0,0.4)
+// sheet bg:               $surface-raised (#FFFFFF)
+// sheet radius:           $radius-xl $radius-xl 0 0 (12px top corners)
+// sheet shadow:           $shadow-md
+// header border:          $border-subtle
+// title:                  $text-default
+// close btn:              $text-subtle
+// section label:          $text-subtle
+// search input bg:        $surface-raised
+// search input border:    $border-default
+// search input shadow:    $shadow-sm
+// search icon:            $text-disabled
+// clear input icon:       $text-subtle
+// category badge bg:      var(--spruce-100)
+// category badge text:    var(--spruce-700)
+// action pill bg:         $surface-base
+// action pill border:     $border-default
+// action pill active bg:  $primary-default
+// action pill active text:$text-inverse
+// footer border:          $border-subtle
+// clear all text:         $text-disabled
+// clear all active text:  $text-subtle
+// show results bg:        $primary-default
+// show results text:      $text-inverse
+// =============================================================================
+
+@use '../styles' as *;
+
+// Only render on mobile — hidden entirely above 1024px
+.backdrop,
+.sheet {
+  @media (min-width: 1024px) {
+    display: none !important;
+  }
+}
+
+// ─── Backdrop ─────────────────────────────────────────────────────────────────
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 40;
+  pointer-events: none;
+  transition: background 280ms ease;
+
+  &.backdropVisible {
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+  }
+}
+
+// ─── Sheet ────────────────────────────────────────────────────────────────────
+
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 88dvh;
+  background: $surface-raised;
+  border-radius: $radius-xl $radius-xl 0 0; // 12px top corners
+  box-shadow: $shadow-md;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  &.sheetOpen {
+    transform: translateY(0);
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 1px solid $border-subtle;
+  padding: 0 $space-4;
+}
+
+.title {
+  color: $text-default;
+}
+
+.closeBtn {
+  position: absolute;
+  right: $space-4;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: $text-subtle;
+  font-size: 18px;
+
+  &:hover {
+    color: $text-default;
+  }
+}
+
+// ─── Scrollable content ───────────────────────────────────────────────────────
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-8 $space-4; // 32px 16px
+  display: flex;
+  flex-direction: column;
+  gap: $space-7; // 28px between sections
+  // Extra bottom padding so content clears the sticky footer
+  padding-bottom: 96px;
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2; // 8px
+}
+
+.sectionLabel {
+  color: $text-subtle;
+}
+
+// ─── Search input ─────────────────────────────────────────────────────────────
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  height: 48px;
+  padding: 0 $space-3;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-md; // 6px
+  box-shadow: $shadow-sm;
+
+  i {
+    color: $text-disabled;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 400;
+  color: $text-default;
+  outline: none;
+  min-width: 0;
+
+  &::placeholder {
+    color: $text-disabled;
+  }
+}
+
+.clearInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: $text-subtle;
+  font-size: 14px;
+  flex-shrink: 0;
+  padding: $space-1;
+}
+
+// ─── Category badges ──────────────────────────────────────────────────────────
+
+.categoryBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-top: $space-1;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3; // 4px 12px
+  background: var(--spruce-100);
+  color: var(--spruce-700);
+  border-radius: $radius-lg; // 8px
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  i {
+    font-size: 13px;
+  }
+}
+
+// ─── Autocomplete dropdown ────────────────────────────────────────────────────
+
+.autocomplete {
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-top: $space-1;
+}
+
+.autocompleteItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3; // 12px
+  width: 100%;
+  padding: $space-3 $space-4; // 12px 16px
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  text-align: left;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.autocompleteIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: $surface-sunken;
+  border-radius: $radius-md; // 6px
+  color: $text-subtle;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.autocompleteText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.autocompleteMain {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $text-default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocompleteSub {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 400;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Action pills ─────────────────────────────────────────────────────────────
+
+.actionPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px; // nearest: $space-2 (8px) — using exact Figma value
+}
+
+.actionPill {
+  padding: 10px $space-3; // 10px 12px — nearest vertical: $space-2/$space-3
+  background: $surface-base;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm; // 4px
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $text-default;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.actionPillActive {
+  background: $primary-default;
+  border-color: $primary-default;
+  color: $text-inverse;
+
+  &:hover {
+    background: $primary-hover;
+    border-color: $primary-hover;
+  }
+}
+
+// ─── Sticky footer ────────────────────────────────────────────────────────────
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4; // 12px 16px — nearest to Figma's 11px
+  background: $surface-raised;
+  border-top: 1px solid $border-subtle;
+  box-shadow: 0 -3px 4px 0 rgba(0, 0, 0, 0.08);
+}
+
+.clearAllBtn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 500;
+  color: $text-disabled;
+  padding: $space-2 $space-3;
+  transition: color 120ms ease;
+
+  &:not(:disabled) {
+    color: $text-subtle;
+    cursor: pointer;
+
+    &:hover {
+      color: $text-default;
+    }
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.showResultsBtn {
+  flex: 1;
+  height: 48px;
+  background: $primary-default;
+  border: none;
+  border-radius: $radius-md;
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 500;
+  color: $text-inverse;
+  cursor: pointer;
+  transition: background 120ms ease;
+
+  &:hover {
+    background: $primary-hover;
+  }
+}

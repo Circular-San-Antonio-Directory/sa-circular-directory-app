@@ -4,8 +4,12 @@ import { useState, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
+import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
+import type { Category } from '@/lib/getCategories';
 import { slugify } from '@/lib/slugify';
+import { MobileBottomSheet } from './MobileBottomSheet';
+import { MobileSearchSheet } from './MobileSearchSheet';
 import styles from './page.module.scss';
 
 const MapView = dynamic(
@@ -15,22 +19,51 @@ const MapView = dynamic(
 
 interface DirectoryClientProps {
   listings: Listing[];
+  categories: Category[];
 }
 
-export function DirectoryClient({ listings }: DirectoryClientProps) {
+export function DirectoryClient({ listings, categories }: DirectoryClientProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [actionFilter, setActionFilter] = useState<ActionName | null>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
 
   const filteredListings = useMemo(() => {
-    if (!searchQuery.trim()) return listings;
-    const q = searchQuery.toLowerCase();
-    return listings.filter(
-      (l) =>
-        l.fields.businessName.toLowerCase().includes(q) ||
-        l.fields.address.toLowerCase().includes(q),
-    );
-  }, [listings, searchQuery]);
+    let result = listings;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+
+      // Find categories whose items contain the query as a substring
+      const matchedCategories = new Set(
+        categories
+          .filter((cat) => cat.items.some((item) => item.includes(q)))
+          .map((cat) => cat.category),
+      );
+
+      result = result.filter((l) => {
+        const nameOrAddress =
+          l.fields.businessName.toLowerCase().includes(q) ||
+          l.fields.address.toLowerCase().includes(q);
+
+        const allCategories = [
+          ...l.fields.inputCategories,
+          ...l.fields.outputCategories,
+          ...l.fields.serviceCategories,
+        ];
+        const categoryItemMatch = allCategories.some((cat) => matchedCategories.has(cat));
+
+        return nameOrAddress || categoryItemMatch;
+      });
+    }
+
+    if (actionFilter) {
+      result = result.filter((l) => l.fields.allActionNames.includes(actionFilter));
+    }
+
+    return result;
+  }, [listings, categories, searchQuery, actionFilter]);
 
   const handleSelectListing = useCallback((id: string) => {
     setSelectedId(id);
@@ -94,12 +127,31 @@ export function DirectoryClient({ listings }: DirectoryClientProps) {
       <div className={styles.mapArea}>
         <MapView
           listings={listings}
+          filteredListings={filteredListings}
+          categories={categories}
           selectedId={selectedId}
           onSelectListing={handleSelectListing}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          actionFilter={actionFilter}
+          onActionFilterChange={setActionFilter}
+          onMobileSearchOpen={() => setIsMobileSearchOpen(true)}
         />
       </div>
+
+      {/* Mobile bottom sheet — receives filtered listings so filters apply on mobile too */}
+      <MobileBottomSheet listings={filteredListings} />
+
+      {/* Mobile search + filter sheet */}
+      <MobileSearchSheet
+        isOpen={isMobileSearchOpen}
+        onClose={() => setIsMobileSearchOpen(false)}
+        onApply={(q, af) => { setSearchQuery(q); setActionFilter(af); }}
+        initialSearch={searchQuery}
+        initialActionFilter={actionFilter}
+        listings={listings}
+        categories={categories}
+      />
     </>
   );
 }

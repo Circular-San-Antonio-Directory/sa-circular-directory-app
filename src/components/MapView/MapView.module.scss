@@ -29,8 +29,8 @@
 // --- Markers ---
 
 .marker {
-  width: 32px;
-  height: 32px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: $primary-default;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
@@ -40,6 +40,10 @@
   &:hover {
     transform: scale(1.15);
   }
+}
+
+.markerHidden {
+  display: none;
 }
 
 .markerSelected {
@@ -70,13 +74,23 @@
   z-index: 10;
 }
 
+// "I want to" wrapper — anchor for the dropdown
+.intentPillWrapper {
+  position: relative;
+  flex-shrink: 0;
+
+  @media (max-width: 1023px) {
+    display: none;
+  }
+}
+
 // "I want to" action selector pill
 .intentPill {
   display: flex;
   align-items: center;
   gap: $space-1; // 4px
-  width: 134px;
-  height: 44px;
+  min-width: 134px;
+  min-height: 44px;
   padding: 6px;
   background: $primary-default;
   border: none;
@@ -87,7 +101,13 @@
   i {
     color: $text-inverse;
     font-size: 14px;
+    flex-shrink: 0;
   }
+}
+
+// Active state when a filter is selected
+.intentPillActive {
+  background: $primary-hover; // $fern-900 — darker to indicate active filter
 }
 
 .intentInner {
@@ -95,7 +115,6 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
   padding: $space-2; // 8px
   background: #c1f1a1; // $fern-300 — nearest token: TODO: add $fern-300 to token table
   border-radius: 4px;
@@ -103,7 +122,8 @@
   font-size: 16px;
   font-weight: 500;
   color: #092620; // $fern-900
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 // Search input
@@ -142,30 +162,158 @@
   }
 }
 
-// Filters button
-.filtersButton {
+// Autocomplete dropdown — positioned relative to .searchBar (position: absolute creates containing block)
+.autocomplete {
+  position: absolute;
+  top: calc(100% + $space-2); // 8px below the search bar
+  left: 0;
+  right: 0;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  z-index: 20;
+  overflow: hidden; // clip children to border-radius
+}
+
+.autocompleteSectionLabel {
+  padding: $space-2 $space-4;
+  font-family: $font-body;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $text-disabled;
+  border-bottom: 1px solid $border-subtle;
+}
+
+.autocompleteItem {
   display: flex;
   align-items: center;
-  gap: $space-2; // 8px — Figma: gap-10, nearest: $space-2
-  height: 44px;
-  padding: $space-3; // 12px
-  background: $surface-raised;
-  border: 1px solid $border-strong;
-  border-radius: $radius-sm; // 4px
+  gap: $space-3; // 12px
+  width: 100%;
+  padding: $space-3 $space-4; // 12px 16px
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  text-align: left;
   cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
 
-  i {
-    color: $text-default;
-    font-size: 16px;
+  &:last-child {
+    border-bottom: none;
   }
 
-  span {
-    font-family: $font-body;
-    font-size: 16px;
-    font-weight: 500;
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.autocompleteIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: $surface-sunken;
+  border-radius: $radius-md; // 6px
+  color: $text-subtle;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.autocompleteText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0; // allow text to truncate
+}
+
+.autocompleteMain {
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocompleteSub {
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 400;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Action filter dropdown
+.dropdown {
+  position: absolute;
+  top: calc(100% + $space-2); // 8px below the pill
+  left: 0;
+  min-width: 160px;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  z-index: 20;
+  padding: $space-2 0; // 8px vertical padding
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: $space-2 $space-4; // 8px 16px
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 400;
+  color: $text-default;
+  cursor: pointer;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.dropdownItemActive {
+  background: $surface-sunken;
+  font-weight: 500;
+  color: $primary-default;
+}
+
+.dropdownClear {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  margin-bottom: $space-1;
+  text-align: left;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-subtle;
+  cursor: pointer;
+
+  i {
+    font-size: 12px;
+  }
+
+  &:hover {
     color: $text-default;
-    letter-spacing: 0.16px;
+    background: $surface-sunken;
   }
 }
