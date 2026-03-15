@@ -56,6 +56,7 @@ interface MapViewProps {
   onSearchChange: (query: string) => void;
   actionFilter: ActionName | null;
   onActionFilterChange: (action: ActionName | null) => void;
+  onMobileSearchOpen?: () => void;
 }
 
 export function MapView({
@@ -68,6 +69,7 @@ export function MapView({
   onSearchChange,
   actionFilter,
   onActionFilterChange,
+  onMobileSearchOpen,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -379,7 +381,14 @@ export function MapView({
             placeholder="Item or category..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
-            onFocus={() => setIsAutocompleteOpen(true)}
+            onFocus={(e) => {
+              if (onMobileSearchOpen && window.innerWidth < 1024) {
+                e.currentTarget.blur();
+                onMobileSearchOpen();
+              } else {
+                setIsAutocompleteOpen(true);
+              }
+            }}
           />
         </label>
 

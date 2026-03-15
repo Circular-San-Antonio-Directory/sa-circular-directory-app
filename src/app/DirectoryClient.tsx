@@ -9,6 +9,7 @@ import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
 import { slugify } from '@/lib/slugify';
 import { MobileBottomSheet } from './MobileBottomSheet';
+import { MobileSearchSheet } from './MobileSearchSheet';
 import styles from './page.module.scss';
 
 const MapView = dynamic(
@@ -25,6 +26,7 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState<ActionName | null>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
 
   const filteredListings = useMemo(() => {
@@ -133,11 +135,23 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
           onSearchChange={setSearchQuery}
           actionFilter={actionFilter}
           onActionFilterChange={setActionFilter}
+          onMobileSearchOpen={() => setIsMobileSearchOpen(true)}
         />
       </div>
 
       {/* Mobile bottom sheet — receives filtered listings so filters apply on mobile too */}
       <MobileBottomSheet listings={filteredListings} />
+
+      {/* Mobile search + filter sheet */}
+      <MobileSearchSheet
+        isOpen={isMobileSearchOpen}
+        onClose={() => setIsMobileSearchOpen(false)}
+        onApply={(q, af) => { setSearchQuery(q); setActionFilter(af); }}
+        initialSearch={searchQuery}
+        initialActionFilter={actionFilter}
+        listings={listings}
+        categories={categories}
+      />
     </>
   );
 }
