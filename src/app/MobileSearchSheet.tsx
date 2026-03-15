@@ -7,6 +7,32 @@ import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
 import styles from './MobileSearchSheet.module.scss';
 
+// ─── Autocomplete types ───────────────────────────────────────────────────────
+
+type BusinessResult = {
+  type: 'business';
+  id: string;
+  name: string;
+  address: string;
+};
+
+type ItemResult = {
+  type: 'item';
+  item: string;
+  category: string;
+  faIcon: string | null;
+};
+
+type AutocompleteResult = BusinessResult | ItemResult;
+
+const MAX_EACH = 4;
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -28,23 +54,59 @@ export function MobileSearchSheet({
 }: Props) {
   const [localSearch, setLocalSearch] = useState(initialSearch);
   const [localActionFilter, setLocalActionFilter] = useState<ActionName | null>(initialActionFilter);
+  const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
+  // Set only when the user explicitly selects an item result from autocomplete
+  const [selectedCategory, setSelectedCategory] = useState<{ category: string; faIcon: string | null } | null>(null);
 
   // Sync local state when the sheet opens
   useEffect(() => {
     if (isOpen) {
       setLocalSearch(initialSearch);
       setLocalActionFilter(initialActionFilter);
+      setSelectedCategory(null);
+      setIsAutocompleteOpen(false);
     }
   }, [isOpen, initialSearch, initialActionFilter]);
 
-  // Categories whose items match the current search query
-  const matchedCategories = useMemo(() => {
-    const q = localSearch.trim().toLowerCase();
-    if (!q) return [];
-    return categories.filter((cat) => cat.items.some((item) => item.includes(q)));
-  }, [localSearch, categories]);
+  // ─── Autocomplete suggestions ─────────────────────────────────────────────
 
-  // Live filtered count for the "Show Results" button
+  const suggestions = useMemo((): AutocompleteResult[] => {
+    const q = localSearch.trim().toLowerCase();
+    if (q.length === 0) return [];
+
+    const businessResults: BusinessResult[] = listings
+      .filter((l) => l.fields.businessName.toLowerCase().includes(q))
+      .slice(0, MAX_EACH)
+      .map((l) => ({
+        type: 'business',
+        id: l.id,
+        name: l.fields.businessName,
+        address: l.fields.address,
+      }));
+
+    const seenItems = new Set<string>();
+    const itemResults: ItemResult[] = [];
+    for (const cat of categories) {
+      if (itemResults.length >= MAX_EACH) break;
+      for (const item of cat.items) {
+        if (itemResults.length >= MAX_EACH) break;
+        if (item.includes(q) && !seenItems.has(item)) {
+          seenItems.add(item);
+          itemResults.push({
+            type: 'item',
+            item: capitalize(item),
+            category: cat.category,
+            faIcon: cat.faIcon,
+          });
+        }
+      }
+    }
+
+    return [...businessResults, ...itemResults];
+  }, [listings, categories, localSearch]);
+
+  // ─── Live filtered count ──────────────────────────────────────────────────
+
   const filteredCount = useMemo(() => {
     let result = listings;
 
@@ -75,9 +137,37 @@ export function MobileSearchSheet({
     return result.length;
   }, [listings, categories, localSearch, localActionFilter]);
 
+  // ─── Handlers ─────────────────────────────────────────────────────────────
+
+  function handleLocalSearchChange(value: string) {
+    setLocalSearch(value);
+    setSelectedCategory(null); // badge only sticks after an explicit selection
+    setIsAutocompleteOpen(value.trim().length > 0);
+  }
+
+  function handleSelectBusiness(result: BusinessResult) {
+    setLocalSearch(result.name);
+    setSelectedCategory(null);
+    setIsAutocompleteOpen(false);
+  }
+
+  function handleSelectItem(result: ItemResult) {
+    setLocalSearch(result.item);
+    setSelectedCategory({ category: result.category, faIcon: result.faIcon });
+    setIsAutocompleteOpen(false);
+  }
+
+  function handleClearSearch() {
+    setLocalSearch('');
+    setSelectedCategory(null);
+    setIsAutocompleteOpen(false);
+  }
+
   function handleClearAll() {
     setLocalSearch('');
     setLocalActionFilter(null);
+    setSelectedCategory(null);
+    setIsAutocompleteOpen(false);
   }
 
   function handleShowResults() {
@@ -90,6 +180,7 @@ export function MobileSearchSheet({
   }
 
   const hasFilters = localSearch.trim().length > 0 || localActionFilter !== null;
+  const showAutocomplete = isAutocompleteOpen && suggestions.length > 0;
 
   return (
     <>
@@ -121,6 +212,7 @@ export function MobileSearchSheet({
           {/* Search section */}
           <div className={styles.section}>
             <span className={`${styles.sectionLabel} label-small`}>Item or category</span>
+
             <div className={styles.searchInputWrapper}>
               <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
               <input
@@ -128,14 +220,14 @@ export function MobileSearchSheet({
                 className={styles.searchInput}
                 placeholder="Item or category..."
                 value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
+                onChange={(e) => handleLocalSearchChange(e.target.value)}
                 autoFocus={isOpen}
               />
               {localSearch && (
                 <button
                   className={styles.clearInput}
                   type="button"
-                  onClick={() => setLocalSearch('')}
+                  onMouseDown={(e) => { e.preventDefault(); handleClearSearch(); }}
                   aria-label="Clear search"
                 >
                   <i className="fa-solid fa-xmark" aria-hidden="true" />
@@ -143,17 +235,59 @@ export function MobileSearchSheet({
               )}
             </div>
 
-            {/* Matched category badges */}
-            {matchedCategories.length > 0 && (
+            {/* Autocomplete dropdown — inline, flows in the scroll area */}
+            {showAutocomplete && (
+              <div className={styles.autocomplete} role="listbox" aria-label="Search suggestions">
+                {suggestions.map((result, i) =>
+                  result.type === 'business' ? (
+                    <button
+                      key={`b-${result.id}`}
+                      className={styles.autocompleteItem}
+                      role="option"
+                      aria-selected={false}
+                      onMouseDown={(e) => { e.preventDefault(); handleSelectBusiness(result); }}
+                    >
+                      <span className={styles.autocompleteIcon}>
+                        <i className="fa-solid fa-location-dot" aria-hidden="true" />
+                      </span>
+                      <span className={styles.autocompleteText}>
+                        <span className={styles.autocompleteMain}>{result.name}</span>
+                        <span className={styles.autocompleteSub}>{result.address}</span>
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      key={`i-${i}-${result.item}`}
+                      className={styles.autocompleteItem}
+                      role="option"
+                      aria-selected={false}
+                      onMouseDown={(e) => { e.preventDefault(); handleSelectItem(result); }}
+                    >
+                      <span className={styles.autocompleteIcon}>
+                        {result.faIcon
+                          ? <i className={`fa-solid fa-${result.faIcon}`} aria-hidden="true" />
+                          : <i className="fa-solid fa-tag" aria-hidden="true" />
+                        }
+                      </span>
+                      <span className={styles.autocompleteText}>
+                        <span className={styles.autocompleteMain}>{result.item}</span>
+                        <span className={styles.autocompleteSub}>{result.category}</span>
+                      </span>
+                    </button>
+                  ),
+                )}
+              </div>
+            )}
+
+            {/* Category badge — only shown after an item is explicitly selected */}
+            {selectedCategory && (
               <div className={styles.categoryBadges}>
-                {matchedCategories.slice(0, 3).map((cat) => (
-                  <span key={cat.category} className={styles.categoryBadge}>
-                    {cat.faIcon && (
-                      <i className={`fa-solid fa-${cat.faIcon}`} aria-hidden="true" />
-                    )}
-                    {cat.category}
-                  </span>
-                ))}
+                <span className={styles.categoryBadge}>
+                  {selectedCategory.faIcon && (
+                    <i className={`fa-solid fa-${selectedCategory.faIcon}`} aria-hidden="true" />
+                  )}
+                  {selectedCategory.category}
+                </span>
               </div>
             )}
           </div>

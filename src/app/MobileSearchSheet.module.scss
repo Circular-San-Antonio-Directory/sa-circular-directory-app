@@ -214,6 +214,81 @@
   }
 }
 
+// ─── Autocomplete dropdown ────────────────────────────────────────────────────
+
+.autocomplete {
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-top: $space-1;
+}
+
+.autocompleteItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3; // 12px
+  width: 100%;
+  padding: $space-3 $space-4; // 12px 16px
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  text-align: left;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.autocompleteIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: $surface-sunken;
+  border-radius: $radius-md; // 6px
+  color: $text-subtle;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.autocompleteText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.autocompleteMain {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $text-default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocompleteSub {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 400;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 // ─── Action pills ─────────────────────────────────────────────────────────────
 
 .actionPills {
