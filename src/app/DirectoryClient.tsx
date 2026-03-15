@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
+import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import { slugify } from '@/lib/slugify';
 import styles from './page.module.scss';
@@ -20,17 +21,27 @@ interface DirectoryClientProps {
 export function DirectoryClient({ listings }: DirectoryClientProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [actionFilter, setActionFilter] = useState<ActionName | null>(null);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
 
   const filteredListings = useMemo(() => {
-    if (!searchQuery.trim()) return listings;
-    const q = searchQuery.toLowerCase();
-    return listings.filter(
-      (l) =>
-        l.fields.businessName.toLowerCase().includes(q) ||
-        l.fields.address.toLowerCase().includes(q),
-    );
-  }, [listings, searchQuery]);
+    let result = listings;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (l) =>
+          l.fields.businessName.toLowerCase().includes(q) ||
+          l.fields.address.toLowerCase().includes(q),
+      );
+    }
+
+    if (actionFilter) {
+      result = result.filter((l) => l.fields.allActionNames.includes(actionFilter));
+    }
+
+    return result;
+  }, [listings, searchQuery, actionFilter]);
 
   const handleSelectListing = useCallback((id: string) => {
     setSelectedId(id);
@@ -98,6 +109,8 @@ export function DirectoryClient({ listings }: DirectoryClientProps) {
           onSelectListing={handleSelectListing}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          actionFilter={actionFilter}
+          onActionFilterChange={setActionFilter}
         />
       </div>
     </>

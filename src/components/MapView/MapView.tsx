@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Listing } from '@/lib/getListings';
+import type { ActionName } from '@/components/ActionIcon';
+import { getActionLabel, ALL_ACTIONS } from '@/components/ActionIcon';
 import styles from './MapView.module.scss';
 
 interface MapViewProps {
@@ -12,12 +14,36 @@ interface MapViewProps {
   onSelectListing: (id: string) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  actionFilter: ActionName | null;
+  onActionFilterChange: (action: ActionName | null) => void;
 }
 
-export function MapView({ listings, selectedId, onSelectListing, searchQuery, onSearchChange }: MapViewProps) {
+export function MapView({
+  listings,
+  selectedId,
+  onSelectListing,
+  searchQuery,
+  onSearchChange,
+  actionFilter,
+  onActionFilterChange,
+}: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
 
   // Initialize map
   useEffect(() => {
@@ -100,10 +126,57 @@ export function MapView({ listings, selectedId, onSelectListing, searchQuery, on
     <div ref={containerRef} className={styles.root}>
       {/* Floating search bar */}
       <div className={styles.searchBar}>
-        <button className={styles.intentPill} type="button" aria-label="Select action type">
-          <span className={styles.intentInner}>I want to</span>
-          <i className="fa-solid fa-chevron-down" aria-hidden="true" />
-        </button>
+        {/* "I want to" action filter dropdown */}
+        <div className={styles.intentPillWrapper} ref={dropdownRef}>
+          <button
+            className={`${styles.intentPill}${actionFilter ? ` ${styles.intentPillActive}` : ''}`}
+            type="button"
+            aria-label="Select action type"
+            aria-expanded={isDropdownOpen}
+            onClick={() => setIsDropdownOpen((v) => !v)}
+          >
+            <span className={styles.intentInner}>
+              {actionFilter ? getActionLabel(actionFilter) : 'I want to'}
+            </span>
+            <i
+              className={`fa-solid ${isDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}
+              aria-hidden="true"
+            />
+          </button>
+
+          {isDropdownOpen && (
+            <div className={styles.dropdown} role="listbox" aria-label="Filter by action">
+              {actionFilter && (
+                <button
+                  className={styles.dropdownClear}
+                  role="option"
+                  aria-selected={false}
+                  onClick={() => {
+                    onActionFilterChange(null);
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <i className="fa-solid fa-xmark" aria-hidden="true" />
+                  Clear filter
+                </button>
+              )}
+              {ALL_ACTIONS.map((action) => (
+                <button
+                  key={action}
+                  className={`${styles.dropdownItem}${actionFilter === action ? ` ${styles.dropdownItemActive}` : ''}`}
+                  role="option"
+                  aria-selected={actionFilter === action}
+                  onClick={() => {
+                    onActionFilterChange(action);
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  {getActionLabel(action)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         <label className={styles.searchInput}>
           <i className="fa-regular fa-magnifying-glass" aria-hidden="true" />
@@ -114,13 +187,7 @@ export function MapView({ listings, selectedId, onSelectListing, searchQuery, on
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </label>
-
-        <button className={styles.filtersButton} type="button">
-          <i className="fa-regular fa-sliders" aria-hidden="true" />
-          <span>Filters</span>
-        </button>
       </div>
     </div>
   );
 }
-

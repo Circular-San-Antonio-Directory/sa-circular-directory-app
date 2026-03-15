@@ -70,6 +70,12 @@
   z-index: 10;
 }
 
+// "I want to" wrapper — anchor for the dropdown
+.intentPillWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
 // "I want to" action selector pill
 .intentPill {
   display: flex;
@@ -88,6 +94,11 @@
     color: $text-inverse;
     font-size: 14px;
   }
+}
+
+// Active state when a filter is selected
+.intentPillActive {
+  background: $primary-hover; // $fern-900 — darker to indicate active filter
 }
 
 .intentInner {
@@ -142,30 +153,69 @@
   }
 }
 
-// Filters button
-.filtersButton {
+// Action filter dropdown
+.dropdown {
+  position: absolute;
+  top: calc(100% + $space-2); // 8px below the pill
+  left: 0;
+  min-width: 160px;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  z-index: 20;
+  padding: $space-2 0; // 8px vertical padding
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: $space-2 $space-4; // 8px 16px
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 400;
+  color: $text-default;
+  cursor: pointer;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.dropdownItemActive {
+  background: $surface-sunken;
+  font-weight: 500;
+  color: $primary-default;
+}
+
+.dropdownClear {
   display: flex;
   align-items: center;
-  gap: $space-2; // 8px — Figma: gap-10, nearest: $space-2
-  height: 44px;
-  padding: $space-3; // 12px
-  background: $surface-raised;
-  border: 1px solid $border-strong;
-  border-radius: $radius-sm; // 4px
+  gap: $space-2;
+  width: 100%;
+  padding: $space-2 $space-4;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  margin-bottom: $space-1;
+  text-align: left;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-subtle;
   cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
 
   i {
-    color: $text-default;
-    font-size: 16px;
+    font-size: 12px;
   }
 
-  span {
-    font-family: $font-body;
-    font-size: 16px;
-    font-weight: 500;
+  &:hover {
     color: $text-default;
-    letter-spacing: 0.16px;
+    background: $surface-sunken;
   }
 }
