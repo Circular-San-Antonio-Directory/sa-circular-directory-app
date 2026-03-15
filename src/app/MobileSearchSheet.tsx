@@ -102,7 +102,7 @@ export function MobileSearchSheet({
       }
     }
 
-    return [...businessResults, ...itemResults];
+    return [...businessResults, ...itemResults].slice(0, 5);
   }, [listings, categories, localSearch]);
 
   // ─── Live filtered count ──────────────────────────────────────────────────
