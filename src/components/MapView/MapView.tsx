@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
 import type { ActionName } from '@/components/ActionIcon';
