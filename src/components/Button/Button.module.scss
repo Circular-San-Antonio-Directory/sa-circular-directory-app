@@ -31,6 +31,10 @@
 //   bg active   #D8FAC2 → $fern-200
 //   text        #1E5751 → $text-link
 //   text disabled #A6A29A → $text-disabled
+//   padding     $space-4 (same as primary/secondary)
+//
+// GHOST-COMPACT
+//   same colors as ghost but padding: $space-2
 //
 // ACCENT
 //   bg default  #851926 → $secondary-default  (merlot-700)
@@ -108,9 +112,18 @@
 }
 
 .ghost {
-  padding: $space-2; // ghost uses tighter padding than default $space-4
   background-color: transparent;
-  color: $text-link;
+  color: $text-default;
+
+  &:hover:not(:disabled) { background-color: $surface-sunken; }
+  &:active:not(:disabled) { background-color: $fern-200; }
+  &:disabled { color: $text-disabled; }
+}
+
+.ghost-compact {
+  padding: $space-2;
+  background-color: transparent;
+  color: $text-default;
 
   &:hover:not(:disabled) { background-color: $surface-sunken; }
   &:active:not(:disabled) { background-color: $fern-200; }

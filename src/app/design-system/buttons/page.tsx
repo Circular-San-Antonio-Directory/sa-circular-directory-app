@@ -21,6 +21,11 @@ const variants = [
   {
     name: 'Ghost',
     variant: 'ghost' as const,
+    description: 'Transparent bg · no border · $text-link · hover: $surface-sunken · active: $fern-200 · padding: $space-4',
+  },
+  {
+    name: 'Ghost Compact',
+    variant: 'ghost-compact' as const,
     description: 'Transparent bg · no border · $text-link · hover: $surface-sunken · active: $fern-200 · padding: $space-2',
   },
   {
@@ -36,7 +41,7 @@ export default function ButtonsPage() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Buttons</h1>
         <p className={styles.pageDescription}>
-          Four variants — Primary, Secondary, Ghost, and Accent — each with default, hover, active, and disabled states.
+          Five variants — Primary, Secondary, Ghost, Ghost Compact, and Accent — each with default, hover, active, and disabled states.
           Use the <code>variant</code> prop to switch between them.
         </p>
       </div>

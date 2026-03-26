@@ -16,7 +16,7 @@
 
 .nav {
   // Mobile: sticky header bar
-  background: $surface-raised;
+  background: $surface-base;
   border-bottom: 1px solid $border-subtle;
   display: flex;
   align-items: center;
@@ -50,8 +50,8 @@
 }
 
 .logoWrapper {
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,10 +64,14 @@
   height: 44px;
 }
 
+.logoImgInverse {
+  filter: brightness(0) invert(1);
+}
+
 .wordmark {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0px;
   color: $text-default;
 }
 
@@ -108,16 +112,135 @@
   }
 }
 
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
 .joinLink {
+  text-decoration: none;
+}
+
+// --- Mobile menu overlay ---
+
+@keyframes menuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menuSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+.mobileMenu {
+  position: fixed;
+  inset: 0;
+  background: $primary-default;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  animation: menuSlideIn 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+.mobileMenuClosing {
+  animation: menuSlideOut 180ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.mobileHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px $space-4; // matches .nav mobile padding
+  flex-shrink: 0;
+}
+
+.wordmarkInverse {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  color: $text-inverse;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $text-inverse;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.mobileBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: $space-4 $space-4 $space-8;
+  min-height: 0;
+}
+
+.primaryLinks {
+  display: flex;
+  flex-direction: column;
+}
+
+.primaryItem {
+  @include type-hero-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 0;
+  border-bottom: 1px solid $primary-subtle;
+  color: $fern-200;
+  text-decoration: none;
+}
+
+.secondaryLinks {
+  display: flex;
+  flex-direction: column;
+}
+
+.secondaryItem {
+  @include type-heading-3;
+  font-weight: 400; // heading-3 mixin is 500; Figma uses regular weight here
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 0;
+  border-bottom: 1px solid $border-medium;
+  color: $text-inverse;
   text-decoration: none;
 }
 
 // --- Mobile hamburger button ---
 
 .menuBtn {
-  background: $surface-sunken;
-  border: 1px solid $border-medium;
-  border-radius: $radius-sm;
+  background: rgba(181, 169, 158, 0.3);
+  border: 0px;
+  border-radius: $radius-md;
   width: 44px;
   height: 44px;
   display: flex;

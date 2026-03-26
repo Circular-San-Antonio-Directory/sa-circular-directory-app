@@ -1,6 +1,6 @@
 import styles from './Button.module.scss';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'accent';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'ghost-compact' | 'accent';
 export type ButtonIconPosition = 'left' | 'right' | 'only';
 
 // Extends all native <button> attributes (onClick, disabled, type, aria-label, etc.)
