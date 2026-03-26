@@ -87,10 +87,10 @@ const ICON_MAP: Record<ActionName, { iconFile: string; label: string; colorFamil
 };
 
 export function getActionLabel(action: ActionName): string {
-  return ACTION_MAP[action].label;
+  return ICON_MAP[action].label;
 }
 
-export const ALL_ACTIONS = Object.keys(ACTION_MAP) as ActionName[];
+export const ALL_ACTIONS = Object.keys(ICON_MAP) as ActionName[];
 
 interface ActionIconProps {
   action: ActionName;
