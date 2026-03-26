@@ -1,5 +1,5 @@
 import styles from './ActionIcon.module.scss';
-import { ACTION_SVGS } from './ActionIconSVGs';
+import { ICON_SVGS } from './IconSVGs';
 
 export type ActionName =
   | 'donate'
@@ -48,7 +48,7 @@ const COLOR_VARS: Record<ColorFamily, { primary: string; secondary: string; ligh
     secondary: 'var(--spruce-400)',  
     lightBG: 'var(--spruce-300)' },
   orange:   { 
-    primary: 'var(--orange-600)',    
+    primary: 'var(--orange-700)',    
     secondary: 'var(--orange-400)',  
     lightBG: 'var(--orange-300)' },
   merlot:   { 
@@ -69,21 +69,21 @@ const COLOR_VARS: Record<ColorFamily, { primary: string; secondary: string; ligh
     lightBG: 'var(--mono-300)' },
 };
 
-const ACTION_MAP: Record<ActionName, { iconFile: string; label: string; colorFamily: ColorFamily }> = {
-  donate:      { iconFile: 'Action-3',  label: 'Donate',        colorFamily: 'blue' },
-  buy:         { iconFile: 'Action-10', label: 'Buy',           colorFamily: 'fern' },
-  buyB2B:      { iconFile: 'Action-10', label: 'Buy (B2B)',     colorFamily: 'mintChoc' },      // TODO: replace with real icon
-  sell:        { iconFile: 'Action-9',  label: 'Sell',          colorFamily: 'violet' },
-  consign:     { iconFile: 'Action-6',  label: 'Consign',       colorFamily: 'spruce' },
-  trade:       { iconFile: 'Action-4',  label: 'Trade',         colorFamily: 'violet' },
-  repair:      { iconFile: 'Action-5',  label: 'Repair',        colorFamily: 'orange' },
-  recycle:     { iconFile: 'Action-11', label: 'Recycle',       colorFamily: 'merlot' },
-  compost:     { iconFile: 'Action-7',  label: 'Compost',       colorFamily: 'blue' },
-  volunteer:   { iconFile: 'Action-8',  label: 'Volunteer',     colorFamily: 'fern' },
-  refill:      { iconFile: 'Action-2',  label: 'Refill',        colorFamily: 'mintChoc' },
-  rent:        { iconFile: 'Action-4',  label: 'Rent',          colorFamily: 'spruce' },    // TODO: replace with real icon
-  process:     { iconFile: 'Action-11', label: 'Process',       colorFamily: 'merlot' },   // TODO: replace with real icon
-  dineOrDrink: { iconFile: 'Action-1',  label: 'Dine or Drink', colorFamily: 'mono' }, // nearest token: offWhite-800 for primary; consider 'mono' if contrast is insufficient
+const ICON_MAP: Record<ActionName, { iconFile: string; label: string; colorFamily: ColorFamily }> = {
+  donate:      { iconFile: 'Icon-3',  label: 'Donate',        colorFamily: 'blue' },
+  buy:         { iconFile: 'Icon-6', label: 'Buy',           colorFamily: 'fern' },
+  buyB2B:      { iconFile: 'Icon-10', label: 'Buy (B2B)',     colorFamily: 'mintChoc' },      // TODO: replace with real icon
+  sell:        { iconFile: 'Icon-9',  label: 'Sell',          colorFamily: 'violet' },
+  consign:     { iconFile: 'Icon-12',  label: 'Consign',       colorFamily: 'spruce' },
+  trade:       { iconFile: 'Icon-4',  label: 'Trade',         colorFamily: 'violet' },
+  repair:      { iconFile: 'Icon-5',  label: 'Repair',        colorFamily: 'orange' },
+  recycle:     { iconFile: 'Icon-11', label: 'Recycle',       colorFamily: 'merlot' },
+  compost:     { iconFile: 'Icon-7',  label: 'Compost',       colorFamily: 'blue' },
+  volunteer:   { iconFile: 'Icon-8',  label: 'Volunteer',     colorFamily: 'mintChoc' },
+  refill:      { iconFile: 'Icon-2',  label: 'Refill',        colorFamily: 'mintChoc' },
+  rent:        { iconFile: 'Icon-4',  label: 'Rent',          colorFamily: 'spruce' },    // TODO: replace with real icon
+  process:     { iconFile: 'Icon-11', label: 'Process',       colorFamily: 'merlot' },   // TODO: replace with real icon
+  dineOrDrink: { iconFile: 'Icon-13',  label: 'Dine or Drink', colorFamily: 'orange' }, // nearest token: offWhite-800 for primary; consider 'mono' if contrast is insufficient
 };
 
 interface ActionIconProps {
@@ -92,9 +92,9 @@ interface ActionIconProps {
 }
 
 export function ActionIcon({ action, variant = 'icon' }: ActionIconProps) {
-  const { iconFile, label, colorFamily } = ACTION_MAP[action];
+  const { iconFile, label, colorFamily } = ICON_MAP[action];
   const { primary, secondary, lightBG } = COLOR_VARS[colorFamily];
-  const SvgIcon = ACTION_SVGS[iconFile];
+  const SvgIcon = ICON_SVGS[iconFile];
 
   if (variant === 'badge') {
     return (

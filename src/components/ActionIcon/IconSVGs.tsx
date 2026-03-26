@@ -3,8 +3,8 @@ export interface SVGIconProps {
   secondary?: string;
 }
 
-// Action-1 — dineOrDrink (2 colors: cross shape + bars)
-export function Action1({ primary, secondary }: SVGIconProps) {
+// Icon-1
+export function Icon1({ primary, secondary }: SVGIconProps) {
   const sec = secondary ?? primary;
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,8 +16,8 @@ export function Action1({ primary, secondary }: SVGIconProps) {
   );
 }
 
-// Action-2 — refill (2 colors: two interlocking S shapes)
-export function Action2({ primary, secondary }: SVGIconProps) {
+// Icon-2
+export function Icon2({ primary, secondary }: SVGIconProps) {
   const sec = secondary ?? primary;
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,8 +27,8 @@ export function Action2({ primary, secondary }: SVGIconProps) {
   );
 }
 
-// Action-3 — donate (1 color: radial arrow star)
-export function Action3({ primary }: SVGIconProps) {
+// Icon-3 — donate (1 color: radial arrow star)
+export function Icon3({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M7.82085 5.59315C7.74661 5.8226 7.42199 5.8226 7.34776 5.59315L5.8663 1.0141C5.81435 0.853523 5.93407 0.688952 6.10284 0.688952H9.06576C9.23453 0.688952 9.35426 0.853523 9.30231 1.0141L7.82085 5.59315Z" fill={primary} />
@@ -43,8 +43,8 @@ export function Action3({ primary }: SVGIconProps) {
   );
 }
 
-// Action-4 — trade / rent (2 colors: concentric gear/cog shapes)
-export function Action4({ primary, secondary }: SVGIconProps) {
+// Icon-4 — trade / rent (2 colors: concentric gear/cog shapes)
+export function Icon4({ primary, secondary }: SVGIconProps) {
   const sec = secondary ?? primary;
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,8 +55,8 @@ export function Action4({ primary, secondary }: SVGIconProps) {
   );
 }
 
-// Action-5 — repair (1 color: two mirrored bracket shapes)
-export function Action5({ primary }: SVGIconProps) {
+// Icon-5 — repair (1 color: two mirrored bracket shapes)
+export function Icon5({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M7.50268 4.18499L4.57208 1.24566C4.4024 1.07547 4.12688 1.07506 3.95669 1.24474L0.929988 4.26243L0.919647 4.25213L0.973696 10.7812L3.95713 13.7553C4.12733 13.9249 4.40286 13.9245 4.57253 13.7543L7.50288 10.8147L4.17775 7.50002L7.50268 4.18499Z" fill={primary} />
@@ -65,8 +65,8 @@ export function Action5({ primary }: SVGIconProps) {
   );
 }
 
-// Action-6 — consign (1 color: four-part circular shape)
-export function Action6({ primary }: SVGIconProps) {
+// Icon-6 — consign (1 color: four-part circular shape)
+export function Icon6({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M11.564 4.29016C13.2025 4.2902 14.5308 5.61849 14.5308 7.25696C14.5306 8.89524 13.2024 10.2237 11.564 10.2238C11.4958 10.2238 11.428 10.2195 11.3609 10.215V7.54016H8.61092C8.60207 7.44694 8.59726 7.35249 8.59724 7.25696C8.59724 5.61847 9.92555 4.29016 11.564 4.29016Z" fill={primary} />
@@ -77,8 +77,8 @@ export function Action6({ primary }: SVGIconProps) {
   );
 }
 
-// Action-7 — compost (1 color: three-arrow recycling symbol)
-export function Action7({ primary }: SVGIconProps) {
+// Icon-7 — compost (1 color: three-arrow recycling symbol)
+export function Icon7({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9.05846 10.9486C8.21244 10.5505 7.23293 10.5505 6.38692 10.9486L0.438178 13.748C0.278595 13.8231 0.332112 14.0625 0.508482 14.0625H14.9369C15.1133 14.0625 15.1668 13.8231 15.0072 13.748L9.05846 10.9486Z" fill={primary} />
@@ -88,8 +88,8 @@ export function Action7({ primary }: SVGIconProps) {
   );
 }
 
-// Action-8 — volunteer (1 color: abstract volunteer/person shape)
-export function Action8({ primary }: SVGIconProps) {
+// Icon-8 — volunteer (1 color: abstract volunteer/person shape)
+export function Icon8({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12.4846 13.8098C12.3891 13.9673 12.2183 14.0635 12.0342 14.0635H8.4451C8.28022 14.0635 8.12486 13.9863 8.0253 13.8548L5.53212 10.5634C5.26938 10.2165 5.51679 9.71875 5.95192 9.71875H14.0287C14.4391 9.71875 14.6918 10.1674 14.4791 10.5183L12.4846 13.8098ZM7.28579 4.98318C7.72094 4.98568 7.96548 5.4849 7.70072 5.83024L2.78644 12.2403C2.53673 12.5661 2.02693 12.4936 1.87783 12.1112L0.479591 8.5254C0.412688 8.35382 0.440268 8.15976 0.552324 8.01362L2.73602 5.16569C2.83633 5.03487 2.99211 4.95857 3.15696 4.95951L7.28579 4.98318ZM10.9231 1.07988C11.1071 1.08667 11.2742 1.18909 11.3638 1.34999L13.1097 4.48615C13.1899 4.63021 13.198 4.80351 13.1316 4.95443L11.4685 8.7342C11.2933 9.13249 10.738 9.15846 10.5263 8.77826L6.59713 1.72028C6.39751 1.36169 6.66658 0.922684 7.07671 0.93783L10.9231 1.07988Z" fill={primary} />
@@ -97,8 +97,8 @@ export function Action8({ primary }: SVGIconProps) {
   );
 }
 
-// Action-9 — sell (1 color: DNA/chain link shape)
-export function Action9({ primary }: SVGIconProps) {
+// Icon-9 — sell (1 color: DNA/chain link shape)
+export function Icon9({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M7.41634 1.98581C7.41634 3.69951 6.0271 5.08875 4.3134 5.08875H3.05545V4.04046C3.05545 2.32675 4.44468 0.937516 6.15839 0.937516H7.41634V1.98581Z" fill={primary} />
@@ -111,8 +111,8 @@ export function Action9({ primary }: SVGIconProps) {
   );
 }
 
-// Action-10 — buy / buyB2B (1 color: circular network/atom shape)
-export function Action10({ primary }: SVGIconProps) {
+// Icon-10 — buy / buyB2B (1 color: circular network/atom shape)
+export function Icon10({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M7.49976 0.9375C8.64213 0.9375 9.56897 1.86352 9.56909 3.00586C9.56909 3.81528 9.10365 4.51444 8.42608 4.85352C8.09784 5.01778 7.82104 5.31749 7.82104 5.68453C7.82104 6.25219 8.43063 6.61121 8.92708 6.33594L8.95169 6.3223C9.28846 6.13556 9.41646 5.72432 9.39395 5.33989C9.39159 5.29949 9.39039 5.25877 9.39038 5.21777C9.39038 4.07541 10.3164 3.14954 11.4587 3.14941C12.6012 3.14941 13.5271 4.07533 13.5271 5.21777C13.527 6.3601 12.6011 7.28613 11.4587 7.28613C11.0415 7.28609 10.6535 7.16222 10.3288 6.9495C10.032 6.75506 9.64967 6.66918 9.33936 6.84124L9.31104 6.85694C8.81455 7.13224 8.81461 7.84617 9.31115 8.12139C9.61922 8.29214 9.99924 8.20287 10.2893 8.00307C10.6218 7.77405 11.0245 7.6397 11.4587 7.63965C12.6012 7.63965 13.5271 8.56654 13.5271 9.70898C13.527 10.8513 12.6011 11.7773 11.4587 11.7773C10.3165 11.7772 9.39053 10.8512 9.39038 9.70898C9.39038 9.67798 9.39108 9.64714 9.39247 9.61648C9.40955 9.23892 9.27717 8.83645 8.94671 8.65304C8.4448 8.37449 7.82104 8.73343 7.82104 9.30746C7.82104 9.67854 8.10108 9.98145 8.43235 10.1487C9.10642 10.489 9.56891 11.1864 9.56909 11.9932C9.56909 13.1356 8.6422 14.0625 7.49976 14.0625C6.35746 14.0623 5.4314 13.1355 5.4314 11.9932C5.43157 11.1849 5.89556 10.4858 6.57159 10.1459C6.90114 9.98029 7.17944 9.67797 7.17944 9.30913C7.17944 8.7405 6.56888 8.37842 6.07152 8.65405C5.74216 8.83659 5.61694 9.23785 5.64107 9.61364C5.64384 9.65678 5.64525 9.70029 5.64526 9.74414C5.64526 10.8866 4.71935 11.8135 3.5769 11.8135C2.43446 11.8135 1.50854 10.8866 1.50854 9.74414C1.5088 8.60191 2.43462 7.67579 3.5769 7.67578C3.99882 7.67578 4.39128 7.80217 4.71847 8.01909C5.01064 8.2128 5.39249 8.29576 5.69908 8.12581C6.1953 7.85075 6.2039 7.1325 5.7077 6.85741C5.39719 6.68526 5.01396 6.77743 4.72334 6.98137C4.38873 7.21619 3.98178 7.35443 3.54175 7.35449C2.39939 7.35449 1.47255 6.42846 1.47241 5.28613C1.47241 4.14369 2.3993 3.21777 3.54175 3.21777C4.68405 3.21794 5.61011 4.14379 5.61011 5.28613C5.6101 5.31136 5.60962 5.33646 5.60867 5.36145C5.59438 5.73586 5.72283 6.13101 6.05053 6.31267L6.07968 6.32883C6.57335 6.60249 7.17944 6.24548 7.17944 5.68104C7.17944 5.31602 6.90422 5.01793 6.5775 4.85516C5.89819 4.51672 5.4314 3.81662 5.4314 3.00586C5.43152 1.86363 6.35754 0.937681 7.49976 0.9375Z" fill={primary} />
@@ -120,8 +120,8 @@ export function Action10({ primary }: SVGIconProps) {
   );
 }
 
-// Action-11 — recycle / process (1 color: four-part radial arrows)
-export function Action11({ primary }: SVGIconProps) {
+// Icon-11 — recycle / process (1 color: four-part radial arrows)
+export function Icon11({ primary }: SVGIconProps) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M5.30368 0.46875L2.02368 3.80948C2.39895 4.34275 3.89676 4.75159 4.99334 4.96748C5.44044 5.0555 5.89854 5.08381 6.35163 5.03521C9.50722 4.69672 10.8717 2.97963 11.1651 2.10875C7.88515 3.85808 5.89084 1.7443 5.30368 0.46875Z" fill={primary} />
@@ -132,16 +132,45 @@ export function Action11({ primary }: SVGIconProps) {
   );
 }
 
-export const ACTION_SVGS: Record<string, React.FC<SVGIconProps>> = {
-  'Action-1':  Action1,
-  'Action-2':  Action2,
-  'Action-3':  Action3,
-  'Action-4':  Action4,
-  'Action-5':  Action5,
-  'Action-6':  Action6,
-  'Action-7':  Action7,
-  'Action-8':  Action8,
-  'Action-9':  Action9,
-  'Action-10': Action10,
-  'Action-11': Action11,
+// Icon-12 
+export function Icon12({ primary }: SVGIconProps) {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.69756 0.566406H9.30245L8.56027 4.91349H6.43974L5.69756 0.566406Z" fill={primary}/>
+    <path d="M11.1283 1.32269L13.6773 3.87174L10.0787 6.42078L8.57923 4.92134L11.1283 1.32269Z" fill={primary}/>
+    <path d="M14.4336 5.69756V9.30246L10.0865 8.56027V6.43974L14.4336 5.69756Z" fill={primary}/>
+    <path d="M13.6773 11.1283L11.1283 13.6773L8.57923 10.0787L10.0787 8.57923L13.6773 11.1283Z" fill={primary}/>
+    <path d="M9.30245 14.4336L5.69756 14.4336L6.43974 10.0865H8.56027L9.30245 14.4336Z" fill={primary}/>
+    <path d="M3.87173 13.6773L1.32269 11.1283L4.92134 8.57923L6.42078 10.0787L3.87173 13.6773Z" fill={primary}/>
+    <path d="M0.566406 9.30245L0.566406 5.69756L4.91349 6.43974V8.56027L0.566406 9.30245Z" fill={primary}/>
+    <path d="M1.32269 3.87173L3.87174 1.32268L6.42078 4.92134L4.92134 6.42078L1.32269 3.87173Z" fill={primary}/>
+    </svg>
+  );
+}
+
+
+// Icon-13 
+export function Icon13({ primary }: SVGIconProps) {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.50006 0.462967C11.3865 0.463006 14.5372 3.61365 14.5372 7.50008C14.5371 11.3865 11.3865 14.5371 7.50006 14.5372C3.61364 14.5372 0.462991 11.3865 0.462952 7.50008C0.462952 3.61363 3.61361 0.462967 7.50006 0.462967ZM6.5733 7.91121C5.15691 8.15713 4.07939 9.39234 4.07916 10.879C4.07922 12.4906 5.34499 13.807 6.93658 13.8878C7.0217 13.8899 7.09186 13.8215 7.09186 13.7364V8.38777C7.09172 8.10009 6.85674 7.86217 6.5733 7.91121ZM8.42975 7.86629C8.14186 7.86629 7.90394 8.10218 7.95319 8.38582C8.19931 9.80215 9.43426 10.879 10.921 10.879C12.5326 10.8789 13.849 9.6132 13.9297 8.02156C13.9317 7.93659 13.8634 7.86633 13.7784 7.86629H8.42975ZM4.07916 4.03816C2.59254 4.03831 1.35742 5.11501 1.11139 6.53133C1.06215 6.81494 1.3001 7.05081 1.58795 7.05086H6.93658C7.0216 7.05086 7.08989 6.98053 7.08795 6.89558C7.00721 5.30393 5.69087 4.03822 4.07916 4.03816ZM8.42682 1.06941C8.14326 1.0203 7.90826 1.25913 7.90826 1.54695V6.89558C7.90838 6.98063 7.97849 7.04909 8.06354 7.04695C9.65503 6.96609 10.9208 5.64971 10.921 4.03816C10.921 2.55131 9.84336 1.31536 8.42682 1.06941Z" fill={primary}/>
+    </svg>
+  );
+}
+
+
+export const ICON_SVGS: Record<string, React.FC<SVGIconProps>> = {
+  'Icon-1':  Icon1,
+  'Icon-2':  Icon2,
+  'Icon-3':  Icon3,
+  'Icon-4':  Icon4,
+  'Icon-5':  Icon5,
+  'Icon-6':  Icon6,
+  'Icon-7':  Icon7,
+  'Icon-8':  Icon8,
+  'Icon-9':  Icon9,
+  'Icon-10': Icon10,
+  'Icon-11': Icon11,
+  'Icon-12': Icon12,
+  'Icon-13': Icon13,
 };
