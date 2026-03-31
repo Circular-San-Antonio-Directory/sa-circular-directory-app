@@ -12,26 +12,31 @@ const variants = [
     name: 'Primary',
     variant: 'primary' as const,
     description: '$primary-default bg · $text-inverse · hover: $primary-hover · active: $primary-active',
+    darkDescription: '$fern-600 bg · $text-inverse · hover: $fern-700 · active: $fern-500 · disabled: $primary-subtle + $mono-500',
   },
   {
     name: 'Secondary',
     variant: 'secondary' as const,
     description: 'Transparent bg · $border-strong border · $text-default · hover: $border-default · active: $fern-300',
+    darkDescription: 'Transparent bg · $border-subtle border · $text-inverse · hover: rgba(255,255,255,0.08) · active: $fern-200 · disabled: $text-subtle border',
   },
   {
     name: 'Ghost',
     variant: 'ghost' as const,
     description: 'Transparent bg · no border · $text-link · hover: $surface-sunken · active: $fern-200 · padding: $space-4',
+    darkDescription: 'Transparent bg · $text-inverse · hover: rgba(255,255,255,0.08) · active: $fern-200 · padding: $space-4',
   },
   {
     name: 'Ghost Compact',
     variant: 'ghost-compact' as const,
     description: 'Transparent bg · no border · $text-link · hover: $surface-sunken · active: $fern-200 · padding: $space-2',
+    darkDescription: 'Transparent bg · $text-inverse · hover: rgba(255,255,255,0.08) · active: $fern-200 · padding: $space-2',
   },
   {
     name: 'Accent',
     variant: 'accent' as const,
     description: '$secondary-default bg (merlot) · $text-inverse · hover: $secondary-hover · active: $secondary-active',
+    darkDescription: '$merlot-600 bg · $text-inverse · hover: $merlot-700 · active: $merlot-400 + $text-default · disabled: $merlot-500 + $mono-400',
   },
 ] as const;
 
@@ -62,6 +67,32 @@ export default function ButtonsPage() {
           <p className={styles.typeSpecs} style={{ marginTop: 'var(--space-3)' }}>{description}</p>
         </div>
       ))}
+
+      <div className={styles.section}>
+        <h2 className="heading-3">Dark Surface</h2>
+        <p className={styles.pageDescription}>
+          Use <code>surface=&quot;dark&quot;</code> when placing buttons on dark backgrounds.
+          All variants shift to lighter base colors with the same interaction logic.
+        </p>
+        {variants.map(({ name, variant, darkDescription }) => (
+          <div key={variant} className={styles.section}>
+            <p className={styles.sectionHeading}>{name}</p>
+            <div className={styles.darkSurface}>
+              <div className={styles.componentRow}>
+                <div className={styles.componentItem}>
+                  <Button variant={variant} surface="dark">Explore Systems</Button>
+                  <span className={styles.typeSpecs} style={{ color: 'var(--text-inverse)' }}>Default</span>
+                </div>
+                <div className={styles.componentItem}>
+                  <Button variant={variant} surface="dark" disabled>Explore Systems</Button>
+                  <span className={styles.typeSpecs} style={{ color: 'var(--text-inverse)' }}>Disabled</span>
+                </div>
+              </div>
+              <p className={styles.typeSpecs} style={{ color: 'var(--text-inverse)', marginTop: 'var(--space-3)' }}>{darkDescription}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div className={styles.section}>
         <h2 className="heading-3">Icons</h2>
