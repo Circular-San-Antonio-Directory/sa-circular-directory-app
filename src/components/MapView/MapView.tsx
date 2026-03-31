@@ -411,7 +411,10 @@ export function MapView({
           {/* Content column — stacks action label above input on mobile when filter is active */}
           <span className={styles.searchContent}>
             {actionFilter && (
-              <span className={styles.mobileActionLabel}>
+              <span
+                className={styles.mobileActionLabel}
+                style={{ color: `var(--${pillColorway}-700)` }}
+              >
                 {getActionLabel(actionFilter, actionsConfig)}
               </span>
             )}
@@ -430,14 +433,13 @@ export function MapView({
               }}
             />
           </span>
-          {/* X button — clears action filter (+ search) when filter active; clears search otherwise */}
-          {(searchQuery || actionFilter) && (
+          {/* X button — only visible when there is text in the search input */}
+          {searchQuery && (
             <button
               className={styles.clearInput}
               type="button"
               onMouseDown={(e) => {
                 e.preventDefault();
-                if (actionFilter) onActionFilterChange(null);
                 onSearchChange('');
                 setIsAutocompleteOpen(false);
               }}
