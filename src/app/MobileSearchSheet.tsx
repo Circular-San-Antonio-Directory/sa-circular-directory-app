@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { ALL_ACTIONS, getActionLabel } from '@/components/ActionIcon';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { getActionLabel, useActionsConfig } from '@/components/ActionIcon';
+import { getAvailableActions } from '@/lib/getAvailableActions';
+import { filterListings } from '@/lib/filterListings';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
@@ -52,19 +54,25 @@ export function MobileSearchSheet({
   listings,
   categories,
 }: Props) {
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const actionsConfig = useActionsConfig();
   const [localSearch, setLocalSearch] = useState(initialSearch);
   const [localActionFilter, setLocalActionFilter] = useState<ActionName | null>(initialActionFilter);
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
   // Set only when the user explicitly selects an item result from autocomplete
   const [selectedCategory, setSelectedCategory] = useState<{ category: string; faIcon: string | null } | null>(null);
 
-  // Sync local state when the sheet opens
+  // Sync local state when the sheet opens and focus the search input
   useEffect(() => {
     if (isOpen) {
       setLocalSearch(initialSearch);
       setLocalActionFilter(initialActionFilter);
       setSelectedCategory(null);
       setIsAutocompleteOpen(false);
+      // Delay focus slightly so the sheet slide-in animation has started
+      // before the mobile keyboard appears
+      const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, initialSearch, initialActionFilter]);
 
@@ -107,35 +115,19 @@ export function MobileSearchSheet({
 
   // ─── Live filtered count ──────────────────────────────────────────────────
 
-  const filteredCount = useMemo(() => {
-    let result = listings;
+  const filteredCount = useMemo(
+    () => filterListings(listings, categories, localSearch, localActionFilter).length,
+    [listings, categories, localSearch, localActionFilter],
+  );
 
-    if (localSearch.trim()) {
-      const q = localSearch.toLowerCase().trim();
-      const matchedCategoryNames = new Set(
-        categories
-          .filter((cat) => cat.items.some((item) => item.includes(q)))
-          .map((cat) => cat.category),
-      );
-      result = result.filter((l) => {
-        const nameOrAddress =
-          l.fields.businessName.toLowerCase().includes(q) ||
-          l.fields.address.toLowerCase().includes(q);
-        const categoryMatch = [
-          ...l.fields.inputCategories,
-          ...l.fields.outputCategories,
-          ...l.fields.serviceCategories,
-        ].some((cat) => matchedCategoryNames.has(cat));
-        return nameOrAddress || categoryMatch;
-      });
-    }
+  // ─── Available actions (based on search-filtered listings only) ──────────
+  // Excludes the action filter so users can still see which actions are possible
+  // for the current search query before committing to a filter.
 
-    if (localActionFilter) {
-      result = result.filter((l) => l.fields.allActionNames.includes(localActionFilter));
-    }
-
-    return result.length;
-  }, [listings, categories, localSearch, localActionFilter]);
+  const availableActions = useMemo(
+    () => getAvailableActions(listings, categories, localSearch),
+    [listings, categories, localSearch],
+  );
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
@@ -216,12 +208,12 @@ export function MobileSearchSheet({
             <div className={styles.searchInputWrapper}>
               <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
               <input
+                ref={searchInputRef}
                 type="text"
                 className={styles.searchInput}
                 placeholder="Item or category..."
                 value={localSearch}
                 onChange={(e) => handleLocalSearchChange(e.target.value)}
-                autoFocus={isOpen}
               />
               {localSearch && (
                 <button
@@ -296,16 +288,22 @@ export function MobileSearchSheet({
           <div className={styles.section}>
             <span className={`${styles.sectionLabel} label-small`}>I want to</span>
             <div className={styles.actionPills}>
-              {ALL_ACTIONS.map((action) => (
-                <button
-                  key={action}
-                  type="button"
-                  className={`${styles.actionPill} ${localActionFilter === action ? styles.actionPillActive : ''}`}
-                  onClick={() => toggleAction(action)}
-                >
-                  {getActionLabel(action)}
-                </button>
-              ))}
+              {actionsConfig
+                .filter(
+                  // Always keep the active filter visible; otherwise only show
+                  // actions present in the current search-filtered listings.
+                  ({ actionName }) => actionName === localActionFilter || availableActions.has(actionName),
+                )
+                .map(({ actionName, label }) => (
+                  <button
+                    key={actionName}
+                    type="button"
+                    className={`${styles.actionPill} ${localActionFilter === actionName ? styles.actionPillActive : ''}`}
+                    onClick={() => toggleAction(actionName)}
+                  >
+                    {label}
+                  </button>
+                ))}
             </div>
           </div>
 

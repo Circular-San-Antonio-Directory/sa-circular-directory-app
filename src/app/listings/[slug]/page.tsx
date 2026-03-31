@@ -2,6 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import { notFound } from 'next/navigation';
 import { getListings, slugify } from '@/lib/getListings';
+import { getActions } from '@/lib/getActions';
+import { ActionsProvider } from '@/components/ActionIcon';
 import { Nav } from '@/components/Nav';
 import styles from './page.module.scss';
 import { ListingContent } from './ListingContent';
@@ -12,7 +14,7 @@ interface Props {
 
 export default async function ListingPage({ params }: Props) {
   const { slug } = await params;
-  const listings = await getListings();
+  const [listings, actions] = await Promise.all([getListings(), getActions()]);
   const listing = listings.find(l => slugify(l.fields.businessName) === slug);
 
   if (!listing) notFound();
@@ -22,7 +24,9 @@ export default async function ListingPage({ params }: Props) {
       <div className={styles.navWrapper}>
         <Nav />
       </div>
-      <ListingContent listing={listing} />
+      <ActionsProvider actions={actions}>
+        <ListingContent listing={listing} />
+      </ActionsProvider>
     </div>
   );
 }

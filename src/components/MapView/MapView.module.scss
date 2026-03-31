@@ -4,6 +4,7 @@
 // root bg:              (transparent — map fills it)
 // map border:           $border-default (handled by parent .mapArea)
 // search bar bg:        $surface-sunken (#EEECE8)
+// mobile action label:  $text-subtle (mono-600, #6F6F6F)
 // search bar border:    $border-default
 // search bar radius:    $radius-lg (8px)
 // intent pill bg:       $primary-default ($fern-700, #1E5751)
@@ -58,20 +59,25 @@
 // --- Floating search bar ---
 
 .searchBar {
-  position: absolute;
-  top: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: $space-2; // 8px
-  align-items: center;
-  background: $surface-sunken;
-  border: 1px solid $border-default;
-  border-radius: $radius-lg; // 8px
-  padding: $space-3; // 12px
-  max-width: calc(100% - 32px);
-  box-shadow: 0 1px 2px rgba(10, 13, 18, 0.05);
-  z-index: 10;
+  // Hidden on mobile — replaced by the search bar in the page layout above the map
+  display: none;
+
+  @media (min-width: 1024px) {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: $space-2; // 8px
+    align-items: center;
+    background: $surface-sunken;
+    border: 1px solid $border-default;
+    border-radius: $radius-lg; // 8px
+    padding: $space-3; // 12px
+    max-width: calc(100% - 32px);
+    box-shadow: 0 1px 2px rgba(10, 13, 18, 0.05);
+    z-index: 10;
+  }
 }
 
 // "I want to" wrapper — anchor for the dropdown
@@ -85,6 +91,12 @@
 }
 
 // "I want to" action selector pill
+// Colors are driven by CSS custom properties set inline from the selected
+// action's colorway (or mono when nothing is selected):
+//   --pill-700  outer pill background (dark surface)
+//   --pill-300  inner text-area background (light surface)
+//   --pill-100  caret icon
+//   --pill-900  text on light surface
 .intentPill {
   display: flex;
   align-items: center;
@@ -92,22 +104,17 @@
   min-width: 134px;
   min-height: 44px;
   padding: 6px;
-  background: $primary-default;
+  background: var(--pill-700);
   border: none;
   border-radius: $radius-sm; // 4px
   cursor: pointer;
   flex-shrink: 0;
 
   i {
-    color: $text-inverse;
+    color: var(--pill-100);
     font-size: 14px;
     flex-shrink: 0;
   }
-}
-
-// Active state when a filter is selected
-.intentPillActive {
-  background: $primary-hover; // $fern-900 — darker to indicate active filter
 }
 
 .intentInner {
@@ -116,12 +123,12 @@
   align-items: center;
   justify-content: flex-start;
   padding: $space-2; // 8px
-  background: #c1f1a1; // $fern-300 — nearest token: TODO: add $fern-300 to token table
+  background: var(--pill-300);
   border-radius: 4px;
   font-family: $font-body;
   font-size: 16px;
   font-weight: 500;
-  color: #092620; // $fern-900
+  color: var(--pill-900);
   white-space: normal;
   line-height: 1.2;
 }
@@ -130,7 +137,7 @@
 .searchInput {
   display: flex;
   align-items: center;
-  gap: $space-2; // 8px (approx — Figma: gap-10)
+  gap: $space-2; // 8px
   flex: 1;
   height: 44px;
   padding: $space-3; // 12px
@@ -159,6 +166,80 @@
     &::placeholder {
       color: $text-disabled;
     }
+  }
+}
+
+// Named class for the magnifying glass so .searchInputWithAction can target it
+.searchIcon {
+  flex-shrink: 0;
+}
+
+// Groups action label + input in a vertical column; is itself a flex item of .searchInput
+.searchContent {
+  flex: 1;
+  min-width: 0;
+
+  input {
+    display: block;
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: $font-body;
+    font-size: 16px;
+    font-weight: 500;
+    color: $text-default;
+    outline: none;
+
+    &::placeholder {
+      color: $text-disabled;
+    }
+  }
+}
+
+// Action filter label — mobile only, stacked above the search input
+// token: $text-subtle (mono-600, #6F6F6F)
+.mobileActionLabel {
+  display: none; // hidden on desktop — the "I want to" pill covers this
+
+  @media (max-width: 1023px) {
+    display: block;
+    font-family: $font-body;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: $text-subtle; // mono-600 (#6F6F6F)
+  }
+}
+
+// Modifier on .searchInput when action filter is active — mobile only layout change
+.searchInputWithAction {
+  @media (max-width: 1023px) {
+    height: auto;
+    min-height: 44px;
+    padding-top: $space-2;    // 8px — tighter vertical padding to fit two lines
+    padding-bottom: $space-2;
+
+    .searchIcon {
+      display: none; // Figma: no magnifying glass in stacked state
+    }
+  }
+}
+
+// Clear search button — visible only when input has text
+.clearInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: $text-subtle;
+  font-size: 14px;
+  flex-shrink: 0;
+  padding: $space-1;
+
+  &:hover {
+    color: $text-default;
   }
 }
 

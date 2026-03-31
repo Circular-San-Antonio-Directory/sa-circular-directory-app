@@ -5,7 +5,8 @@ import mapboxgl from 'mapbox-gl';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
 import type { ActionName } from '@/components/ActionIcon';
-import { getActionLabel, ALL_ACTIONS } from '@/components/ActionIcon';
+import { getActionLabel, useActionsConfig } from '@/components/ActionIcon';
+import { getAvailableActions } from '@/lib/getAvailableActions';
 import styles from './MapView.module.scss';
 
 // ─── Autocomplete types ───────────────────────────────────────────────────────
@@ -75,6 +76,8 @@ export function MapView({
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
   const listingsByIdRef = useRef<Map<string, Listing>>(new Map());
 
+  const actionsConfig = useActionsConfig();
+
   // Action filter dropdown
   const [isActionDropdownOpen, setIsActionDropdownOpen] = useState(false);
   const actionDropdownRef = useRef<HTMLDivElement>(null);
@@ -120,6 +123,13 @@ export function MapView({
 
     return [...businessResults, ...itemResults];
   }, [listings, categories, searchQuery]);
+
+  // Available actions — restricted to those present in search-filtered listings.
+  // The currently active filter is always included so it stays visible in the dropdown.
+  const availableActions = useMemo(
+    () => getAvailableActions(listings, categories, searchQuery),
+    [listings, categories, searchQuery],
+  );
 
   // Default suggestions shown when focused with an empty query and no recents
   const defaultSuggestions = useMemo((): AutocompleteResult[] => {
@@ -310,6 +320,21 @@ export function MapView({
     }
   }, [selectedId]);
 
+  // ─── Intent pill color vars ───────────────────────────────────────────────────
+  // Use the selected action's colorway at fixed tones; fall back to mono when
+  // nothing is selected. Applied as CSS custom properties on the button element.
+
+  const pillColorway = actionFilter
+    ? (actionsConfig.find((a) => a.actionName === actionFilter)?.colorway ?? 'mono')
+    : 'mono';
+
+  const pillVars = {
+    '--pill-700': `var(--${pillColorway}-700)`, // outer pill background
+    '--pill-300': `var(--${pillColorway}-300)`, // inner text-area background
+    '--pill-100': `var(--${pillColorway}-100)`, // caret icon
+    '--pill-900': `var(--${pillColorway}-900)`, // text on light surface
+  } as React.CSSProperties;
+
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   return (
@@ -320,7 +345,8 @@ export function MapView({
         {/* "I want to" action filter dropdown */}
         <div className={styles.intentPillWrapper} ref={actionDropdownRef}>
           <button
-            className={`${styles.intentPill}${actionFilter ? ` ${styles.intentPillActive}` : ''}`}
+            className={styles.intentPill}
+            style={pillVars}
             type="button"
             aria-label="Select action type"
             aria-expanded={isActionDropdownOpen}
@@ -330,7 +356,7 @@ export function MapView({
             }}
           >
             <span className={styles.intentInner}>
-              {actionFilter ? getActionLabel(actionFilter) : 'I want to'}
+              {actionFilter ? getActionLabel(actionFilter, actionsConfig) : 'I want to'}
             </span>
             <i
               className={`fa-solid ${isActionDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}
@@ -354,41 +380,74 @@ export function MapView({
                   Clear filter
                 </button>
               )}
-              {ALL_ACTIONS.map((action) => (
-                <button
-                  key={action}
-                  className={`${styles.dropdownItem}${actionFilter === action ? ` ${styles.dropdownItemActive}` : ''}`}
-                  role="option"
-                  aria-selected={actionFilter === action}
-                  onClick={() => {
-                    onActionFilterChange(action);
-                    setIsActionDropdownOpen(false);
-                  }}
-                >
-                  {getActionLabel(action)}
-                </button>
-              ))}
+              {actionsConfig
+                .filter(
+                  // Always keep the active filter visible; otherwise only show
+                  // actions present in the current search-filtered listings.
+                  ({ actionName }) => actionName === actionFilter || availableActions.has(actionName),
+                )
+                .map(({ actionName, label }) => (
+                  <button
+                    key={actionName}
+                    className={`${styles.dropdownItem}${actionFilter === actionName ? ` ${styles.dropdownItemActive}` : ''}`}
+                    role="option"
+                    aria-selected={actionFilter === actionName}
+                    onClick={() => {
+                      onActionFilterChange(actionName);
+                      setIsActionDropdownOpen(false);
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
             </div>
           )}
         </div>
 
         {/* Search input */}
-        <label className={styles.searchInput}>
-          <i className="fa-regular fa-magnifying-glass" aria-hidden="true" />
-          <input
-            type="text"
-            placeholder="Item or category..."
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            onFocus={(e) => {
-              if (onMobileSearchOpen && window.innerWidth < 1024) {
-                e.currentTarget.blur();
-                onMobileSearchOpen();
-              } else {
-                setIsAutocompleteOpen(true);
-              }
-            }}
-          />
+        <label className={`${styles.searchInput}${actionFilter ? ` ${styles.searchInputWithAction}` : ''}`}>
+          {/* Magnifying glass — hidden on mobile when action filter active (Figma: no icon in that state) */}
+          <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`} aria-hidden="true" />
+          {/* Content column — stacks action label above input on mobile when filter is active */}
+          <span className={styles.searchContent}>
+            {actionFilter && (
+              <span
+                className={styles.mobileActionLabel}
+                style={{ color: `var(--${pillColorway}-700)` }}
+              >
+                {getActionLabel(actionFilter, actionsConfig)}
+              </span>
+            )}
+            <input
+              type="text"
+              placeholder="Item or category..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={(e) => {
+                if (onMobileSearchOpen && window.innerWidth < 1024) {
+                  e.currentTarget.blur();
+                  onMobileSearchOpen();
+                } else {
+                  setIsAutocompleteOpen(true);
+                }
+              }}
+            />
+          </span>
+          {/* X button — only visible when there is text in the search input */}
+          {searchQuery && (
+            <button
+              className={styles.clearInput}
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onSearchChange('');
+                setIsAutocompleteOpen(false);
+              }}
+              aria-label="Clear search"
+            >
+              <i className="fa-solid fa-xmark" aria-hidden="true" />
+            </button>
+          )}
         </label>
 
         {/* Autocomplete dropdown — position: absolute relative to .searchBar */}

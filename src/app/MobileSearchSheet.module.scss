@@ -14,8 +14,8 @@
 // search input shadow:    $shadow-sm
 // search icon:            $text-disabled
 // clear input icon:       $text-subtle
-// category badge bg:      var(--spruce-100)
-// category badge text:    var(--spruce-700)
+// category badge bg:      $surface-sunken (offWhite-300)
+// category badge text:    $text-subtle (mono-600)
 // action pill bg:         $surface-base
 // action pill border:     $border-default
 // action pill active bg:  $primary-default
@@ -201,8 +201,8 @@
   align-items: center;
   gap: $space-2;
   padding: $space-1 $space-3; // 4px 12px
-  background: var(--spruce-100);
-  color: var(--spruce-700);
+  background: $surface-sunken;
+  color: $text-subtle;
   border-radius: $radius-lg; // 8px
   font-family: $font-body;
   font-size: 14px;

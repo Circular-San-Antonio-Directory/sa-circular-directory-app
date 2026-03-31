@@ -66,6 +66,8 @@ CREATE TABLE business_actions (
   action VARCHAR(200) NOT NULL,
   corresponding_action VARCHAR(100),   -- User-facing label (e.g. "Donate", "Buy")
   display_order INTEGER,               -- Order for display in UI (from Airtable "Order for Display")
+  icon_file VARCHAR(50),               -- SVG icon key, e.g. "Icon-3" (synced from Airtable "Icon to Use")
+  colorway VARCHAR(50),                -- Color family token, e.g. "blue", "fern" (synced from Airtable "Colorway")
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
