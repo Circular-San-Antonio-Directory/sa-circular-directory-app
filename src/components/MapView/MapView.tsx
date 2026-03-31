@@ -6,6 +6,7 @@ import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
 import type { ActionName } from '@/components/ActionIcon';
 import { getActionLabel, ALL_ACTIONS } from '@/components/ActionIcon';
+import { getAvailableActions } from '@/lib/getAvailableActions';
 import styles from './MapView.module.scss';
 
 // ─── Autocomplete types ───────────────────────────────────────────────────────
@@ -120,6 +121,13 @@ export function MapView({
 
     return [...businessResults, ...itemResults];
   }, [listings, categories, searchQuery]);
+
+  // Available actions — restricted to those present in search-filtered listings.
+  // The currently active filter is always included so it stays visible in the dropdown.
+  const availableActions = useMemo(
+    () => getAvailableActions(listings, categories, searchQuery),
+    [listings, categories, searchQuery],
+  );
 
   // Default suggestions shown when focused with an empty query and no recents
   const defaultSuggestions = useMemo((): AutocompleteResult[] => {
@@ -354,7 +362,11 @@ export function MapView({
                   Clear filter
                 </button>
               )}
-              {ALL_ACTIONS.map((action) => (
+              {ALL_ACTIONS.filter(
+                // Always keep the active filter visible; otherwise only show
+                // actions present in the current search-filtered listings.
+                (action) => action === actionFilter || availableActions.has(action),
+              ).map((action) => (
                 <button
                   key={action}
                   className={`${styles.dropdownItem}${actionFilter === action ? ` ${styles.dropdownItemActive}` : ''}`}

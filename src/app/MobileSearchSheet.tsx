@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_ACTIONS, getActionLabel } from '@/components/ActionIcon';
+import { getAvailableActions } from '@/lib/getAvailableActions';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
@@ -141,6 +142,15 @@ export function MobileSearchSheet({
 
     return result.length;
   }, [listings, categories, localSearch, localActionFilter]);
+
+  // ─── Available actions (based on search-filtered listings only) ──────────
+  // Excludes the action filter so users can still see which actions are possible
+  // for the current search query before committing to a filter.
+
+  const availableActions = useMemo(
+    () => getAvailableActions(listings, categories, localSearch),
+    [listings, categories, localSearch],
+  );
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
@@ -301,7 +311,11 @@ export function MobileSearchSheet({
           <div className={styles.section}>
             <span className={`${styles.sectionLabel} label-small`}>I want to</span>
             <div className={styles.actionPills}>
-              {ALL_ACTIONS.map((action) => (
+              {ALL_ACTIONS.filter(
+                // Always keep the active filter visible; otherwise only show
+                // actions present in the current search-filtered listings.
+                (action) => action === localActionFilter || availableActions.has(action),
+              ).map((action) => (
                 <button
                   key={action}
                   type="button"
