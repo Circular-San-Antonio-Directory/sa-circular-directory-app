@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ActionIcon } from '@/components/ActionIcon';
+import { ActionIcon, useActionsConfig, getActionLabel } from '@/components/ActionIcon';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
@@ -30,6 +30,11 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
 
+  const actionsConfig = useActionsConfig();
+  const pillColorway = actionFilter
+    ? (actionsConfig.find((a) => a.actionName === actionFilter)?.colorway ?? 'mono')
+    : 'mono';
+
   const filteredListings = useMemo(
     () => filterListings(listings, categories, searchQuery, actionFilter),
     [listings, categories, searchQuery, actionFilter],
@@ -45,6 +50,50 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
 
   return (
     <>
+      {/* Mobile search bar — sits below nav, above map; desktop hidden */}
+      <div className={styles.mobileSearchBar}>
+        <div
+          className={styles.mobileSearchField}
+          role="button"
+          tabIndex={0}
+          onClick={() => setIsMobileSearchOpen(true)}
+          onKeyDown={(e) => e.key === 'Enter' && setIsMobileSearchOpen(true)}
+        >
+          <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
+          <span className={styles.mobileSearchContent}>
+            {actionFilter && (
+              <span
+                className={styles.mobileSearchAction}
+                style={{ color: `var(--${pillColorway}-700)` }}
+              >
+                {getActionLabel(actionFilter, actionsConfig)}
+              </span>
+            )}
+            {searchQuery ? (
+              <span className={styles.mobileSearchText}>{searchQuery}</span>
+            ) : (
+              <span className={`${styles.mobileSearchText} ${styles.mobileSearchPlaceholder}`}>
+                {actionFilter ? 'Any item or category...' : 'Search items, categories...'}
+              </span>
+            )}
+          </span>
+          {(searchQuery || actionFilter) && (
+            <button
+              type="button"
+              className={styles.mobileClearBtn}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSearchQuery('');
+                setActionFilter(null);
+              }}
+              aria-label="Clear search"
+            >
+              <i className="fa-solid fa-xmark" aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Sidebar — desktop only */}
       <aside className={styles.sidebar}>
         <div className={styles.countPill}>

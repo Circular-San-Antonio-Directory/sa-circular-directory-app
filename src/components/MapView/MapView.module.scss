@@ -59,20 +59,25 @@
 // --- Floating search bar ---
 
 .searchBar {
-  position: absolute;
-  top: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: $space-2; // 8px
-  align-items: center;
-  background: $surface-sunken;
-  border: 1px solid $border-default;
-  border-radius: $radius-lg; // 8px
-  padding: $space-3; // 12px
-  max-width: calc(100% - 32px);
-  box-shadow: 0 1px 2px rgba(10, 13, 18, 0.05);
-  z-index: 10;
+  // Hidden on mobile — replaced by the search bar in the page layout above the map
+  display: none;
+
+  @media (min-width: 1024px) {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: $space-2; // 8px
+    align-items: center;
+    background: $surface-sunken;
+    border: 1px solid $border-default;
+    border-radius: $radius-lg; // 8px
+    padding: $space-3; // 12px
+    max-width: calc(100% - 32px);
+    box-shadow: 0 1px 2px rgba(10, 13, 18, 0.05);
+    z-index: 10;
+  }
 }
 
 // "I want to" wrapper — anchor for the dropdown
