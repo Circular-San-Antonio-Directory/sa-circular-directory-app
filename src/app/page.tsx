@@ -1,13 +1,19 @@
 import { Nav } from '@/components/Nav';
 import { getListings } from '@/lib/getListings';
 import { getCategories } from '@/lib/getCategories';
+import { getActions } from '@/lib/getActions';
+import { ActionsProvider } from '@/components/ActionIcon';
 import { DirectoryClient } from './DirectoryClient';
 import styles from './page.module.scss';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [listings, categories] = await Promise.all([getListings(), getCategories()]);
+  const [listings, categories, actions] = await Promise.all([
+    getListings(),
+    getCategories(),
+    getActions(),
+  ]);
 
   return (
     <div className={styles.page}>
@@ -17,7 +23,9 @@ export default async function Home() {
         <Nav />
 
         <div className={styles.contentArea}>
-          <DirectoryClient listings={listings} categories={categories} />
+          <ActionsProvider actions={actions}>
+            <DirectoryClient listings={listings} categories={categories} />
+          </ActionsProvider>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ALL_ACTIONS, getActionLabel } from '@/components/ActionIcon';
+import { getActionLabel, useActionsConfig } from '@/components/ActionIcon';
 import { getAvailableActions } from '@/lib/getAvailableActions';
 import { filterListings } from '@/lib/filterListings';
 import type { ActionName } from '@/components/ActionIcon';
@@ -55,6 +55,7 @@ export function MobileSearchSheet({
   categories,
 }: Props) {
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const actionsConfig = useActionsConfig();
   const [localSearch, setLocalSearch] = useState(initialSearch);
   const [localActionFilter, setLocalActionFilter] = useState<ActionName | null>(initialActionFilter);
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
@@ -287,20 +288,22 @@ export function MobileSearchSheet({
           <div className={styles.section}>
             <span className={`${styles.sectionLabel} label-small`}>I want to</span>
             <div className={styles.actionPills}>
-              {ALL_ACTIONS.filter(
-                // Always keep the active filter visible; otherwise only show
-                // actions present in the current search-filtered listings.
-                (action) => action === localActionFilter || availableActions.has(action),
-              ).map((action) => (
-                <button
-                  key={action}
-                  type="button"
-                  className={`${styles.actionPill} ${localActionFilter === action ? styles.actionPillActive : ''}`}
-                  onClick={() => toggleAction(action)}
-                >
-                  {getActionLabel(action)}
-                </button>
-              ))}
+              {actionsConfig
+                .filter(
+                  // Always keep the active filter visible; otherwise only show
+                  // actions present in the current search-filtered listings.
+                  ({ actionName }) => actionName === localActionFilter || availableActions.has(actionName),
+                )
+                .map(({ actionName, label }) => (
+                  <button
+                    key={actionName}
+                    type="button"
+                    className={`${styles.actionPill} ${localActionFilter === actionName ? styles.actionPillActive : ''}`}
+                    onClick={() => toggleAction(actionName)}
+                  >
+                    {label}
+                  </button>
+                ))}
             </div>
           </div>
 

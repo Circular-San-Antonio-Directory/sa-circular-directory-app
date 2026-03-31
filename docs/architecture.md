@@ -96,7 +96,7 @@ Airtable is **read-only from the app's perspective.** All data edits happen in A
 | Airtable Table | Postgres Table | Notes |
 |---|---|---|
 | `Production DB` | `businesses` | Main listing records |
-| `Business Actions` | `business_actions` | Has `Corresponding Action` (user-facing label) and `Order for Display` (sort order) |
+| `Business Actions` | `business_actions` | Has `Corresponding Action` (user-facing label), `Order for Display` (sort order), `Icon to Use` (SVG icon key), and `Colorway` (color family token) |
 | `Categories` | `categories` | Has `Items` (comma-separated item strings) and `FA Icon` (Font Awesome icon name, no prefix) |
 | `Business Type` | `business_types` | |
 | `Core Material System` | `core_material_systems` | |
@@ -160,7 +160,8 @@ Schema is managed with plain SQL migration files in `migrations/`. There is no O
 
 - **PostgreSQL arrays for relationships** — instead of junction tables, `businesses` stores `input_action_ids INTEGER[]`, `tag_ids INTEGER[]`, etc. GIN indexes enable fast array searches.
 - **`businesses_complete` view** — joins all array columns to their name strings; this is what `getListings()` queries. Action name arrays are ordered by `business_actions.display_order`.
-- **Action name mapping** — `src/lib/actionMapping.ts` maps Airtable action strings to the app's `ActionName` type. `ACTION_ORDER` in `src/lib/getListings.ts` controls display sort order and should mirror `Order for Display` in the `Business Actions` Airtable table.
+- **Action name mapping** — `src/lib/actionMapping.ts` maps Airtable action strings to the app's `ActionName` type. `ACTION_ORDER` in `src/lib/getListings.ts` controls the sort order of `allActionNames` on each listing and should mirror `Order for Display` in Airtable.
+- **Action UI config** — icon file and color family are now synced from Airtable (`Icon to Use` → `icon_file`, `Colorway` → `colorway`) and read at runtime via `src/lib/getActions.ts`. `ActionsContext` (a React context) provides this config to all client components so `ActionIcon`, dropdowns, and pills are driven by DB data rather than hardcoded constants. To change an icon or color, update the Airtable row and re-sync.
 - **`CREATE OR REPLACE VIEW` column ordering** — PostgreSQL does not allow changing or inserting column positions in an existing view. New columns must always be appended at the end of the SELECT list. Inserting a column in the middle causes a fatal error: `cannot change name of view column 'X' to 'Y'`. When recreating `businesses_complete`, always append new columns after the last existing column.
 - **`categories.items`** — stored as a comma-separated string in PostgreSQL (mirroring Airtable). `getCategories()` parses them into a lowercased string array. Search matching is done by substring (`item.includes(query)`), not exact match.
 

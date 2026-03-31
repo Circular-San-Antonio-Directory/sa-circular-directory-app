@@ -5,7 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
 import type { ActionName } from '@/components/ActionIcon';
-import { getActionLabel, ALL_ACTIONS } from '@/components/ActionIcon';
+import { getActionLabel, useActionsConfig } from '@/components/ActionIcon';
 import { getAvailableActions } from '@/lib/getAvailableActions';
 import styles from './MapView.module.scss';
 
@@ -75,6 +75,8 @@ export function MapView({
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
   const listingsByIdRef = useRef<Map<string, Listing>>(new Map());
+
+  const actionsConfig = useActionsConfig();
 
   // Action filter dropdown
   const [isActionDropdownOpen, setIsActionDropdownOpen] = useState(false);
@@ -338,7 +340,7 @@ export function MapView({
             }}
           >
             <span className={styles.intentInner}>
-              {actionFilter ? getActionLabel(actionFilter) : 'I want to'}
+              {actionFilter ? getActionLabel(actionFilter, actionsConfig) : 'I want to'}
             </span>
             <i
               className={`fa-solid ${isActionDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}
@@ -362,24 +364,26 @@ export function MapView({
                   Clear filter
                 </button>
               )}
-              {ALL_ACTIONS.filter(
-                // Always keep the active filter visible; otherwise only show
-                // actions present in the current search-filtered listings.
-                (action) => action === actionFilter || availableActions.has(action),
-              ).map((action) => (
-                <button
-                  key={action}
-                  className={`${styles.dropdownItem}${actionFilter === action ? ` ${styles.dropdownItemActive}` : ''}`}
-                  role="option"
-                  aria-selected={actionFilter === action}
-                  onClick={() => {
-                    onActionFilterChange(action);
-                    setIsActionDropdownOpen(false);
-                  }}
-                >
-                  {getActionLabel(action)}
-                </button>
-              ))}
+              {actionsConfig
+                .filter(
+                  // Always keep the active filter visible; otherwise only show
+                  // actions present in the current search-filtered listings.
+                  ({ actionName }) => actionName === actionFilter || availableActions.has(actionName),
+                )
+                .map(({ actionName, label }) => (
+                  <button
+                    key={actionName}
+                    className={`${styles.dropdownItem}${actionFilter === actionName ? ` ${styles.dropdownItemActive}` : ''}`}
+                    role="option"
+                    aria-selected={actionFilter === actionName}
+                    onClick={() => {
+                      onActionFilterChange(actionName);
+                      setIsActionDropdownOpen(false);
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
             </div>
           )}
         </div>
@@ -392,7 +396,7 @@ export function MapView({
           <span className={styles.searchContent}>
             {actionFilter && (
               <span className={styles.mobileActionLabel}>
-                {getActionLabel(actionFilter)}
+                {getActionLabel(actionFilter, actionsConfig)}
               </span>
             )}
             <input
