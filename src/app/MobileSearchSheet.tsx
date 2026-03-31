@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_ACTIONS, getActionLabel } from '@/components/ActionIcon';
 import { getAvailableActions } from '@/lib/getAvailableActions';
+import { filterListings } from '@/lib/filterListings';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
@@ -113,35 +114,10 @@ export function MobileSearchSheet({
 
   // ─── Live filtered count ──────────────────────────────────────────────────
 
-  const filteredCount = useMemo(() => {
-    let result = listings;
-
-    if (localSearch.trim()) {
-      const q = localSearch.toLowerCase().trim();
-      const matchedCategoryNames = new Set(
-        categories
-          .filter((cat) => cat.items.some((item) => item.includes(q)))
-          .map((cat) => cat.category),
-      );
-      result = result.filter((l) => {
-        const nameOrAddress =
-          l.fields.businessName.toLowerCase().includes(q) ||
-          l.fields.address.toLowerCase().includes(q);
-        const categoryMatch = [
-          ...l.fields.inputCategories,
-          ...l.fields.outputCategories,
-          ...l.fields.serviceCategories,
-        ].some((cat) => matchedCategoryNames.has(cat));
-        return nameOrAddress || categoryMatch;
-      });
-    }
-
-    if (localActionFilter) {
-      result = result.filter((l) => l.fields.allActionNames.includes(localActionFilter));
-    }
-
-    return result.length;
-  }, [listings, categories, localSearch, localActionFilter]);
+  const filteredCount = useMemo(
+    () => filterListings(listings, categories, localSearch, localActionFilter).length,
+    [listings, categories, localSearch, localActionFilter],
+  );
 
   // ─── Available actions (based on search-filtered listings only) ──────────
   // Excludes the action filter so users can still see which actions are possible

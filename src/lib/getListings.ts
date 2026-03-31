@@ -52,6 +52,11 @@ export interface Listing {
     serviceNotes: string;
     volunteerOpportunities: boolean;
     volunteerNotes: string;
+    // Derived per-group: used for cross-group filtering (action must belong to
+    // the same group as the matched category — prevents false positives).
+    inputActionNames: ActionName[];
+    outputActionNames: ActionName[];
+    serviceActionNames: ActionName[];
     // Derived: all input + output + service actions mapped to ActionName
     allActionNames: ActionName[];
   };
@@ -188,6 +193,9 @@ function rowToListing(row: BusinessRow): Listing {
       serviceNotes:            toStr(row.service_notes),
       volunteerOpportunities:  row.volunteer_opportunities ?? false,
       volunteerNotes:          toStr(row.volunteer_notes),
+      inputActionNames:        inputActions,
+      outputActionNames:       outputActions,
+      serviceActionNames:      serviceActions,
       allActionNames,
     },
   };
