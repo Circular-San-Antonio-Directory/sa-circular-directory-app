@@ -219,6 +219,12 @@
   gap: $space-3;
 }
 
+.darkSurface {
+  background-color: $mono-900; // #000000 — matches Figma dark surface frame bg
+  border-radius: $radius-lg;
+  padding: $space-6;
+}
+
 // ————————————————————————————————————————————————
 // ICONOGRAPHY
 // ————————————————————————————————————————————————
