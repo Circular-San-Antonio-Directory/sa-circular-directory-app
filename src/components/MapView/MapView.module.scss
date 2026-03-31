@@ -86,6 +86,12 @@
 }
 
 // "I want to" action selector pill
+// Colors are driven by CSS custom properties set inline from the selected
+// action's colorway (or mono when nothing is selected):
+//   --pill-700  outer pill background (dark surface)
+//   --pill-300  inner text-area background (light surface)
+//   --pill-100  caret icon
+//   --pill-900  text on light surface
 .intentPill {
   display: flex;
   align-items: center;
@@ -93,22 +99,17 @@
   min-width: 134px;
   min-height: 44px;
   padding: 6px;
-  background: $primary-default;
+  background: var(--pill-700);
   border: none;
   border-radius: $radius-sm; // 4px
   cursor: pointer;
   flex-shrink: 0;
 
   i {
-    color: $text-inverse;
+    color: var(--pill-100);
     font-size: 14px;
     flex-shrink: 0;
   }
-}
-
-// Active state when a filter is selected
-.intentPillActive {
-  background: $primary-hover; // $fern-900 — darker to indicate active filter
 }
 
 .intentInner {
@@ -117,12 +118,12 @@
   align-items: center;
   justify-content: flex-start;
   padding: $space-2; // 8px
-  background: #c1f1a1; // $fern-300 — nearest token: TODO: add $fern-300 to token table
+  background: var(--pill-300);
   border-radius: 4px;
   font-family: $font-body;
   font-size: 16px;
   font-weight: 500;
-  color: #092620; // $fern-900
+  color: var(--pill-900);
   white-space: normal;
   line-height: 1.2;
 }

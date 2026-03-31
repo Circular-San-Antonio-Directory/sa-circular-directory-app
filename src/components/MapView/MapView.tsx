@@ -320,6 +320,21 @@ export function MapView({
     }
   }, [selectedId]);
 
+  // ─── Intent pill color vars ───────────────────────────────────────────────────
+  // Use the selected action's colorway at fixed tones; fall back to mono when
+  // nothing is selected. Applied as CSS custom properties on the button element.
+
+  const pillColorway = actionFilter
+    ? (actionsConfig.find((a) => a.actionName === actionFilter)?.colorway ?? 'mono')
+    : 'mono';
+
+  const pillVars = {
+    '--pill-700': `var(--${pillColorway}-700)`, // outer pill background
+    '--pill-300': `var(--${pillColorway}-300)`, // inner text-area background
+    '--pill-100': `var(--${pillColorway}-100)`, // caret icon
+    '--pill-900': `var(--${pillColorway}-900)`, // text on light surface
+  } as React.CSSProperties;
+
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   return (
@@ -330,7 +345,8 @@ export function MapView({
         {/* "I want to" action filter dropdown */}
         <div className={styles.intentPillWrapper} ref={actionDropdownRef}>
           <button
-            className={`${styles.intentPill}${actionFilter ? ` ${styles.intentPillActive}` : ''}`}
+            className={styles.intentPill}
+            style={pillVars}
             type="button"
             aria-label="Select action type"
             aria-expanded={isActionDropdownOpen}
