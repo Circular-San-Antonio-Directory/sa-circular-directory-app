@@ -1,3 +1,5 @@
+'use client';
+
 import styles from './ActionIcon.module.scss';
 import { ICON_SVGS } from './IconSVGs';
 import { useActionsConfig } from './ActionsContext';
