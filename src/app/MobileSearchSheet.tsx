@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_ACTIONS, getActionLabel } from '@/components/ActionIcon';
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
@@ -52,19 +52,24 @@ export function MobileSearchSheet({
   listings,
   categories,
 }: Props) {
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [localSearch, setLocalSearch] = useState(initialSearch);
   const [localActionFilter, setLocalActionFilter] = useState<ActionName | null>(initialActionFilter);
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
   // Set only when the user explicitly selects an item result from autocomplete
   const [selectedCategory, setSelectedCategory] = useState<{ category: string; faIcon: string | null } | null>(null);
 
-  // Sync local state when the sheet opens
+  // Sync local state when the sheet opens and focus the search input
   useEffect(() => {
     if (isOpen) {
       setLocalSearch(initialSearch);
       setLocalActionFilter(initialActionFilter);
       setSelectedCategory(null);
       setIsAutocompleteOpen(false);
+      // Delay focus slightly so the sheet slide-in animation has started
+      // before the mobile keyboard appears
+      const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
+      return () => clearTimeout(timer);
     }
   }, [isOpen, initialSearch, initialActionFilter]);
 
@@ -216,12 +221,12 @@ export function MobileSearchSheet({
             <div className={styles.searchInputWrapper}>
               <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
               <input
+                ref={searchInputRef}
                 type="text"
                 className={styles.searchInput}
                 placeholder="Item or category..."
                 value={localSearch}
                 onChange={(e) => handleLocalSearchChange(e.target.value)}
-                autoFocus={isOpen}
               />
               {localSearch && (
                 <button

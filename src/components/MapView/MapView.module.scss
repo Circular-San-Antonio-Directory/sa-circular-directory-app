@@ -4,6 +4,7 @@
 // root bg:              (transparent — map fills it)
 // map border:           $border-default (handled by parent .mapArea)
 // search bar bg:        $surface-sunken (#EEECE8)
+// mobile action label:  $text-subtle (mono-600, #6F6F6F)
 // search bar border:    $border-default
 // search bar radius:    $radius-lg (8px)
 // intent pill bg:       $primary-default ($fern-700, #1E5751)
@@ -130,7 +131,7 @@
 .searchInput {
   display: flex;
   align-items: center;
-  gap: $space-2; // 8px (approx — Figma: gap-10)
+  gap: $space-2; // 8px
   flex: 1;
   height: 44px;
   padding: $space-3; // 12px
@@ -159,6 +160,80 @@
     &::placeholder {
       color: $text-disabled;
     }
+  }
+}
+
+// Named class for the magnifying glass so .searchInputWithAction can target it
+.searchIcon {
+  flex-shrink: 0;
+}
+
+// Groups action label + input in a vertical column; is itself a flex item of .searchInput
+.searchContent {
+  flex: 1;
+  min-width: 0;
+
+  input {
+    display: block;
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: $font-body;
+    font-size: 16px;
+    font-weight: 500;
+    color: $text-default;
+    outline: none;
+
+    &::placeholder {
+      color: $text-disabled;
+    }
+  }
+}
+
+// Action filter label — mobile only, stacked above the search input
+// token: $text-subtle (mono-600, #6F6F6F)
+.mobileActionLabel {
+  display: none; // hidden on desktop — the "I want to" pill covers this
+
+  @media (max-width: 1023px) {
+    display: block;
+    font-family: $font-body;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: $text-subtle; // mono-600 (#6F6F6F)
+  }
+}
+
+// Modifier on .searchInput when action filter is active — mobile only layout change
+.searchInputWithAction {
+  @media (max-width: 1023px) {
+    height: auto;
+    min-height: 44px;
+    padding-top: $space-2;    // 8px — tighter vertical padding to fit two lines
+    padding-bottom: $space-2;
+
+    .searchIcon {
+      display: none; // Figma: no magnifying glass in stacked state
+    }
+  }
+}
+
+// Clear search button — visible only when input has text
+.clearInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: $text-subtle;
+  font-size: 14px;
+  flex-shrink: 0;
+  padding: $space-1;
+
+  &:hover {
+    color: $text-default;
   }
 }
 

@@ -373,22 +373,47 @@ export function MapView({
         </div>
 
         {/* Search input */}
-        <label className={styles.searchInput}>
-          <i className="fa-regular fa-magnifying-glass" aria-hidden="true" />
-          <input
-            type="text"
-            placeholder="Item or category..."
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            onFocus={(e) => {
-              if (onMobileSearchOpen && window.innerWidth < 1024) {
-                e.currentTarget.blur();
-                onMobileSearchOpen();
-              } else {
-                setIsAutocompleteOpen(true);
-              }
-            }}
-          />
+        <label className={`${styles.searchInput}${actionFilter ? ` ${styles.searchInputWithAction}` : ''}`}>
+          {/* Magnifying glass — hidden on mobile when action filter active (Figma: no icon in that state) */}
+          <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`} aria-hidden="true" />
+          {/* Content column — stacks action label above input on mobile when filter is active */}
+          <span className={styles.searchContent}>
+            {actionFilter && (
+              <span className={styles.mobileActionLabel}>
+                {getActionLabel(actionFilter)}
+              </span>
+            )}
+            <input
+              type="text"
+              placeholder="Item or category..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={(e) => {
+                if (onMobileSearchOpen && window.innerWidth < 1024) {
+                  e.currentTarget.blur();
+                  onMobileSearchOpen();
+                } else {
+                  setIsAutocompleteOpen(true);
+                }
+              }}
+            />
+          </span>
+          {/* X button — clears action filter (+ search) when filter active; clears search otherwise */}
+          {(searchQuery || actionFilter) && (
+            <button
+              className={styles.clearInput}
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                if (actionFilter) onActionFilterChange(null);
+                onSearchChange('');
+                setIsAutocompleteOpen(false);
+              }}
+              aria-label="Clear search"
+            >
+              <i className="fa-solid fa-xmark" aria-hidden="true" />
+            </button>
+          )}
         </label>
 
         {/* Autocomplete dropdown — position: absolute relative to .searchBar */}
