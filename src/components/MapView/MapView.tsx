@@ -25,7 +25,12 @@ type ItemResult = {
   faIcon: string | null;
 };
 
-type AutocompleteResult = BusinessResult | ItemResult;
+type OverrideResult = {
+  type: 'override';
+  item: string;       // display-cased override term
+};
+
+type AutocompleteResult = BusinessResult | ItemResult | OverrideResult;
 
 const MAX_EACH = 4;
 const MAX_RECENTS = 5;
@@ -35,7 +40,9 @@ function capitalize(s: string): string {
 }
 
 function resultKey(result: AutocompleteResult): string {
-  return result.type === 'business' ? `b:${result.id}` : `i:${result.item}`;
+  if (result.type === 'business') return `b:${result.id}`;
+  if (result.type === 'override') return `o:${result.item}`;
+  return `i:${result.item}`;
 }
 
 // Marker size scales inversely with zoom: more zoomed out → larger, zoomed in → smaller.
@@ -103,6 +110,28 @@ export function MapView({
         address: l.fields.address,
       }));
 
+    const seenOverrides = new Set<string>();
+    const overrideResults: OverrideResult[] = [];
+    for (const l of listings) {
+      if (overrideResults.length >= MAX_EACH) break;
+      const fields = [
+        l.fields.inputCategoryOverride,
+        l.fields.outputCategoryOverride,
+        l.fields.serviceCategoryOverride,
+      ];
+      for (const field of fields) {
+        if (!field) continue;
+        for (const term of field.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean)) {
+          if (term.includes(q) && !seenOverrides.has(term)) {
+            seenOverrides.add(term);
+            overrideResults.push({ type: 'override', item: capitalize(term) });
+            if (overrideResults.length >= MAX_EACH) break;
+          }
+        }
+        if (overrideResults.length >= MAX_EACH) break;
+      }
+    }
+
     const seenItems = new Set<string>();
     const itemResults: ItemResult[] = [];
     for (const cat of categories) {
@@ -121,7 +150,7 @@ export function MapView({
       }
     }
 
-    return [...businessResults, ...itemResults];
+    return [...businessResults, ...overrideResults, ...itemResults];
   }, [listings, categories, searchQuery]);
 
   // Available actions — restricted to those present in search-filtered listings.
@@ -208,7 +237,7 @@ export function MapView({
     setIsAutocompleteOpen(false);
   }
 
-  function handleSelectItem(result: ItemResult) {
+  function handleSelectItem(result: ItemResult | OverrideResult) {
     addToRecents(result);
     onSearchChange(result.item);
     setIsAutocompleteOpen(false);
@@ -485,6 +514,25 @@ export function MapView({
                     <span className={styles.autocompleteText}>
                       <span className={styles.autocompleteMain}>{result.name}</span>
                       <span className={styles.autocompleteSub}>{result.address}</span>
+                    </span>
+                  </button>
+                ) : result.type === 'override' ? (
+                  <button
+                    key={`override-${i}-${result.item}`}
+                    className={styles.autocompleteItem}
+                    role="option"
+                    aria-selected={false}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSelectItem(result);
+                    }}
+                  >
+                    <span className={styles.autocompleteIcon}>
+                      <i className="fa-solid fa-grip-vertical" aria-hidden="true" />
+                    </span>
+                    <span className={styles.autocompleteText}>
+                      <span className={styles.autocompleteMain}>{result.item}</span>
+                      <span className={styles.autocompleteSub}>Item</span>
                     </span>
                   </button>
                 ) : (

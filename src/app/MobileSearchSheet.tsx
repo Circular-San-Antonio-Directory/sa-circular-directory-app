@@ -25,7 +25,12 @@ type ItemResult = {
   faIcon: string | null;
 };
 
-type AutocompleteResult = BusinessResult | ItemResult;
+type OverrideResult = {
+  type: 'override';
+  item: string;
+};
+
+type AutocompleteResult = BusinessResult | ItemResult | OverrideResult;
 
 const MAX_EACH = 4;
 
@@ -92,6 +97,28 @@ export function MobileSearchSheet({
         address: l.fields.address,
       }));
 
+    const seenOverrides = new Set<string>();
+    const overrideResults: OverrideResult[] = [];
+    for (const l of listings) {
+      if (overrideResults.length >= MAX_EACH) break;
+      const fields = [
+        l.fields.inputCategoryOverride,
+        l.fields.outputCategoryOverride,
+        l.fields.serviceCategoryOverride,
+      ];
+      for (const field of fields) {
+        if (!field) continue;
+        for (const term of field.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean)) {
+          if (term.includes(q) && !seenOverrides.has(term)) {
+            seenOverrides.add(term);
+            overrideResults.push({ type: 'override', item: capitalize(term) });
+            if (overrideResults.length >= MAX_EACH) break;
+          }
+        }
+        if (overrideResults.length >= MAX_EACH) break;
+      }
+    }
+
     const seenItems = new Set<string>();
     const itemResults: ItemResult[] = [];
     for (const cat of categories) {
@@ -110,7 +137,7 @@ export function MobileSearchSheet({
       }
     }
 
-    return [...businessResults, ...itemResults].slice(0, 5);
+    return [...businessResults, ...overrideResults, ...itemResults].slice(0, 5);
   }, [listings, categories, localSearch]);
 
   // ─── Live filtered count ──────────────────────────────────────────────────
@@ -143,9 +170,9 @@ export function MobileSearchSheet({
     setIsAutocompleteOpen(false);
   }
 
-  function handleSelectItem(result: ItemResult) {
+  function handleSelectItem(result: ItemResult | OverrideResult) {
     setLocalSearch(result.item);
-    setSelectedCategory({ category: result.category, faIcon: result.faIcon });
+    setSelectedCategory(result.type === 'item' ? { category: result.category, faIcon: result.faIcon } : null);
     setIsAutocompleteOpen(false);
   }
 
@@ -245,6 +272,22 @@ export function MobileSearchSheet({
                       <span className={styles.autocompleteText}>
                         <span className={styles.autocompleteMain}>{result.name}</span>
                         <span className={styles.autocompleteSub}>{result.address}</span>
+                      </span>
+                    </button>
+                  ) : result.type === 'override' ? (
+                    <button
+                      key={`o-${i}-${result.item}`}
+                      className={styles.autocompleteItem}
+                      role="option"
+                      aria-selected={false}
+                      onMouseDown={(e) => { e.preventDefault(); handleSelectItem(result); }}
+                    >
+                      <span className={styles.autocompleteIcon}>
+                        <i className="fa-solid fa-grip-vertical" aria-hidden="true" />
+                      </span>
+                      <span className={styles.autocompleteText}>
+                        <span className={styles.autocompleteMain}>{result.item}</span>
+                        <span className={styles.autocompleteSub}>Item</span>
                       </span>
                     </button>
                   ) : (
