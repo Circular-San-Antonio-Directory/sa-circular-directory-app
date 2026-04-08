@@ -135,6 +135,34 @@ function toArr(val: string[] | null): string[] {
   return val ?? [];
 }
 
+/**
+ * Parses a PostgreSQL array literal (e.g. `{"Photographs","Notebooks"}`) into
+ * a comma-separated string. Falls back to returning the raw value unchanged if
+ * it doesn't look like an array literal, so plain-text overrides still work.
+ */
+function pgArrayToStr(val: string | null): string {
+  if (!val) return '';
+  const match = val.match(/^\{([\s\S]*)\}$/);
+  if (!match) return val;
+  const inner = match[1];
+  const items: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < inner.length; i++) {
+    const ch = inner[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      if (current.trim()) items.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) items.push(current.trim());
+  return items.join(', ');
+}
+
 function rowToListing(row: BusinessRow): Listing {
   const inputActions  = toActionNames(row.input_action_names);
   const outputActions = toActionNames(row.output_action_names);
@@ -144,7 +172,7 @@ function rowToListing(row: BusinessRow): Listing {
   if (row.volunteer_opportunities) allActionsSet.add('volunteer');
   const allActionNames = ACTION_ORDER.filter(a => allActionsSet.has(a));
 
-  const inputCategoryOverride = toStr(row.input_category_override);
+  const inputCategoryOverride = pgArrayToStr(row.input_category_override);
 
   return {
     id: row.airtable_id,
@@ -184,12 +212,12 @@ function rowToListing(row: BusinessRow): Listing {
       outputActions:           toArr(row.output_action_names),
       outputCategories:        toArr(row.output_category_names),
       outputCategoryIcons:     toArr(row.output_category_icons),
-      outputCategoryOverride:  toStr(row.output_category_override),
+      outputCategoryOverride:  pgArrayToStr(row.output_category_override),
       outputNotes:             toStr(row.output_notes),
       serviceActions:          toArr(row.service_action_names),
       serviceCategories:       toArr(row.service_category_names),
       serviceCategoryIcons:    toArr(row.service_category_icons),
-      serviceCategoryOverride: toStr(row.service_category_override),
+      serviceCategoryOverride: pgArrayToStr(row.service_category_override),
       serviceNotes:            toStr(row.service_notes),
       volunteerOpportunities:  row.volunteer_opportunities ?? false,
       volunteerNotes:          toStr(row.volunteer_notes),

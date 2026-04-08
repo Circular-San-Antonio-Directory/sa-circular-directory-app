@@ -40,7 +40,7 @@ export function filterListings(
       .map((cat) => cat.category),
   );
 
-  // Search only — match name/address OR any category (behaviour unchanged)
+  // Search only — match name/address OR any category OR any override
   if (!actionFilter) {
     return listings.filter((l) => {
       const nameOrAddress =
@@ -51,7 +51,11 @@ export function filterListings(
         ...l.fields.outputCategories,
         ...l.fields.serviceCategories,
       ].some((cat) => matchedCategoryNames.has(cat));
-      return nameOrAddress || categoryMatch;
+      const overrideMatch =
+        l.fields.inputCategoryOverride.toLowerCase().includes(q) ||
+        l.fields.outputCategoryOverride.toLowerCase().includes(q) ||
+        l.fields.serviceCategoryOverride.toLowerCase().includes(q);
+      return nameOrAddress || categoryMatch || overrideMatch;
     });
   }
 
@@ -65,20 +69,23 @@ export function filterListings(
 
     if (nameOrAddressWithAction) return true;
 
-    // Category hit: the matching category must live in the same group as the action
+    // Category or override hit: must live in the same group as the action
     const inputMatch =
       l.fields.inputActionNames.includes(actionFilter) &&
-      l.fields.inputCategories.some((c) => matchedCategoryNames.has(c));
+      (l.fields.inputCategories.some((c) => matchedCategoryNames.has(c)) ||
+        l.fields.inputCategoryOverride.toLowerCase().includes(q));
     if (inputMatch) return true;
 
     const outputMatch =
       l.fields.outputActionNames.includes(actionFilter) &&
-      l.fields.outputCategories.some((c) => matchedCategoryNames.has(c));
+      (l.fields.outputCategories.some((c) => matchedCategoryNames.has(c)) ||
+        l.fields.outputCategoryOverride.toLowerCase().includes(q));
     if (outputMatch) return true;
 
     const serviceMatch =
       l.fields.serviceActionNames.includes(actionFilter) &&
-      l.fields.serviceCategories.some((c) => matchedCategoryNames.has(c));
+      (l.fields.serviceCategories.some((c) => matchedCategoryNames.has(c)) ||
+        l.fields.serviceCategoryOverride.toLowerCase().includes(q));
     return serviceMatch;
   });
 }
