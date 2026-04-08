@@ -30,13 +30,14 @@
 // --- Markers ---
 
 .marker {
-  width: 16px;
-  height: 16px;
+  // width: 16px;
+  // height: 16px;
   border-radius: 50%;
-  background: $primary-default;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+  background: #AE4A9D; //$violet-600 variation - higher saturation for better visibility on the map
+  border: 2.5px solid $mono-100;
+  box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  // transition: background 150ms ease, transform 150ms ease;
+  transition: width 100ms ease, height 100ms ease;
 
   &:hover {
     transform: scale(1.15);
@@ -48,8 +49,8 @@
 }
 
 .markerSelected {
-  background: $secondary-default;
-  transform: scale(1.2);
+  background: $spruce-700;
+  //transform: scale(1.2);
 
   &:hover {
     transform: scale(1.2);

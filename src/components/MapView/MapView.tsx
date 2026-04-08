@@ -48,7 +48,7 @@ function resultKey(result: AutocompleteResult): string {
 // Marker size scales inversely with zoom: more zoomed out → larger, zoomed in → smaller.
 // Range: 24px at zoom 8 → 6px at zoom 17+.
 function getMarkerSize(zoom: number): number {
-  return Math.round(Math.max(6, Math.min(24, 40 - zoom * 2)));
+  return Math.round(Math.max(23, Math.min(28, 40 - zoom * 2)));
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -264,7 +264,7 @@ export function MapView({
     const rafId = requestAnimationFrame(() => {
       map = new mapboxgl.Map({
         container,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: 'mapbox://styles/circular-sa/cmnqjwsot002101s7b867angr',
         center: [-98.4936, 29.4241], // San Antonio
         zoom: 11,
       });
@@ -278,8 +278,10 @@ export function MapView({
         const size = getMarkerSize(zoom);
         markersRef.current.forEach((marker) => {
           const el = marker.getElement();
-          el.style.width = `${size}px`;
-          el.style.height = `${size}px`;
+          const isSelected = el.classList.contains(styles.markerSelected);
+          const finalSize = isSelected ? Math.round(size * 1.2) : size;
+          el.style.width = `${finalSize}px`;
+          el.style.height = `${finalSize}px`;
         });
       }
 
@@ -344,7 +346,7 @@ export function MapView({
     if (selectedId && map) {
       const marker = markersRef.current.get(selectedId);
       if (marker) {
-        map.flyTo({ center: marker.getLngLat(), zoom: Math.max(map.getZoom(), 13), speed: 1.2 });
+        map.flyTo({ center: marker.getLngLat(), zoom: Math.max(map.getZoom(), 14), speed: 1.1 });
       }
     }
   }, [selectedId]);
