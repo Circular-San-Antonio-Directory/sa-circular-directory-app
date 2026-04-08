@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { ActionIcon } from '@/components/ActionIcon';
 import { ModalActionButton } from '@/components/ModalActionButton';
+import { AboutCircularSA } from '@/components/AboutCircularSA';
 import type { Listing } from '@/lib/getListings';
 
 function slugify(name: string): string {
@@ -114,6 +115,9 @@ export function MobileBottomSheet({ listings }: Props) {
               </Link>
             ))}
           </div>
+
+          <hr className={styles.aboutDivider} />
+          <AboutCircularSA mobile />
         </div>
       </div>
     </>

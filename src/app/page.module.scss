@@ -335,6 +335,18 @@
   }
 }
 
+// --- About Circular SA section ---
+
+.aboutSection {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: block;
+    margin-top: $space-6; // 24px gap after map area
+    padding-bottom: $space-6;
+  }
+}
+
 // --- Mobile bottom sheet ---
 
 .mobileSheet {

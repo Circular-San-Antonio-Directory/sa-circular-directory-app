@@ -39,7 +39,7 @@ comment: `// nearest token: Figma used #388A58, mapped to $fern-600`.
 - **App:** SA Circular Directory — a Next.js 14 app (App Router) with TypeScript
 - **Styling:** SCSS modules per component + global design tokens
 - **Figma source:** `2026_Circular_Directory`
-- **Fonts:** Archivo (display/hero via Google Fonts) · Geist (UI/body via `next/font`)
+- **Fonts:** Archivo (display/hero via Google Fonts) · Shippori Antique B1 (accent via Google Fonts) · Geist (UI/body via `next/font`)
 - **Style entry point:** `src/styles/globals.scss` (imported in `layout.tsx`)
 
 ### Import chain
@@ -63,6 +63,7 @@ src/styles/_index.scss      ← forwarding barrel (@forward 'variables' + 'mixin
 |---|---|---|
 | `--font-display` | `$font-display` | `'Archivo', serif` |
 | `--font-body` | `$font-body` | `'Geist', sans-serif` |
+| `--font-accent` | `$font-accent` | `'Shippori Antique B1', serif` |
 
 ### Semantic Color Tokens (prefer these over raw palette)
 ```
@@ -141,6 +142,8 @@ Apply these as CSS classes, not by repeating font properties inline.
 **Caption**: `.caption-regular` · `.caption-bold` · `.caption-extrabold`
 
 **Label**: `.label-large` · `.label-large-strong` · `.label-default` · `.label-default-strong` · `.label-small` · `.label-small-strong` · `.label-caption` · `.label-caption-strong`
+
+**Accent** (Shippori Antique B1): `.accent-1` 64px · `.accent-2` 40px
 
 ---
 
@@ -225,7 +228,7 @@ Three prefixes available: `fa-solid`, `fa-regular`, `fa-brands`.
 - Pure white (`#FFFFFF`) = `$surface-raised` / `$mono-100`
 - Default body text is `$text-default` (`$mono-800`, not `$mono-900` / black)
 - Geist is loaded via `next/font` in `layout.tsx` — don't import it via CSS
-- Archivo is loaded via Google Fonts in `typography.scss` — already available globally
+- Archivo and Shippori Antique B1 are loaded via Google Fonts in `typography.scss` — already available globally
 - h1–h5 and `p` have global defaults set in `globals.scss` via `@include` — don't redefine base element styles in modules unless overriding intentionally
 
 ---

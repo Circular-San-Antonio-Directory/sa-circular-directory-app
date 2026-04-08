@@ -3,6 +3,7 @@ import { getListings } from '@/lib/getListings';
 import { getCategories } from '@/lib/getCategories';
 import { getActions } from '@/lib/getActions';
 import { ActionsProvider } from '@/components/ActionIcon';
+import { AboutCircularSA } from '@/components/AboutCircularSA';
 import { DirectoryClient } from './DirectoryClient';
 import styles from './page.module.scss';
 
@@ -26,6 +27,10 @@ export default async function Home() {
           <ActionsProvider actions={actions}>
             <DirectoryClient listings={listings} categories={categories} />
           </ActionsProvider>
+        </div>
+
+        <div className={styles.aboutSection}>
+          <AboutCircularSA />
         </div>
       </div>
 
