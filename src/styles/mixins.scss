@@ -46,6 +46,31 @@
 }
 
 // -----------------------------------------------------------------------------
+// ACCENT  (font: Shippori Antique B1)
+// -----------------------------------------------------------------------------
+
+@mixin type-accent-1 {
+  font-family: $font-accent;
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+@mixin type-accent-2 {
+  font-family: $font-accent;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+@mixin type-accent-3 {
+  font-family: $font-accent;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+// -----------------------------------------------------------------------------
 // HEADING  (font: Geist)
 // -----------------------------------------------------------------------------
 

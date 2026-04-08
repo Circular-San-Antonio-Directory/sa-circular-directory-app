@@ -7,6 +7,7 @@
 @use 'mixins' as *;
 
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Antique+B1&display=swap');
 // Note: Geist is a Vercel font — import via next/font in layout.tsx (see below)
 
 // -----------------------------------------------------------------------------
@@ -36,6 +37,25 @@
 // Hero 4 — 28px / 110% / Medium
 .hero-4 {
   @include type-hero-4;
+}
+
+// -----------------------------------------------------------------------------
+// ACCENT STYLES  (font: Shippori Antique B1)
+// -----------------------------------------------------------------------------
+
+// Accent 1 — 64px / 110% / Regular
+.accent-1 {
+  @include type-accent-1;
+}
+
+// Accent 2 — 40px / 110% / Regular
+.accent-2 {
+  @include type-accent-2;
+}
+
+// Accent 3 — 32px / 110% / Regular
+.accent-3 {
+  @include type-accent-3;
 }
 
 // -----------------------------------------------------------------------------

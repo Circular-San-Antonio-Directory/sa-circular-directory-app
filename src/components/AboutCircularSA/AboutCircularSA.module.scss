@@ -1,0 +1,177 @@
+// AboutCircularSA — About section banner
+// =============================================================================
+// Token map
+// bg:                      $merlot-800 (#5E0F1A) — exact palette match
+// border-radius:           $radius-xl (12px)
+// content padding:         56px — nearest token: $space-14 (54px), override to match Figma
+// content gap:             $space-12 (48px)
+// content-wrapper gap:     $space-6 (24px)
+// buttons gap:             $space-4 (16px)
+// heading:                 type-accent-2 mixin (Shippori 40px) + letter-spacing override
+// heading default color:   $text-inverse-secondary ($mono-300, #F0F0F0)
+// heading accent color:    $merlot-300 (#E8D1F0) — exact palette match
+// body:                    type-body-default-medium mixin (Geist 17px/500)
+// body color:              $text-inverse ($mono-100, #FFFFFF)
+// btn "Learn More":        Button accent/dark → $merlot-600 bg, white text
+// btn "Explore Membership":Button secondary/dark → transparent + $border-subtle, white text
+// stroke border:           decorative SVG frame (stroked-border-rectangle.svg), fills container
+// photo overflow:          extends beyond container on top, right, bottom (24px each)
+//                          photo fills inside decorative frame, layered behind frame
+// =============================================================================
+
+@use '../../styles' as *;
+
+.root {
+  background: $merlot-800;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.content {
+ // flex: 1 1 0;
+  width: 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: $space-12; // 48px
+  padding: $space-10;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6; // 24px
+}
+
+.logo {
+  width: 172px;
+  height: auto;
+  display: block;
+}
+
+.heading {
+  @include type-accent-3;
+  letter-spacing: -0.8px;
+  margin: 0;
+}
+
+.headingDefault {
+  color: $text-inverse-secondary; // $mono-300 (#F0F0F0)
+}
+
+.headingAccent {
+  color: $merlot-300; // #E8D1F0 — soft pink tint, exact palette match
+}
+
+.body {
+  @include type-body-default-medium;
+  color: $text-inverse;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: $space-4; // 16px
+}
+
+.actionBtn {
+  flex: 1;
+  font-size: 20px; // label-large-strong override — Figma: 20px/600
+  font-weight: 600;
+  Button {
+    width: 100%;
+  }
+}
+
+// --- Image section ---
+
+.imageSection {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-10 $space-6 $space-10 0; // ~40px top/bottom, 24px right, flush left
+}
+
+// .strokeBorder {
+//   position: absolute;
+//   inset: 0;
+//   width: 100%;
+//   height: 100%;
+//   object-fit: fill;
+//   z-index: 2; // On top of photo
+//   pointer-events: none;
+
+//   // Add stroke color to the SVG paths
+//   :global(path) {
+//     stroke: $merlot-800; // Match the background color
+//     stroke-width: 1;
+//     fill: none;
+//   }
+// }
+
+.photo {
+  display: block;
+  width: 80%;
+  height: auto; // preserves natural aspect ratio as it scales
+  // Rounded corners are baked into treatment-pexels-group.png — no border-radius needed
+}
+
+// --- Mobile prop variant (photo hidden, compact padding/type) ---
+// Figma: node 9307-156420 — padding 24px, heading 28px, buttons stacked
+
+.rootMobile {
+  flex-direction: column;
+
+  .content {
+    padding: $space-6; // 24px — Figma: p-24px
+    gap: $space-6;     // 24px — Figma: gap-24px
+    width: 100%;
+  }
+
+  .contentWrapper {
+    gap: $space-6; // 24px
+  }
+
+  .heading {
+    font-size: 28px;         // Figma: 28px
+    letter-spacing: -0.56px; // Figma: tracking -0.56px
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .strokeBorder {
+    display: none; // Hide stroke border in mobile prop variant
+  }
+}
+
+// --- Responsive mobile breakpoint (browser-width responsive, no prop needed) ---
+
+@media (max-width: 1023px) {
+  .root:not(.rootMobile) {
+    flex-direction: column;
+  }
+
+  .root:not(.rootMobile) .content {
+    padding: $space-8; // 32px
+    gap: $space-8;
+  }
+
+  .root:not(.rootMobile) .heading {
+    font-size: 28px;
+  }
+
+  .root:not(.rootMobile) .actions {
+    flex-direction: column;
+  }
+
+  .root:not(.rootMobile) .imageSection {
+    display: none; // Hide image on mobile — treatment image is desktop-only
+  }
+}

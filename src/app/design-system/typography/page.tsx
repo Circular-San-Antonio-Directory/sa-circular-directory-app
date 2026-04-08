@@ -61,6 +61,13 @@ const sections = [
       { className: 'label-caption-strong', name: 'Label Caption · Strong',specs: 'Geist · 13px · 600 · 1.1', text: 'Tag or badge text' },
     ],
   },
+  {
+    heading: 'Accent — Shippori Antique B1',
+    specimens: [
+      { className: 'accent-1', name: 'Accent 1', specs: 'Shippori Antique B1 · 64px · 400 · 1.1', text: 'Circular' },
+      { className: 'accent-2', name: 'Accent 2', specs: 'Shippori Antique B1 · 40px · 400 · 1.1', text: 'Circular Directory' },
+    ],
+  },
 ];
 
 export default function TypographyPage() {
@@ -69,7 +76,7 @@ export default function TypographyPage() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Typography</h1>
         <p className={styles.pageDescription}>
-          Type styles for the Circular Directory design system. Hero styles use Archivo; headings, body, and labels use Geist.
+          Type styles for the Circular Directory design system. Hero styles use Archivo; headings, body, and labels use Geist; accent styles use Shippori Antique B1.
         </p>
       </div>
 
