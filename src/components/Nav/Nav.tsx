@@ -11,11 +11,21 @@ const CLOSE_DURATION = 180; // ms — must match menuSlideOut duration in SCSS
 export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
+
+  useEffect(() => {
+    const THRESHOLD = 24; // $space-6 — matches pageInner padding-top on desktop
+    function onScroll() {
+      setScrolled(window.scrollY >= THRESHOLD);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   function close() {
     setIsClosing(true);
@@ -27,7 +37,7 @@ export function Nav() {
 
   return (
     <>
-      <nav className={styles.nav}>
+      <nav className={`${styles.nav}${scrolled ? ` ${styles.navScrolled}` : ''}`}>
         <Link href="/" className={styles.left}>
           <div className={styles.logoWrapper}>
             <Image

@@ -7,6 +7,8 @@ import { ActionIcon, useActionsConfig, getActionLabel } from '@/components/Actio
 import type { ActionName } from '@/components/ActionIcon';
 import type { Listing } from '@/lib/getListings';
 import type { Category } from '@/lib/getCategories';
+import { Pill } from '@/components/Pill';
+import type { PillColor } from '@/components/Pill';
 import { slugify } from '@/lib/slugify';
 import { filterListings } from '@/lib/filterListings';
 import { MobileBottomSheet } from './MobileBottomSheet';
@@ -18,17 +20,44 @@ const MapView = dynamic(
   { ssr: false },
 );
 
+// ─── Preview action helpers ───────────────────────────────────────────────────
+
+const INPUT_ACTIONS  = new Set<ActionName>(['donate', 'sell', 'trade']);
+const OUTPUT_ACTIONS = new Set<ActionName>(['buy', 'buyB2B', 'consign']);
+
+function getPreviewActionContent(action: ActionName, f: Listing['fields']) {
+  if (INPUT_ACTIONS.has(action))
+    return { categories: f.inputCategories,  override: f.inputCategoryOverride  };
+  if (OUTPUT_ACTIONS.has(action))
+    return { categories: f.outputCategories, override: f.outputCategoryOverride };
+  if (action === 'volunteer')
+    return { categories: [],                  override: ''                        };
+  return   { categories: f.serviceCategories, override: f.serviceCategoryOverride };
+}
+
+// Deterministic tag color — same algorithm as ListingContent.tsx
+const TAG_COLORS: PillColor[] = ['blue', 'orange', 'merlot', 'fern', 'violet', 'spruce', 'mintChoc', 'redAdobe'];
+
+function tagColor(tag: string): PillColor {
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) hash = (hash * 31 + tag.charCodeAt(i)) >>> 0;
+  return TAG_COLORS[hash % TAG_COLORS.length];
+}
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
 interface DirectoryClientProps {
   listings: Listing[];
   categories: Category[];
 }
 
 export function DirectoryClient({ listings, categories }: DirectoryClientProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState<ActionName | null>(null);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
+  const sidebarRef = useRef<HTMLElement>(null);
 
   const actionsConfig = useActionsConfig();
   const pillColorway = actionFilter
@@ -41,11 +70,21 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
   );
 
   const handleSelectListing = useCallback((id: string) => {
-    setSelectedId(id);
+    setPreviewId(id);
     const card = cardRefs.current.get(id);
-    if (card) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const sidebar = sidebarRef.current;
+    if (card && sidebar) {
+      const cardRect = card.getBoundingClientRect();
+      const sidebarRect = sidebar.getBoundingClientRect();
+      sidebar.scrollTo({
+        top: sidebar.scrollTop + cardRect.top - sidebarRect.top - 8,
+        behavior: 'smooth',
+      });
     }
+  }, []);
+
+  const handleMapBackgroundClick = useCallback(() => {
+    setPreviewId(null);
   }, []);
 
   return (
@@ -95,7 +134,7 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
       </div>
 
       {/* Sidebar — desktop only */}
-      <aside className={styles.sidebar}>
+      <aside className={styles.sidebar} ref={sidebarRef}>
         <div className={styles.countPill}>
           <span className={styles.countBold}>{filteredListings.length} Listings</span>
           {' '}
@@ -107,38 +146,92 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
         </p>
 
         <div className={styles.listingStack}>
-          {filteredListings.map((listing) => (
-            <Link
-              key={listing.id}
-              href={`/listings/${slugify(listing.fields.businessName)}`}
-              className={`${styles.listingCard}${selectedId === listing.id ? ` ${styles.listingCardSelected}` : ''}`}
-              ref={(el) => {
-                if (el) cardRefs.current.set(listing.id, el);
-                else cardRefs.current.delete(listing.id);
-              }}
-              onClick={() => setSelectedId(listing.id)}
-            >
-              <div className={styles.listingImageWrapper}>
-                {listing.fields.listingPhoto[0] ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={listing.fields.listingPhoto[0]} alt={listing.fields.businessName} />
-                ) : (
-                  <i className="fa-regular fa-image" aria-hidden="true" />
-                )}
-              </div>
-              <div className={styles.listingBody}>
-                <div className={styles.listingMeta}>
-                  <p className={styles.listingTitle}>{listing.fields.businessName}</p>
-                  <p className={styles.listingAddress}>{listing.fields.address}</p>
+          {filteredListings.map((listing) => {
+            const isPreview = previewId === listing.id;
+            return (
+              <Link
+                key={listing.id}
+                href={`/listings/${slugify(listing.fields.businessName)}`}
+                className={`${styles.listingCard}${isPreview ? ` ${styles.listingCardPreview}` : ''}`}
+                ref={(el) => {
+                  if (el) cardRefs.current.set(listing.id, el);
+                  else cardRefs.current.delete(listing.id);
+                }}
+              >
+                {/* Image */}
+                <div className={styles.listingImageWrapper}>
+                  {listing.fields.listingPhoto[0] ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={listing.fields.listingPhoto[0]} alt={listing.fields.businessName} />
+                  ) : (
+                    <i className="fa-regular fa-image" aria-hidden="true" />
+                  )}
                 </div>
-                <div className={styles.listingBadges}>
-                  {listing.fields.allActionNames.map((action) => (
-                    <ActionIcon key={action} action={action} variant="icon-with-label" />
-                  ))}
+
+                {/* Default body — always visible */}
+                <div className={styles.listingBody}>
+                  <div className={styles.listingMeta}>
+                    <p className={styles.listingTitle}>{listing.fields.businessName}</p>
+                    <p className={styles.listingAddress}>{listing.fields.address}</p>
+                  </div>
+                  {!isPreview && (
+                    <div className={styles.listingBadges}>
+                      {listing.fields.allActionNames.map((action) => (
+                        <ActionIcon key={action} action={action} variant="icon-with-label" />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </Link>
-          ))}
+
+                {/* Preview expansion — always in DOM for smooth animation */}
+                <div className={`${styles.previewExpanded}${isPreview ? ` ${styles.previewExpandedOpen}` : ''}`}>
+                  <div className={styles.previewInner}>
+
+                    <hr className={styles.previewDivider} />
+
+                    {/* Tags */}
+                    {listing.fields.typeOfBusiness.length > 0 && (
+                      <div className={styles.previewTags}>
+                        {listing.fields.typeOfBusiness.map((tag) => (
+                          <Pill key={tag} label={tag} color={tagColor(tag)} size="small" />
+                        ))}
+                      </div>
+                    )}
+
+                    <hr className={styles.previewDivider} />
+
+                    {/* Action rows */}
+                    <div className={styles.previewActions}>
+                      {listing.fields.allActionNames.map((action, i) => {
+                        const { categories: cats, override } = getPreviewActionContent(action, listing.fields);
+                        const categoryText = override || cats.join(', ');
+                        return (
+                          <div key={action}>
+                            {i > 0 && <hr className={styles.previewActionDivider} />}
+                            <div className={styles.previewActionRow}>
+                              <div className={styles.previewActionLeft}>
+                                <ActionIcon action={action} variant="icon-with-label" />
+                              </div>
+                              {categoryText && (
+                                <p className={styles.previewActionCategories}>{categoryText}</p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* CTA Footer */}
+                    <div className={styles.previewCTA}>
+                      <span className={styles.previewCTALabel}>View Full Details</span>
+                      <i className="fa-solid fa-arrow-right-long" aria-hidden="true" />
+                    </div>
+
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </aside>
 
@@ -148,8 +241,9 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
           listings={listings}
           filteredListings={filteredListings}
           categories={categories}
-          selectedId={selectedId}
+          selectedId={previewId}
           onSelectListing={handleSelectListing}
+          onMapBackgroundClick={handleMapBackgroundClick}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           actionFilter={actionFilter}

@@ -25,17 +25,41 @@
   flex-shrink: 0;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 
   @media (min-width: 1024px) {
-    // Desktop: raised card with border
-    background: $surface-raised;
+    // Desktop: raised card with border + frosted glass effect
+    background: rgba(255, 255, 255, 0.92); // $surface-raised at slight transparency
+    backdrop-filter: blur(0.4px);
+    -webkit-backdrop-filter: blur(0.4px);
     border: 1px solid $border-subtle;
     border-radius: $radius-md;
     padding: $space-3 $space-4; // 12px 16px
     position: sticky;
     top: $space-6; // sticks 24px from top within the scrolling page
-    z-index: 10;
+    z-index: 20; // above map search bar (z-index: 10)
+    transition:
+      background-color 550ms ease-in-out,
+      //border-color 550ms ease-in-out,
+      border-radius 550ms ease-in-out,
+      box-shadow 550ms ease-in-out;
+  }
+}
+
+// --- Docked state (after scrolling past top padding) ---
+
+.navScrolled {
+  @media (min-width: 1024px) {
+    top: 0;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid $border-subtle;
+    margin-left: calc(-1 * $space-8);           // -32px — breaks out of pageInner padding
+    margin-right: calc(-1 * $space-8);          // -32px
+    width: calc(100% + 2 * $space-8);           // viewport width
+    padding-left: calc($space-8 + $space-4);    // 48px — content stays at same visual X as floating state
+    padding-right: calc($space-8 + $space-4);   // 48px
+    box-shadow: $shadow-sm;
   }
 }
 
