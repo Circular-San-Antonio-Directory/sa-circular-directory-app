@@ -59,6 +59,7 @@ interface MapViewProps {
   categories: Category[];
   selectedId: string | null;
   onSelectListing: (id: string) => void;
+  onMapBackgroundClick?: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   actionFilter: ActionName | null;
@@ -72,6 +73,7 @@ export function MapView({
   categories,
   selectedId,
   onSelectListing,
+  onMapBackgroundClick,
   searchQuery,
   onSearchChange,
   actionFilter,
@@ -81,6 +83,10 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
+  // Tracks whether the current map click originated from a marker element so the
+  // background-click handler can skip it (marker click events bubble to the canvas
+  // container and would otherwise immediately clear the preview state).
+  const markerClickedRef = useRef(false);
   const listingsByIdRef = useRef<Map<string, Listing>>(new Map());
 
   const actionsConfig = useActionsConfig();
@@ -303,12 +309,26 @@ export function MapView({
             .setLngLat([longitude, latitude])
             .addTo(map);
 
-          el.addEventListener('click', () => onSelectListing(listing.id));
+          el.addEventListener('click', () => {
+            markerClickedRef.current = true;
+            onSelectListing(listing.id);
+          });
           markersRef.current.set(listing.id, marker);
         });
 
         // Set initial sizes once all markers exist
         applyMarkerSizes(map.getZoom());
+
+        // Collapse preview when user clicks map background (not a marker).
+        // Marker clicks bubble up to the canvas container and also trigger this
+        // event, so we guard with the ref flag set in the marker click handler.
+        map.on('click', () => {
+          if (markerClickedRef.current) {
+            markerClickedRef.current = false;
+            return;
+          }
+          onMapBackgroundClick?.();
+        });
       });
     });
 
