@@ -20,7 +20,7 @@ export default async function ListingModalPage({ params }: Props) {
 
   return (
     <ActionsProvider actions={actions}>
-      <ListingModal>
+      <ListingModal title={listing.fields.businessName}>
         <ListingContent listing={listing} isModal />
       </ListingModal>
     </ActionsProvider>

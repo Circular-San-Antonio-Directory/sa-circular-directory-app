@@ -7,9 +7,10 @@ import { ModalActionButton } from '@/components/ModalActionButton';
 
 interface ListingModalProps {
   children: React.ReactNode;
+  title?: string;
 }
 
-export function ListingModal({ children }: ListingModalProps) {
+export function ListingModal({ children, title }: ListingModalProps) {
   const router = useRouter();
 
   const close = useCallback(() => {
@@ -36,8 +37,9 @@ export function ListingModal({ children }: ListingModalProps) {
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Desktop: floating X button */}
+        {/* Desktop: title + close button bar */}
         <div className={styles.closeButton}>
+          {title && <span className={`label-large-strong ${styles.closeButtonTitle}`}>{title}</span>}
           <ModalActionButton surface="sunken" onClick={close} />
         </div>
 

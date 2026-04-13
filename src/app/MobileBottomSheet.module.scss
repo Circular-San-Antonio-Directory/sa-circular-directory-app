@@ -35,7 +35,7 @@ $sheet-height: 88dvh;
   pointer-events: none;
   transition: background 320ms ease;
 
-  @media (max-width: 1023px) {
+  @include mobile {
     display: block;
   }
 
@@ -71,7 +71,7 @@ $sheet-height: 88dvh;
   }
 
   // Desktop: never shown
-  @media (min-width: 1024px) {
+  @include desktop {
     display: none;
   }
 }

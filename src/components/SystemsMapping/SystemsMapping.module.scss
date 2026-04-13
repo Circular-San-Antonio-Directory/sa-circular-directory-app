@@ -1,0 +1,68 @@
+@use '../../styles' as *;
+
+.sectionLabel {
+  @include type-heading-3();
+  color: $text-default;
+  margin: 0;
+  padding-bottom: $space-3;
+}
+
+.systemsBlock {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.systemDivider {
+  height: 1px;
+  background: $border-subtle;
+}
+
+.systemRow {
+  summary {
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+  }
+}
+
+.systemSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 $space-4 $space-3 $space-3;
+  cursor: pointer;
+  user-select: none;
+  border-radius: $radius-md;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.systemSummaryLabel {
+  @include type-heading-5();
+  color: $text-default;
+}
+
+.systemChevron {
+  color: $text-subtle;
+  font-size: 14px;
+  transition: transform 0.15s ease;
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.systemContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  background-color: #f8f8f6; // override - a specific step between offWhite-100 and offWhite-200
+  margin: $space-1 $space-1 $space-3 $space-4;
+  padding: $space-4;
+  border-radius: $radius-md;
+  border: 1px solid $border-subtle;
+
+}

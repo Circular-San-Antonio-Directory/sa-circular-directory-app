@@ -2,43 +2,13 @@
 
 import { useState } from 'react';
 import type { Listing } from '@/lib/getListings';
-import type { ActionName } from '@/components/ActionIcon/ActionIcon';
-import { ActionIcon } from '@/components/ActionIcon';
 import { Pill } from '@/components/Pill';
+import { ActionsBlock } from '@/components/ActionsBlock';
+import { SystemsMapping } from '@/components/SystemsMapping';
 import { CopyEmailButton } from './CopyEmailButton';
 import styles from './ListingTabs.module.scss';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-const ACTION_LABELS: Record<ActionName, string> = {
-  donate:      'Donate',
-  buy:         'Buy',
-  buyB2B:      'Buy (B2B)',
-  sell:        'Sell',
-  consign:     'Consign',
-  trade:       'Trade',
-  repair:      'Repair',
-  recycle:     'Recycle',
-  compost:     'Compost',
-  volunteer:   'Volunteer',
-  refill:      'Refill',
-  rent:        'Rent',
-  process:     'Process',
-  dineOrDrink: 'Dine or Drink',
-};
-
-const INPUT_ACTIONS  = new Set<ActionName>(['donate', 'sell', 'trade']);
-const OUTPUT_ACTIONS = new Set<ActionName>(['buy', 'buyB2B', 'consign']);
-
-function getActionContent(action: ActionName, f: Listing['fields']) {
-  if (INPUT_ACTIONS.has(action))
-    return { categories: f.inputCategories,  override: f.inputCategoryOverride,  notes: f.inputNotes  };
-  if (OUTPUT_ACTIONS.has(action))
-    return { categories: f.outputCategories, override: f.outputCategoryOverride, notes: f.outputNotes };
-  if (action === 'volunteer')
-    return { categories: [],                  override: '',                        notes: f.volunteerNotes };
-  return   { categories: f.serviceCategories, override: f.serviceCategoryOverride, notes: f.serviceNotes  };
-}
 
 function toInstagramUrl(handle: string): string {
   if (!handle) return '';
@@ -132,81 +102,10 @@ export function ListingTabs({ fields: f, mapsUrl }: ListingTabsProps) {
           )}
 
           {/* Actions */}
-          {f.allActionNames.length > 0 && (
-            <div className={styles.actionsBlock}>
-              {f.allActionNames.map((action) => {
-                const { categories, override, notes } = getActionContent(action, f);
-                const hasContent = categories.length > 0 || override || notes;
-                return (
-                  <details key={action} className={styles.actionRow}>
-                    <summary className={styles.actionSummary}>
-                      <ActionIcon action={action} variant="badge" />
-                      <span className={styles.actionLabel}>{ACTION_LABELS[action]}</span>
-                      {hasContent && (
-                        <i
-                          className={`fa-solid fa-chevron-down ${styles.actionChevron}`}
-                          aria-hidden="true"
-                        />
-                      )}
-                    </summary>
-                    {hasContent && (
-                      <div className={styles.actionContent}>
-                        {categories.length > 0 && (
-                          <div className={styles.actionCategories}>
-                            {categories.map((cat) => (
-                              <Pill key={cat} label={cat} color="mono" size="small" />
-                            ))}
-                          </div>
-                        )}
-                        {override && (
-                          <div className={styles.actionOverrideBlock}>
-                            <span className={`caption-bold ${styles.actionOverrideLabel}`}>Additional Items</span>
-                            <p className={`body-small-regular ${styles.actionOverride}`}>{override}</p>
-                          </div>
-                        )}
-                        {notes && <p className={styles.actionNote}>{notes}</p>}
-                      </div>
-                    )}
-                  </details>
-                );
-              })}
-            </div>
-          )}
+          <ActionsBlock fields={f} />
 
           {/* Systems Mapping */}
-          {(f.coreMaterialSystem.length > 0 || f.enablingSystem.length > 0) && (
-            <div>
-              <p className={styles.sectionLabel}>Systems Mapping</p>
-              <div className={styles.systemsBlock}>
-                {f.coreMaterialSystem.length > 0 && (
-                  <details className={styles.systemRow}>
-                    <summary className={styles.systemSummary}>
-                      <span className={styles.systemSummaryLabel}>Core Material Systems</span>
-                      <i className={`fa-solid fa-chevron-down ${styles.systemChevron}`} aria-hidden="true" />
-                    </summary>
-                    <div className={styles.systemContent}>
-                      {f.coreMaterialSystem.map((m) => (
-                        <Pill key={m} label={m} color="mono" size="small" />
-                      ))}
-                    </div>
-                  </details>
-                )}
-                {f.enablingSystem.length > 0 && (
-                  <details className={styles.systemRow}>
-                    <summary className={styles.systemSummary}>
-                      <span className={styles.systemSummaryLabel}>This Business Enables</span>
-                      <i className={`fa-solid fa-chevron-down ${styles.systemChevron}`} aria-hidden="true" />
-                    </summary>
-                    <div className={styles.systemContent}>
-                      {f.enablingSystem.map((s) => (
-                        <Pill key={s} label={s} color="mono" size="small" />
-                      ))}
-                    </div>
-                  </details>
-                )}
-              </div>
-            </div>
-          )}
+          <SystemsMapping fields={f} />
 
         </div>
       )}
@@ -336,7 +235,7 @@ export function ListingTabs({ fields: f, mapsUrl }: ListingTabsProps) {
               <p className={styles.sectionLabel}>Activities &amp; Events</p>
               <div className={styles.pillRow}>
                 {f.notableBusinessEvents.map((evt) => (
-                  <Pill key={evt} label={evt} color="mono" size="large" />
+                  <Pill key={evt} label={evt} color="spruce" size="large" />
                 ))}
               </div>
             </div>

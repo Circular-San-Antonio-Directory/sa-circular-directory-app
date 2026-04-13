@@ -32,7 +32,7 @@
 // Only render on mobile — hidden entirely above 1024px
 .backdrop,
 .sheet {
-  @media (min-width: 1024px) {
+  @include desktop {
     display: none !important;
   }
 }

@@ -35,7 +35,7 @@
   flex-direction: column;
   position: relative;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     height: auto;
     min-height: 100dvh;
     overflow: visible;
@@ -51,7 +51,7 @@
   flex: 1;
   overflow: hidden;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     //max-width: 1344px;
     width: 100%;
     margin: 0 auto;
@@ -70,7 +70,7 @@
   flex: 1;
   overflow: hidden;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     flex-direction: row;
     gap: $space-6; // 24px
     margin-top: $space-6;
@@ -100,7 +100,7 @@
   border-bottom: 1px solid $border-default;
   flex-shrink: 0;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     display: none;
   }
 }
@@ -177,7 +177,7 @@
 .sidebar {
   display: none;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     display: flex;
     flex-direction: column;
     gap: $space-5; // 20px
@@ -430,7 +430,7 @@
   // Mobile: no border, fills remaining height, leaves room for bottom sheet
   padding-bottom: 72px;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     height: calc(100dvh - 74px - 48px - 24px); // nav + page padding + gap — matches sidebar max-height calc; must be `height` (not min-height) so child height:100% resolves
     border: 1px solid $border-default;
     border-radius: $radius-md;
@@ -443,7 +443,7 @@
 .aboutSection {
   display: none;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     display: block;
     margin-top: $space-6; // 24px gap after map area
     padding-bottom: $space-6;
@@ -468,7 +468,7 @@
   gap: $space-3;
   z-index: 20;
 
-  @media (min-width: 1024px) {
+  @include desktop {
     display: none;
   }
 }
