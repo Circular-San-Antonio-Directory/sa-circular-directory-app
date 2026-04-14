@@ -117,7 +117,7 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
               {/* Header */}
               <div className={styles.header}>
                 <div className={styles.nameAddress}>
-                  <h1 className={`hero-2-strong ${styles.businessName}`}>{f.businessName}</h1>
+                  <h1 className={`hero-3-strong ${styles.businessName}`}>{f.businessName}</h1>
                   {f.address && (
                     <p className={`body-default-regular ${styles.address}`}>{f.address}</p>
                   )}

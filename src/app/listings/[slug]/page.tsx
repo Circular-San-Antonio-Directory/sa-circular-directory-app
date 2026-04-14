@@ -7,6 +7,7 @@ import { ActionsProvider } from '@/components/ActionIcon';
 import { Nav } from '@/components/Nav';
 import styles from './page.module.scss';
 import { ListingContent } from './ListingContent';
+import { PageTransition } from './PageTransition';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -25,7 +26,9 @@ export default async function ListingPage({ params }: Props) {
         <Nav />
       </div>
       <ActionsProvider actions={actions}>
-        <ListingContent listing={listing} />
+        <PageTransition>
+          <ListingContent listing={listing} />
+        </PageTransition>
       </ActionsProvider>
     </div>
   );

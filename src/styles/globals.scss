@@ -12,6 +12,11 @@
 // BASE HTML ELEMENT DEFAULTS
 // -----------------------------------------------------------------------------
 
+body {
+  background: $surface-base; // #F9F8F5 — matches all page backgrounds; prevents
+  // white flash during navigation when page bg hasn't rendered yet
+}
+
 h1 { @include type-heading-1(); }
 h2 { @include type-heading-2(); }
 h3 { @include type-heading-3(); }

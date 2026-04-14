@@ -12,6 +12,7 @@ import type { PillColor } from '@/components/Pill';
 import { slugify } from '@/lib/slugify';
 import { filterListings } from '@/lib/filterListings';
 import { MobileBottomSheet } from './MobileBottomSheet';
+import { MobileMapPreview } from './MobileMapPreview';
 import { MobileSearchSheet } from './MobileSearchSheet';
 import styles from './page.module.scss';
 
@@ -69,6 +70,10 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
     [listings, categories, searchQuery, actionFilter],
   );
 
+  // Look up the full listing object for the mobile map preview card.
+  // Uses all listings (not filtered) so the card doesn't disappear when filters change.
+  const previewListing = previewId ? (listings.find((l) => l.id === previewId) ?? null) : null;
+
   const handleSelectListing = useCallback((id: string) => {
     setPreviewId(id);
     const card = cardRefs.current.get(id);
@@ -84,6 +89,12 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
   }, []);
 
   const handleMapBackgroundClick = useCallback(() => {
+    // On mobile, users may pan/zoom the map while still viewing the preview card.
+    // Only dismiss on desktop where the sidebar card is the preview surface.
+    if (window.innerWidth >= 820) setPreviewId(null);
+  }, []);
+
+  const handleMobilePreviewClose = useCallback(() => {
     setPreviewId(null);
   }, []);
 
@@ -190,9 +201,9 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
                     <hr className={styles.previewDivider} />
 
                     {/* Tags */}
-                    {listing.fields.typeOfBusiness.length > 0 && (
+                    {listing.fields.tags.length > 0 && (
                       <div className={styles.previewTags}>
-                        {listing.fields.typeOfBusiness.map((tag) => (
+                        {listing.fields.tags.map((tag) => (
                           <Pill key={tag} label={tag} color={tagColor(tag)} size="small" />
                         ))}
                       </div>
@@ -251,6 +262,9 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
           onMobileSearchOpen={() => setIsMobileSearchOpen(true)}
         />
       </div>
+
+      {/* Mobile map preview card — floats over the map when a marker is tapped */}
+      <MobileMapPreview listing={previewListing} onClose={handleMobilePreviewClose} />
 
       {/* Mobile bottom sheet — receives filtered listings so filters apply on mobile too */}
       <MobileBottomSheet listings={filteredListings} />

@@ -34,6 +34,11 @@
   @include type-hero-3;
 }
 
+// Hero 3 Strong — 40px / 110% / Medium
+.hero-3-strong {
+  @include type-hero-3-strong;
+}
+
 // Hero 4 — 28px / 110% / Medium
 .hero-4 {
   @include type-hero-4;

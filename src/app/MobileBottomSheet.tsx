@@ -63,22 +63,24 @@ export function MobileBottomSheet({ listings }: Props) {
           onTouchStart={isOpen ? handleTouchStart : undefined}
           onTouchEnd={isOpen ? handleTouchEnd : undefined}
         >
-          {!isOpen && <div className={styles.handle} aria-hidden="true" />}
+          <div className={styles.handle} aria-hidden="true" />
 
-          <p className={styles.count}>
-            <span className={styles.countBold}>{listings.length} Listings</span>
-            {' '}
-            <span className={styles.countLight}>in this area</span>
-          </p>
+          <div className={styles.headerRow}>
+            <p className={styles.count}>
+              <span className={styles.countBold}>{listings.length} Listings</span>
+              {' '}
+              <span className={styles.countLight}>in this area</span>
+            </p>
 
-          {isOpen && (
-            <ModalActionButton
-              icon="fa-solid fa-arrow-left"
-              surface="transparent"
-              onClick={(e) => { e.stopPropagation(); close(); }}
-              aria-label="Close listings"
-            />
-          )}
+            {isOpen && (
+              <ModalActionButton
+                icon="fa-solid fa-arrow-left"
+                surface="transparent"
+                onClick={(e) => { e.stopPropagation(); close(); }}
+                aria-label="Close listings"
+              />
+            )}
+          </div>
         </div>
 
         {/* Scrollable listing content */}

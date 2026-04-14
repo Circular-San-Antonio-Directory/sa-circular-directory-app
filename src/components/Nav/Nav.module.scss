@@ -25,7 +25,8 @@
   flex-shrink: 0;
   position: sticky;
   top: 0;
-  z-index: 20;
+  // 30: above bottom sheet (20) and its backdrop (19), below search sheet (40)
+  z-index: 30;
 
   @include desktop {
     // Desktop: raised card with border + frosted glass effect

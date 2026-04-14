@@ -22,7 +22,7 @@
 $peek-height: 58px;
 
 // Full sheet height when expanded
-$sheet-height: 88dvh;
+$sheet-height: 80dvh;
 
 // ─── Backdrop ─────────────────────────────────────────────────────────────────
 
@@ -42,6 +42,7 @@ $sheet-height: 88dvh;
   &.backdropVisible {
     background: rgba(0, 0, 0, 0.3);
     pointer-events: auto;
+    z-index: 31; // above nav (30) when scrim is active
   }
 }
 
@@ -68,6 +69,7 @@ $sheet-height: 88dvh;
 
   &.sheetOpen {
     transform: translateY(0);
+    z-index: 32; // above nav (30) and scrim (31) when open
   }
 
   // Desktop: never shown
@@ -80,25 +82,30 @@ $sheet-height: 88dvh;
 
 .header {
   flex-shrink: 0;
-  //min-height: $peek-height;
+  height: 58px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: $space-2; // 8px
-  height: 58px;
-  padding: 0 $space-4; // 12px 16px
+  padding: 0 $space-4;
   cursor: pointer; // tappable to open when collapsed
 
-  // When open, switch to flex: count (left) | button (right)
   .sheetOpen & {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
     cursor: default;
     border-bottom: 1px solid $border-subtle;
-    gap: 0;
+  }
+}
+
+// Row inside header: centered when collapsed, space-between when open
+.headerRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .sheetOpen & {
+    justify-content: space-between;
   }
 }
 
