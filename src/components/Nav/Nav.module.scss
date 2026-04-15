@@ -258,6 +258,50 @@
   border-bottom: 1px solid $border-medium;
   color: $text-inverse;
   text-decoration: none;
+  // reset for when rendered as <button>
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+// --- Feedback view (inside mobile overlay) ---
+
+.mobileMenuFeedback {
+  background: $spruce-800;
+  overflow-y: auto;
+}
+
+.feedbackHeader {
+  display: flex;
+  align-items: center;
+  padding: 10px $space-4; // matches .mobileHeader
+  flex-shrink: 0;
+}
+
+.backBtn {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $text-inverse;
+  font-size: 22px; // same as .closeBtn
+  flex-shrink: 0;
+}
+
+.feedbackContent {
+  flex: 1;
+  padding: $space-4 $space-4 $space-8;
+  display: flex;
+  flex-direction: column;
 }
 
 // --- Mobile hamburger button ---

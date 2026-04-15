@@ -1,0 +1,40 @@
+@use '../../styles' as *;
+
+.root {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  padding: $space-3; // 12px
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm; // 4px
+  box-shadow: $shadow-sm;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 400;
+  color: $text-default;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+
+  &::placeholder {
+    color: $text-disabled;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $mono-500;
+  }
+
+  &:focus:not(:disabled) {
+    border-color: $primary-default;
+    box-shadow: 0 0 0 3px rgba(30, 87, 81, 0.15); // $fern-700 at 15% opacity — nearest token: $primary-default
+  }
+
+  &:disabled {
+    background: $surface-sunken;
+    border-color: $border-subtle;
+    color: $text-disabled;
+    cursor: not-allowed;
+    resize: none;
+  }
+}

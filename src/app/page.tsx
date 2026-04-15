@@ -4,6 +4,7 @@ import { getCategories } from '@/lib/getCategories';
 import { getActions } from '@/lib/getActions';
 import { ActionsProvider } from '@/components/ActionIcon';
 import { AboutCircularSA } from '@/components/AboutCircularSA';
+import { QuestionsOrFeedback } from '@/components/QuestionsOrFeedback';
 import { DirectoryClient } from './DirectoryClient';
 import styles from './page.module.scss';
 
@@ -33,6 +34,8 @@ export default async function Home() {
           <AboutCircularSA />
         </div>
       </div>
+
+      <QuestionsOrFeedback />
 
     </div>
   );
