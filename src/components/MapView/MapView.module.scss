@@ -147,6 +147,14 @@
   border: 1px solid $border-default;
   border-radius: $radius-sm; // 4px
   cursor: text;
+  box-shadow: $shadow-sm;
+  transition: border 0.4s ease;
+
+  &:hover {
+      border: 1px solid $mono-500;
+
+  }
+
 
   i {
     color: $text-subtle;

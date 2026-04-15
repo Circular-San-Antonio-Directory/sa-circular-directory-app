@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/Button';
+import { QuestionsOrFeedback } from '@/components/QuestionsOrFeedback';
 import styles from './Nav.module.scss';
 
 const CLOSE_DURATION = 180; // ms — must match menuSlideOut duration in SCSS
@@ -12,6 +13,7 @@ export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [view, setView] = useState<'menu' | 'feedback'>('menu');
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -32,6 +34,7 @@ export function Nav() {
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
+      setView('menu');
     }, CLOSE_DURATION);
   }
 
@@ -88,66 +91,89 @@ export function Nav() {
       {/* Mobile menu overlay — rendered outside <nav> to escape its stacking context */}
       {isOpen && (
         <div
-          className={`${styles.mobileMenu} ${isClosing ? styles.mobileMenuClosing : ''}`}
+          className={`${styles.mobileMenu} ${isClosing ? styles.mobileMenuClosing : ''} ${view === 'feedback' ? styles.mobileMenuFeedback : ''}`}
           role="dialog"
           aria-modal="true"
-          aria-label="Navigation menu"
+          aria-label={view === 'feedback' ? 'Questions and feedback' : 'Navigation menu'}
         >
-          <div className={styles.mobileHeader}>
-            <Link href="/" className={styles.left} onClick={close}>
-              <div className={styles.logoWrapper}>
-                <Image
-                  src="/images/DirectoryLogo.svg"
-                  alt="SA Circular Directory logo"
-                  width={44}
-                  height={44}
-                  className={`${styles.logoImg} ${styles.logoImgInverse}`}
-                />
+          {view === 'menu' ? (
+            <>
+              <div className={styles.mobileHeader}>
+                <Link href="/" className={styles.left} onClick={close}>
+                  <div className={styles.logoWrapper}>
+                    <Image
+                      src="/images/DirectoryLogo.svg"
+                      alt="SA Circular Directory logo"
+                      width={44}
+                      height={44}
+                      className={`${styles.logoImg} ${styles.logoImgInverse}`}
+                    />
+                  </div>
+                  <div className={styles.wordmarkInverse}>
+                    <span className={styles.wordmarkTop}>San Antonio</span>
+                    <span className={styles.wordmarkBottom}>Circular Directory</span>
+                  </div>
+                </Link>
+                <button
+                  className={styles.closeBtn}
+                  aria-label="Close navigation menu"
+                  onClick={close}
+                >
+                  <i className="fa-solid fa-xmark" aria-hidden="true" />
+                </button>
               </div>
-              <div className={styles.wordmarkInverse}>
-                <span className={styles.wordmarkTop}>San Antonio</span>
-                <span className={styles.wordmarkBottom}>Circular Directory</span>
+
+              <div className={styles.mobileBody}>
+                <div className={styles.primaryLinks}>
+                  {/* <Link href="/" className={styles.primaryItem} onClick={close}>Map</Link> */}
+                  <a
+                    href="https://www.circularsanantonio.org/projects/directory"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.primaryItem}
+                    onClick={close}
+                  >
+                    Join the Directory
+                    <i className="fa-solid fa-arrow-right-long" aria-hidden="true" />
+                  </a>
+                </div>
+
+                <div className={styles.secondaryLinks}>
+                  <button
+                    className={styles.secondaryItem}
+                    onClick={() => setView('feedback')}
+                  >
+                    Questions and Feedback
+                  </button>
+                  <a
+                    href="https://www.circularsanantonio.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.secondaryItem}
+                  >
+                    About Circular San Antonio
+                    <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
+                  </a>
+                </div>
               </div>
-            </Link>
-            <button
-              className={styles.closeBtn}
-              aria-label="Close navigation menu"
-              onClick={close}
-            >
-              <i className="fa-solid fa-xmark" aria-hidden="true" />
-            </button>
-          </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.feedbackHeader}>
+                <button
+                  className={styles.backBtn}
+                  aria-label="Back to menu"
+                  onClick={() => setView('menu')}
+                >
+                  <i className="fa-solid fa-arrow-left" aria-hidden="true" />
+                </button>
+              </div>
 
-          <div className={styles.mobileBody}>
-            <div className={styles.primaryLinks}>
-              {/* <Link href="/" className={styles.primaryItem} onClick={close}>Map</Link> */}
-              <a
-                href="https://www.circularsanantonio.org/projects/directory"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.primaryItem}
-                onClick={close}
-              >
-                Join the Directory
-                <i className="fa-solid fa-arrow-right-long" aria-hidden="true" />
-              </a>
-            </div>
-
-            <div className={styles.secondaryLinks}>
-              <span className={styles.secondaryItem}>
-                Questions and Feedback
-              </span>
-              <a
-                href="https://www.circularsanantonio.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.secondaryItem}
-              >
-                About Circular San Antonio
-                <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
-              </a>
-            </div>
-          </div>
+              <div className={styles.feedbackContent}>
+                <QuestionsOrFeedback mobile />
+              </div>
+            </>
+          )}
         </div>
       )}
     </>

@@ -1,0 +1,122 @@
+@use '../../styles' as *;
+
+.root {
+  background: $spruce-800;
+  // nearest token: Figma used 56px vertical padding, mapped to $space-14 (54px)
+  padding: $space-14 104px; // 104px horizontal has no token equivalent
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-10;
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-4;
+  text-align: center;
+  width: 100%;
+}
+
+.heading {
+  color: $spruce-300;
+}
+
+.description {
+  color: $spruce-100;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  width: 500px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.label {
+  color: $text-inverse;
+}
+
+.submitBtn {
+  width: 100%;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-6;
+  width: 500px;
+  text-align: center;
+  animation: fadeUp 0.4s ease-out both;
+}
+
+.successIcon {
+  font-size: 40px;
+  color: $spruce-400;
+}
+
+.successMessage {
+  color: $text-inverse;
+  text-align: center;
+}
+
+.errorMessage {
+  color: $redAdobe-400;
+  text-align: center;
+}
+
+// Mobile modal variant — no bg/padding/centering; widths expand to fill the overlay
+.mobileContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-10;
+  width: 100%;
+
+  .header {
+    align-items: flex-start;
+    text-align: left;
+
+    .description {
+      margin: 0;
+    }
+  }
+
+  .form,
+  .successState {
+    width: 100%;
+  }
+
+  .successState {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .successMessage {
+    text-align: left;
+  }
+}
