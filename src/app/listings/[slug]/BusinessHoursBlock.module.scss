@@ -1,0 +1,130 @@
+@use '../../../styles' as *;
+
+.details {
+  summary {
+    list-style: none;
+    cursor: pointer;
+    &::-webkit-details-marker { display: none; }
+  }
+}
+
+.summary {
+  display: block;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+
+  &--open    { background: $fern-100; }
+  &--closed  { background: $orange-100; }
+  &--special,
+  &--unknown { background: $mono-300; }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clock {
+  font-size: 14px;
+
+  .header--open &    { color: $success-text-surface-light; }
+  .header--closed &  { color: $warning-text-surface-light; }
+  .header--special &,
+  .header--unknown & { color: $mono-700; }
+}
+
+.labelText {
+  .header--open &    { color: $success-text-surface-light; }
+  .header--closed &  { color: $warning-text-surface-light; }
+  .header--special &,
+  .header--unknown & { color: $mono-700; }
+}
+
+.statusRow {
+  display: flex;
+  align-items: baseline;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.statusText {
+  @include type-body-small-regular();
+
+  .header--open &    { color: $success-text-surface-light; }
+  .header--closed &  { color: $warning-text-surface-light; }
+  .header--special &,
+  .header--unknown & { color: $mono-700; }
+}
+
+.statusAccent {
+  @include type-body-small-medium();
+
+  .header--open &   { color: $success-surface-dark; }
+  .header--closed & { color: $warning-surface-dark; }
+}
+
+.chevron {
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+
+  .header--open &    { color: $success-surface-dark; }
+  .header--closed &  { color: $warning-surface-dark; }
+  .header--special & { color: $mono-700; }
+
+  details[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.panel {
+  margin-top: $space-2;
+  background: $surface-base;
+  border: 1px solid $border-subtle;
+  border-radius: $radius-sm;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.panelRow {
+  display: flex;
+  gap: $space-2;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.dayName {
+  @include type-body-small-regular();
+  color: $mono-700;
+  width: 200px;
+  flex-grow: 1;
+}
+
+.dayTime {
+  @include type-body-small-medium();
+  color: $mono-700;
+  white-space: nowrap;
+}
+
+.panelNote {
+  @include type-body-small-regular();
+  color: $mono-700;
+  margin-top: $space-1;
+  padding-top: $space-2;
+  border-top: 1px solid $border-subtle;
+}

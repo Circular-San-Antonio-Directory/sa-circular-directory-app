@@ -3,6 +3,19 @@ import { csvActionToActionName } from './actionMapping';
 import pool from './db';
 export { slugify } from './slugify';
 
+// ─── Hours types ──────────────────────────────────────────────────────────────
+
+export interface DayHours { open: string; close: string; }
+export type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+export type DayEntry = DayHours[] | { special: string } | null;
+export interface DisplayRow { days: string; time: string; }
+export interface BusinessHoursJson {
+  tz?: string;
+  hours: Partial<Record<DayKey, DayEntry>>;
+  display: DisplayRow[];
+  note?: string;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Listing {
@@ -35,6 +48,7 @@ export interface Listing {
     notableBusinessEvents: string[];
     googleHoursAccurate: string;
     businessHours: string;
+    hoursJson: BusinessHoursJson | null;
     inputActions: string[];
     inputCategories: string[];
     inputCategoryIcons: string[];
@@ -87,6 +101,7 @@ interface BusinessRow {
   online_shop_link: string | null;
   google_hours_accurate: string | null;
   business_hours: string | null;
+  hours_json: BusinessHoursJson | null;
   input_notes: string | null;
   input_category_override: string | null;
   output_notes: string | null;
@@ -204,6 +219,7 @@ function rowToListing(row: BusinessRow): Listing {
       notableBusinessEvents:   toArr(row.activity_names),
       googleHoursAccurate:     toStr(row.google_hours_accurate),
       businessHours:           toStr(row.business_hours),
+      hoursJson:               row.hours_json ?? null,
       inputActions:            toArr(row.input_action_names),
       inputCategories:         toArr(row.input_category_names),
       inputCategoryIcons:      toArr(row.input_category_icons),

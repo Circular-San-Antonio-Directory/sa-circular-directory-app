@@ -1,5 +1,125 @@
 import Airtable from 'airtable';
 import pool from './db';
+import type { BusinessHoursJson, DayKey, DayEntry, DisplayRow } from './getListings';
+
+// ─── Hours text parser ────────────────────────────────────────────────────────
+
+const DAY_ORDER: DayKey[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+const DAY_ABBREV: Record<string, DayKey> = {
+  sun: 'sun', sunday: 'sun',
+  mon: 'mon', monday: 'mon',
+  tue: 'tue', tuesday: 'tue', tues: 'tue',
+  wed: 'wed', wednesday: 'wed',
+  thu: 'thu', thursday: 'thu', thur: 'thu', thurs: 'thu',
+  fri: 'fri', friday: 'fri',
+  sat: 'sat', saturday: 'sat',
+};
+const DAY_FULL: Record<DayKey, string> = {
+  sun: 'Sunday', mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday',
+  thu: 'Thursday', fri: 'Friday', sat: 'Saturday',
+};
+
+function parseSingleTime(t: string): string | null {
+  const m = t.trim().match(/^(\d{1,2})(?::(\d{2}))?(am|pm)$/i);
+  if (!m) return null;
+  let h = parseInt(m[1]);
+  const min = m[2] ? parseInt(m[2]) : 0;
+  if (m[3].toLowerCase() === 'am') { if (h === 12) h = 0; }
+  else { if (h !== 12) h += 12; }
+  return `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+}
+
+function parseTimeRange(valueStr: string): DayEntry {
+  const sessions = valueStr.split(',').map(s => s.trim());
+  const result: { open: string; close: string }[] = [];
+  for (const session of sessions) {
+    const idx = session.search(/\d(am|pm)-/i);
+    if (idx === -1) return { special: valueStr.trim() };
+    const splitAt = session.indexOf('-', idx + 1);
+    if (splitAt === -1) return { special: valueStr.trim() };
+    const open = parseSingleTime(session.slice(0, splitAt).trim());
+    const close = parseSingleTime(session.slice(splitAt + 1).trim());
+    if (!open || !close) return { special: valueStr.trim() };
+    result.push({ open, close });
+  }
+  return result.length > 0 ? result : { special: valueStr.trim() };
+}
+
+function expandDays(daysStr: string): DayKey[] {
+  const result: DayKey[] = [];
+  for (const part of daysStr.split(',').map(s => s.trim())) {
+    if (part.includes('-')) {
+      const [startRaw, endRaw] = part.split('-').map(s => s.trim().toLowerCase());
+      const startKey = DAY_ABBREV[startRaw];
+      const endKey = DAY_ABBREV[endRaw];
+      if (startKey && endKey) {
+        let startIdx = DAY_ORDER.indexOf(startKey);
+        let endIdx = DAY_ORDER.indexOf(endKey);
+        if (endIdx < startIdx) endIdx += 7;
+        for (let i = startIdx; i <= endIdx; i++) result.push(DAY_ORDER[i % 7]);
+      }
+    } else {
+      const key = DAY_ABBREV[part.toLowerCase()];
+      if (key) result.push(key);
+    }
+  }
+  return result;
+}
+
+function formatDisplayDays(daysStr: string): string {
+  return daysStr.split(',').map(part => {
+    part = part.trim();
+    if (part.includes('-')) {
+      const [startRaw, endRaw] = part.split('-').map(s => s.trim().toLowerCase());
+      const startKey = DAY_ABBREV[startRaw];
+      const endKey = DAY_ABBREV[endRaw];
+      if (startKey && endKey) return `${DAY_FULL[startKey]}-${DAY_FULL[endKey]}`;
+    }
+    const key = DAY_ABBREV[part.toLowerCase()];
+    return key ? DAY_FULL[key] : part;
+  }).join(', ');
+}
+
+function parseBusinessHoursText(raw: unknown): BusinessHoursJson | null {
+  if (!raw || typeof raw !== 'string') return null;
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  if (lines.length === 0) return null;
+
+  const hours: Partial<Record<DayKey, DayEntry>> = {};
+  const display: DisplayRow[] = [];
+  let note: string | undefined;
+
+  for (const line of lines) {
+    if (/^note:/i.test(line)) {
+      note = line.replace(/^note:\s*/i, '').trim();
+      continue;
+    }
+    const colonIdx = line.indexOf(':');
+    if (colonIdx === -1) continue;
+    const daysStr = line.slice(0, colonIdx).trim();
+    const valueStr = line.slice(colonIdx + 1).trim();
+    if (!daysStr || !valueStr) continue;
+
+    const dayKeys = expandDays(daysStr);
+    if (dayKeys.length === 0) continue;
+
+    let entry: DayEntry;
+    let displayTime: string;
+    if (/^closed$/i.test(valueStr)) {
+      entry = null;
+      displayTime = 'Closed';
+    } else {
+      entry = parseTimeRange(valueStr);
+      displayTime = valueStr;
+    }
+
+    for (const key of dayKeys) hours[key] = entry;
+    display.push({ days: formatDisplayDays(daysStr), time: displayTime });
+  }
+
+  if (display.length === 0) return null;
+  return { tz: 'America/Chicago', hours, display, ...(note ? { note } : {}) };
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -133,13 +253,15 @@ async function upsertBusinesses(
         business_type_ids, tag_ids,
         input_action_ids, output_action_ids, service_action_ids,
         input_category_ids, output_category_ids, service_category_ids,
-        core_material_ids, enabling_system_ids, activity_ids
+        core_material_ids, enabling_system_ids, activity_ids,
+        hours_json
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
         $11,$12,$13,$14,$15,$16,$17,$18,
         $19,$20,$21,$22,$23,$24,$25,$26,
         $27,$28,$29,$30,
-        $31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41
+        $31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,
+        $42
       )
       ON CONFLICT (airtable_id) DO UPDATE SET
         business_name             = EXCLUDED.business_name,
@@ -195,6 +317,7 @@ async function upsertBusinesses(
         core_material_ids         = EXCLUDED.core_material_ids,
         enabling_system_ids       = EXCLUDED.enabling_system_ids,
         activity_ids              = EXCLUDED.activity_ids,
+        hours_json                = EXCLUDED.hours_json,
         updated_at                = NOW()`,
       [
         record.id,
@@ -238,6 +361,7 @@ async function upsertBusinesses(
         mapIds(f['Core Material System'],                    mappings.coreMaterials),
         mapIds(f['Enabling System'],                         mappings.enablingSystems),
         mapIds(f['Notable Business Events/Activities'],      mappings.activities),
+        parseBusinessHoursText(f['Business Hours']),
       ],
     );
     count++;

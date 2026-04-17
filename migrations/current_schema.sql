@@ -148,6 +148,7 @@ CREATE TABLE businesses (
   -- Business Hours
   google_hours_accurate VARCHAR(50),
   business_hours TEXT,
+  hours_json JSONB,
 
   -- Relationships (using INTEGER[] arrays of foreign keys)
   business_type_ids INTEGER[],      -- References business_types(id)

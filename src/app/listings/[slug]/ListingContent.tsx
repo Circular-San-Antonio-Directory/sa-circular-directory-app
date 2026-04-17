@@ -6,6 +6,7 @@ import styles from './page.module.scss';
 import { CopyEmailButton } from './CopyEmailButton';
 import { ListingTabs } from './ListingTabs';
 import { MobileBackButton } from './MobileBackButton';
+import { BusinessHoursBlock } from './BusinessHoursBlock';
 
 // ─── Tag color picker (deterministic, no mono/offWhite) ───────────────────────
 
@@ -293,22 +294,10 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
             </div>
 
             {/* Hours */}
-            {f.businessHours && (
+            {f.hoursJson && (
               <>
                 <hr className={styles.sidebarDivider} />
-                <details className={styles.hoursDetails}>
-                  <summary className={styles.hoursSummary}>
-                    <div className={styles.hoursText}>
-                      <span className={styles.hoursEyebrow}>Hours</span>
-                      <span className={styles.hoursValue}>View Hours</span>
-                    </div>
-                    <i
-                      className={`fa-solid fa-chevron-down ${styles.hoursChevron}`}
-                      aria-hidden="true"
-                    />
-                  </summary>
-                  <p className={styles.hoursContent}>{f.businessHours}</p>
-                </details>
+                <BusinessHoursBlock hoursJson={f.hoursJson} />
               </>
             )}
 

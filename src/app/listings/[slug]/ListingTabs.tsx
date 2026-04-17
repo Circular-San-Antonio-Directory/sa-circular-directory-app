@@ -6,6 +6,7 @@ import { Pill } from '@/components/Pill';
 import { ActionsBlock } from '@/components/ActionsBlock';
 import { SystemsMapping } from '@/components/SystemsMapping';
 import { CopyEmailButton } from './CopyEmailButton';
+import { BusinessHoursBlock } from './BusinessHoursBlock';
 import styles from './ListingTabs.module.scss';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -85,20 +86,8 @@ export function ListingTabs({ fields: f, mapsUrl }: ListingTabsProps) {
           )}
 
           {/* Hours */}
-          {f.businessHours && (
-            <details className={styles.hoursDetails}>
-              <summary className={styles.hoursSummary}>
-                <div className={styles.hoursText}>
-                  <span className={styles.hoursEyebrow}>Hours</span>
-                  <span className={styles.hoursValue}>View Hours</span>
-                </div>
-                <i
-                  className={`fa-solid fa-chevron-down ${styles.hoursChevron}`}
-                  aria-hidden="true"
-                />
-              </summary>
-              <p className={styles.hoursContent}>{f.businessHours}</p>
-            </details>
+          {f.hoursJson && (
+            <BusinessHoursBlock hoursJson={f.hoursJson} />
           )}
 
           {/* Actions */}
