@@ -4,6 +4,7 @@ import "./globals.css";
 import "@/styles/globals.scss";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Script from 'next/script';
+import { SITE_URL } from "@/lib/siteUrl";
 
 
 const geistSans = Geist({
@@ -16,9 +17,50 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const ROOT_DESCRIPTION =
+  "Directory of San Antonio circular economy businesses — donate, buy, thrift, repair, recycle, refill, rent, and more. Find local shops and services that keep materials in use.";
+
 export const metadata: Metadata = {
-  title: "SA Circular Directory",
-  description: "Find circular economy businesses in San Antonio — donate, buy, thrift, repair, and more.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "SA Circular Directory — San Antonio Circular Economy Businesses",
+    template: "%s · SA Circular Directory",
+  },
+  description: ROOT_DESCRIPTION,
+  applicationName: "SA Circular Directory",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "SA Circular Directory",
+    locale: "en_US",
+    url: "/",
+    title: "SA Circular Directory — San Antonio Circular Economy Businesses",
+    description: ROOT_DESCRIPTION,
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "SA Circular Directory",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SA Circular Directory — San Antonio Circular Economy Businesses",
+    description: ROOT_DESCRIPTION,
+    images: ["/og-default.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
