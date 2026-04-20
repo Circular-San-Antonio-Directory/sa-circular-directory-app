@@ -50,6 +50,11 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
 
   return (
     <>
+      {/* Single crawler/screen-reader h1. The visible headings below are h2s so
+          the DOM has exactly one h1 regardless of which responsive layout is
+          visible. */}
+      <h1 className="sr-only">{f.businessName}</h1>
+
       {/* ── Mobile / tablet layout (≤900px) ─────────────────────────── */}
       <div className={styles.mobileLayout}>
         {/* Scroll-aware sticky back bar — overlaps hero photo via negative margin */}
@@ -75,7 +80,7 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
         <div className={styles.mobileCard}>
           <div className={styles.mobileCardHeader}>
             <div className={styles.nameAddress}>
-              <h3 className={`hero-3 ${styles.businessName}`}>{f.businessName}</h3>
+              <h2 className={`hero-3 ${styles.businessName}`}>{f.businessName}</h2>
               {f.address && (
                 <p className={`body-default-regular ${styles.address}`}>{f.address}</p>
               )}
@@ -118,7 +123,7 @@ export function ListingContent({ listing, isModal }: ListingContentProps) {
               {/* Header */}
               <div className={styles.header}>
                 <div className={styles.nameAddress}>
-                  <h1 className={`hero-3-strong ${styles.businessName}`}>{f.businessName}</h1>
+                  <h2 className={`hero-3-strong ${styles.businessName}`}>{f.businessName}</h2>
                   {f.address && (
                     <p className={`body-default-regular ${styles.address}`}>{f.address}</p>
                   )}
