@@ -1,11 +1,19 @@
-require('dotenv').config();
-const { Pool } = require('pg');
+import 'dotenv/config'; // ES module import, no require() needed
+import { Pool } from 'pg';
 
 /**
  * PostgreSQL connection pool configuration
  * Uses DATABASE_URL from .env
  */
-const pool = new Pool({
+export interface PoolConfig {
+  connectionString: string;
+  ssl?: boolean | { rejectUnauthorized: false };
+  max: number;
+  idleTimeoutMillis: number;
+  connectionTimeoutMillis: number;
+}
+
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   max: 20, // Maximum number of clients in the pool
@@ -21,11 +29,14 @@ pool.on('error', (err) => {
 
 /**
  * Execute a query
- * @param {string} text - SQL query text
- * @param {Array} params - Query parameters
- * @returns {Promise} - Query result
+ * @param text - SQL query text
+ * @param params - Query parameters
+ * @returns Promise resolving to pg query result
  */
-async function query(text, params) {
+export async function query(
+  text: string,
+  params?: any[]
+): Promise<any> {
   const start = Date.now();
   const res = await pool.query(text, params);
   const duration = Date.now() - start;
@@ -39,14 +50,15 @@ async function query(text, params) {
 
 /**
  * Get a client from the pool for transactions
- * @returns {Promise} - Database client
+ * @returns Promise resolving to database client
  */
-async function getClient() {
+export async function getClient(): Promise<any> {
   const client = await pool.connect();
 
   // Add query method with logging
   const originalQuery = client.query.bind(client);
-  client.query = async (text, params) => {
+  
+  (client as any).query = async (text: string, params?: any[]): Promise<any> => {
     const start = Date.now();
     const res = await originalQuery(text, params);
     const duration = Date.now() - start;
@@ -64,31 +76,30 @@ async function getClient() {
 /**
  * Close all connections in the pool
  */
-async function end() {
+export async function end(): Promise<void> {
   await pool.end();
 }
 
 /**
  * Test database connection
- * @returns {Promise<boolean>} - True if connection successful
+ * @returns True if connection successful, false otherwise
  */
-async function testConnection() {
+export async function testConnection(): Promise<boolean> {
   try {
-    const result = await query('SELECT NOW() as current_time, version() as postgres_version');
+    const result = await query(
+      'SELECT NOW() as current_time, version() as postgres_version'
+    );
+    
     console.log('✅ Database connection successful');
     console.log('   Time:', result.rows[0].current_time);
-    console.log('   PostgreSQL:', result.rows[0].postgres_version.split(' ')[0], result.rows[0].postgres_version.split(' ')[1]);
+    console.log(
+      '   PostgreSQL:',
+      result.rows[0].postgres_version.split(' ')[0],
+      result.rows[0].postgres_version.split(' ')[1]
+    );
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Database connection failed:', error.message);
     return false;
   }
 }
-
-module.exports = {
-  query,
-  getClient,
-  end,
-  testConnection,
-  pool
-};
