@@ -16,10 +16,6 @@ async function main(): Promise<void> {
   }
 }
 
-// ============================================
-// Module Exports and Entry Point
-// ============================================
-
 // Run the script if called directly
 if (require.main === module) {
   main();

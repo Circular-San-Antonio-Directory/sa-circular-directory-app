@@ -103,22 +103,6 @@ export const BUSINESS_FIELDS_MAPPING: FieldMappingConfig = {
   [AIRTABLE_FIELD_NAMES.CORE_MATERIAL_SYSTEM]: { sqlColumn: 'core_material_ids', type: 'array' },
   [AIRTABLE_FIELD_NAMES.ENABLING_SYSTEM]: { sqlColumn: 'enabling_system_ids', type: 'array' },
 
-  // Input/Output/Service Actions & Categories (Airtable record IDs)
-  [AIRTABLE_FIELD_NAMES.INPUT_ACTIONS]: { sqlColumn: 'input_action_ids', type: 'array' },
-  [AIRTABLE_FIELD_NAMES.INPUT_CATEGORIES]: { sqlColumn: 'input_category_ids', type: 'array' },
-  [AIRTABLE_FIELD_NAMES.INPUT_CATEGORY_OVERRIDE]: { sqlColumn: 'input_category_override', type: 'string' },
-  [AIRTABLE_FIELD_NAMES.INPUT_NOTES]: { sqlColumn: 'input_notes', type: 'string' },
-
-  [AIRTABLE_FIELD_NAMES.OUTPUT_ACTIONS]: { sqlColumn: 'output_action_ids', type: 'array' },
-  [AIRTABLE_FIELD_NAMES.OUTPUT_CATEGORIES]: { sqlColumn: 'output_category_ids', type: 'array' },
-  [AIRTABLE_FIELD_NAMES.OUTPUT_CATEGORY_OVERRIDE]: { sqlColumn: 'output_category_override', type: 'string' },
-  [AIRTABLE_FIELD_NAMES.OUTPUT_NOTES]: { sqlColumn: 'output_notes', type: 'string' },
-
-  [AIRTABLE_FIELD_NAMES.SERVICE_ACTIONS]: { sqlColumn: 'service_action_ids', type: 'array' },
-  [AIRTABLE_FIELD_NAMES.SERVICE_CATEGORIES]: { sqlColumn: 'service_category_ids', type: 'array' },
-  [AIRTABLE_FIELD_NAMES.SERVICE_CATEGORY_OVERRIDE]: { sqlColumn: 'service_category_override', type: 'string' },
-  [AIRTABLE_FIELD_NAMES.SERVICE_NOTES]: { sqlColumn: 'service_notes', type: 'string' },
-
   // Events & Activities (Airtable record IDs)
   [AIRTABLE_FIELD_NAMES.NOTABLE_BUSINESS_EVENTS]: { sqlColumn: 'activity_ids', type: 'array' },
 
