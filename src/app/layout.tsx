@@ -34,6 +34,14 @@ export default function RootLayout({
         {children}
         {modal}
         <Script src="https://kit.fontawesome.com/d951ac1750.js" crossOrigin="anonymous" strategy="afterInteractive" />
+        {/* Google Analytics */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-CLY6XP3L62" strategy="afterInteractive" />
+        <Script id="gtag-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-CLY6XP3L62');
+        `}</Script>
       </body>
     </html>
   );
