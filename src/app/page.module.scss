@@ -1,488 +1,272 @@
 // Home Page — SA Circular Directory
 // =============================================================================
 // Token map
-// page bg:              $surface-base (#F9F8F5)
-// inner max-width:      1344px (1280px content + 2×32px padding)
-// inner padding:        $space-6 $space-8 (24px 32px) — Figma: py-24 px-32 ✓
-// content gap:          $space-6 (24px) — Figma: gap-24 ✓
-// sidebar width:        320px — Figma: w-320 ✓
-// sidebar border-right: $border-default (#D6D4CE) — Figma: border-gray-400 ≈
-// map area bg:          $surface-sunken (#EEECE8)
-// map area border:      $border-default
-// map area radius:      $radius-md (6px)
-// count pill bg:        $surface-sunken
-// count pill radius:    $radius-sm (4px) — Figma: base(small) = 4px ✓
-// listing card bg:      $surface-raised (#FFFFFF / near-white #FEFEFE ≈)
-// listing card border:  $border-default
-// listing card radius:  $radius-sm (4px) — Figma: base(small) = 4px ✓
-// listing card shadow:  $shadow-sm
-// mobile sheet bg:      $surface-raised (#FFFFFF)
-// mobile sheet radius:  $radius-xl $radius-xl 0 0 (12px top) — Figma: rounded-tl-12 ✓
-// mobile sheet shadow:  $shadow-md
+// page bg:                    $surface-base
+// hero bg:                    /images/home-hero.png (baked-in treatment)
+// hero text:                  $text-inverse ($mono-100)
+// hero accent text:           #F5E6A3 — nearest token: $orange-300 (#FAE89A)
+// description bg:             $surface-base
+// description text:           $text-default
+// description link:           $text-link
+// search section bg:          $surface-sunken (breaks out of pageInner padding)
+// search heading:             $text-default
+// search subtext:             $text-subtle
 // =============================================================================
 
 @use '../styles' as *;
 
-// --- Page root ---
+// ─── Page wrapper ─────────────────────────────────────────────────────────────
+// The hero background lives here as ::before so it covers only the viewport
+// height without affecting document flow.
 
 .page {
+  position: relative;
   background: $surface-base;
 
-  // Mobile: fixed viewport height, no scroll on the page itself
-  height: 100dvh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-
-  @include desktop {
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
-    display: block;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 95dvh;
+    background-image: url('/images/home-hero.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    pointer-events: none;
   }
 }
 
-// --- Padded inner wrapper (desktop only adds padding + max-width) ---
+// ─── pageInner — mirrors map page exactly ────────────────────────────────────
+// Nav is a DIRECT flex child of this element.
+// The sticky constraint for position:sticky is the nearest block-container
+// ancestor — that's this element, which spans the full page height because it
+// contains ALL page sections.  This replicates the map page behaviour exactly.
 
 .pageInner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  overflow: hidden;
 
   @include desktop {
-    //max-width: 1344px;
-    width: 100%;
-    margin: 0 auto;
-    padding: $space-6 $space-8; // 24px 32px
-    overflow: visible;
-    flex: none;
-    min-height: 100dvh;
+    padding: $space-6 $space-8; // 24px 32px — identical to map page .pageInner
+    padding-bottom: $space-8;
   }
 }
 
-// --- Two-column layout (sidebar + map) ---
+// ─── Hero content ─────────────────────────────────────────────────────────────
+// Fills the remaining viewport height after the nav so the hero feels full-screen.
 
-.contentArea {
+.heroContent {
   display: flex;
-  flex-direction: column; // mobile: search bar stacks above map
-  flex: 1;
-  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  gap: $space-6; // 24px
+  padding: $space-10 $space-6 $space-12; // mobile
+  min-height: 70dvh; // ensures hero area feels viewport-filling on all screen sizes
+
+  @include desktop {
+    padding: $space-10 $space-12;
+    max-width: 700px;
+    min-height: calc(95dvh - $space-6 - 80px); // viewport - top padding - approx nav height
+  }
+}
+
+.heroHeading {
+  color: $text-inverse;
+  margin: 0;
+}
+
+// nearest token: $orange-300 (#FAE89A) — Figma used #F5E6A3
+.heroAccent {
+  color: $orange-300;
+}
+
+.heroBody {
+  color: $text-inverse;
+  max-width: 560px;
+  margin: 0;
+
+  strong {
+    font-weight: 700;
+    color: $text-inverse;
+  }
+}
+
+// ─── Description + Accent Visual ──────────────────────────────────────────────
+
+.descriptionSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-8; // 32px
+ //padding: $space-10 $space-6; // mobile
+  margin-left: -$space-8;
+  margin-right: -$space-8;
+  padding: $space-16 $space-16 $space-8 $space-16; // restores content inset
+  background-color: $merlot-800;
 
   @include desktop {
     flex-direction: row;
-    gap: $space-6; // 24px
-    margin-top: $space-6;
-    overflow: visible;
-    align-items: flex-start;
+    align-items: center;
+    gap: $space-12; // 48px
+    padding: $space-8 $space-16 $space-8 $space-16; // restores content inset
+
+    // No extra horizontal padding — inherits pageInner's $space-8 padding
+    //padding: $space-12 0; // 48px vertical, flush to pageInner sides
   }
 }
 
-// --- Mobile search bar (below nav, above map) ---
-// token map:
-// bar bg:           $surface-base (#F9F8F5)
-// bar border:       $border-default (#D6D4CE)
-// field bg:         $surface-raised (white)
-// field border:     $border-default
-// field radius:     $radius-md (6px)
-// field shadow:     $shadow-sm
-// icon color:       $text-subtle (#6F6F6F)
-// action label:     colorway-700 (set inline)
-// text:             $text-default (#2F2F2F)
-// placeholder:      $text-disabled (#A6A29A)
-
-.mobileSearchBar {
+.descriptionTextGroup {
   display: flex;
-  align-items: center;
-  padding: $space-3 $space-4; // 12px 16px
-  background: $surface-base;
-  border-bottom: 1px solid $border-default;
-  flex-shrink: 0;
+
+  flex-direction: column;
+  gap: $space-6;
+  @include desktop {
+    width: 50%;
+  }
+}
+
+.descriptionText {
+  //color: $text-default;
+  color: $text-inverse;
+  //max-width: 500px;
+  margin: 0;
+  line-height: 1.6;
 
   @include desktop {
-    display: none;
+    flex: 0 0 auto;
+    max-width: 500px;
   }
 }
 
-.mobileSearchField {
-  display: flex;
-  align-items: center;
-  gap: $space-2; // 8px
-  flex: 1;
-  min-height: 44px;
-  padding: $space-2 $space-3; // 8px 12px
-  background: $surface-raised;
-  border: 1px solid $border-default;
-  border-radius: $radius-md; // 6px
-  box-shadow: $shadow-sm;
-  cursor: pointer;
+.descriptionAccentText {
 
-  > i { // magnifying glass
-    color: $text-subtle;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-}
-
-.mobileSearchContent {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.mobileSearchAction {
-  font-family: $font-body;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.2;
-  // color set inline from selected action's colorway at tone 700
-}
-
-.mobileSearchText {
-  font-family: $font-body;
-  font-size: 15px;
-  font-weight: 400;
-  color: $text-default;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mobileSearchPlaceholder {
-  color: $text-disabled;
-}
-
-.mobileClearBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: $text-subtle;
-  font-size: 14px;
-  flex-shrink: 0;
-  padding: $space-1;
-
-  &:hover {
-    color: $text-default;
-  }
-}
-
-// --- Sidebar (desktop only) ---
-
-.sidebar {
-  display: none;
+  color: $merlot-300;
+  //max-width: 500px;
+  margin: 0;
+  line-height: 1.4;
 
   @include desktop {
-    display: flex;
-    flex-direction: column;
-    gap: $space-5; // 20px
-    width: 360px;
-    flex-shrink: 0;
-    overflow-y: auto;
-    // Figma shows border-bottom on the sidebar container, but visually it's
-    // the vertical divider between sidebar and map. Using border-right here.
-    border-right: 1px solid $border-default;
-    padding-right: $space-5; // 20px breathing room before divider
-    max-height: calc(100dvh - 74px - 48px - 24px);
-    // 74px ≈ nav height, 48px ≈ top+bottom page padding, 24px = gap
+    flex: 0 0 auto;
+        max-width: 500px;
+
   }
 }
 
-.countPill {
-  background: $surface-sunken;
-  border-radius: $radius-sm;
-  padding: 6px $space-4; // nearest: between $space-1 (4px) and $space-2 (8px); using 6px
-  flex-shrink: 0;
-}
-
-.countBold {
-  @include type-body-small-medium;
-  color: $text-default;
-}
-
-.countLight {
-  @include type-body-small-regular;
-  color: $text-subtle;
-}
-
-.sidebarHint {
-  // nearest token: type-caption-regular (13px) — Figma used 14px
-  @include type-caption-regular;
-  font-size: 14px; // override to match Figma
-  color: $text-subtle;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0 $space-2;
-}
-
-// --- Listing card stack ---
-
-.listingStack {
-  display: flex;
-  flex-direction: column;
-  gap: $space-4; // 16px
-  padding-bottom: $space-16; //  extra scroll room so last card clears the sidebar bottom
-}
-
-// --- Placeholder listing card ---
-
-.listingCard {
-  background: $surface-raised;
-  border: 1px solid $border-default;
-  border-radius: $radius-sm;
-  box-shadow: $shadow-sm;
-  overflow: hidden;
-  cursor: pointer;
-  transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+.descriptionLink {
+  color: $merlot-300;
+  text-decoration: underline;
+  font-weight: 600;
 
   &:hover {
-    box-shadow: $shadow-md;
-    transform: translateY(-2px);
-    border-color: $border-medium;
-
-    .listingImageWrapper img {
-      transform: scale(1.04);
-    }
+    text-decoration: underline;
   }
 }
 
-.listingCardSelected {
-  border-color: $primary-default;
-  box-shadow: 0 0 0 1px $primary-default, $shadow-sm;
-}
-
-// --- Preview (expanded) state — triggered by map marker click ---
-
-.listingCardPreview {
-  border: 2px solid $primary-default;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    border-color: $primary-hover; // $fern-900 (#092620)
-
-    .listingImageWrapper img {
-      transform: scale(1.04);
-    }
-  }
-}
-
-// Expand animation via grid-template-rows trick (smooth, no max-height choppiness)
-
-.previewExpanded {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 250ms ease-in-out;
-}
-
-.previewExpandedOpen {
-  grid-template-rows: 1fr;
-}
-
-.previewInner {
-  overflow: hidden;
-}
-
-// Preview section dividers
-
-.previewDivider {
-  border: none;
-  border-top: 1px solid $border-default;
-  margin: 0;
-}
-
-// Tags (typeOfBusiness pills)
-
-.previewTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px; // nearest token: between $space-1 (4px) and $space-2 (8px); Figma used 6px
-  padding: $space-3 $space-4; // 12px 16px
-}
-
-// Action rows
-
-.previewActions {
-  display: flex;
-  flex-direction: column;
-  padding: $space-2 $space-4; // 8px 16px
-}
-
-.previewActionRow {
-  display: flex;
-  align-items: flex-start;
-  gap: $space-5; // 20px — Figma: gap-20 ✓
-  padding: $space-1 0; // 4px breathing room
-}
-
-.previewActionLeft {
-  flex-shrink: 0;
-}
-
-.previewActionCategories {
-  flex: 1 0 0;
-  @include type-caption-regular;
-  color: $text-subtle;
-  text-align: right;
-  margin: 0;
-  // Clamp to 2 lines to keep preview compact
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.previewActionDivider {
-  border: none;
-  border-top: 1px dotted $border-default;
-  margin: 0;
-}
-
-// CTA footer
-
-.previewCTA {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $space-3 $space-4; // 12px 16px
-  background: $primary-default; // $fern-700 (#1E5751)
-  border-top: 1px solid $border-default;
-  color: $text-inverse; // white
-}
-
-.previewCTALabel {
-  @include type-label-default; // Geist Medium 17px
-}
-
-.listingImageWrapper {
+.accentVisual {
   width: 100%;
-  height: 116px;
-  background: $surface-sunken;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $border-default;
-  font-size: 32px;
   overflow: hidden;
+  margin: 0 auto;
+  padding-top: $space-6;
+  max-height: 200px;
+  overflow: hidden;
+
+
+
+  @include desktop {
+    width: 80%;
+    flex: 1;
+    max-width: 600px;
+    transform: translateY($space-4);
+    max-height: 100%;
+  }
 
   img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 300ms ease;
+    height: auto;
+    display: block;
+    min-width: 600px;
+    overflow: hidden;
   }
 }
 
-.listingBody {
-  display: flex;
-  flex-direction: column;
-  gap: $space-2; 
-  padding: $space-3 $space-4 10px; // 12px 16px 10px — Figma: pt-12 pl-16 pr-8 pb-10
+// ─── Search Section ───────────────────────────────────────────────────────────
+// Breaks out of pageInner's horizontal padding on desktop to be full-bleed.
+
+.searchSection {
+  background: $surface-sunken;
+  // margin-left: -$space-8;
+  //margin-right: -$space-8;
+  padding: $space-12; // restores content inset
+
+  @include desktop {
+    // Break out of pageInner's $space-8 (32px) horizontal padding
+    margin-left: -$space-8;
+    margin-right: -$space-8;
+    padding: $space-16; // restores content inset
+  }
 }
 
-.listingMeta {
+.searchInner {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: $space-8; // 32px
+  //background-color: $fern-700;
+
+  @include desktop {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $space-12; // 48px
+    //max-width: 1104px;
+    margin: 0 auto;
+  }
 }
 
-.listingTitle {
-  // Archivo Medium 20px — no exact mixin (nearest: type-heading-3 is Geist 20px)
-  // Using $font-display (Archivo) manually to match Figma
-  font-family: $font-display;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: 0.4px;
+.searchTextCol {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4; // 16px
+
+  @include desktop {
+    flex: 1;
+    width: 50%;
+    padding-top: $space-2;
+  }
+}
+
+.searchHeading {
   color: $text-default;
   margin: 0;
 }
 
-.listingAddress {
-  // nearest token: type-caption-regular (13px) — Figma used 12px
-  @include type-caption-regular;
-  font-size: 12px; // override to match Figma
+.searchSubtext {
   color: $text-subtle;
   margin: 0;
 }
 
-// --- Category badges ---
-
-.listingBadges {
-  display: flex;
-  gap: $space-2; // 8px — Figma: gap-8 ✓
-  flex-wrap: wrap;
-  margin-top: $space-1;
-}
-
-// --- Map area ---
-
-.mapArea {
-  background: $surface-sunken;
-  position: relative;
-  overflow: hidden;
-  flex: 1;
-
-  // Mobile: no border, fills remaining height, leaves room for bottom sheet
-  padding-bottom: 72px;
-
-  @include desktop {
-    height: calc(100dvh - 74px - 48px - 24px); // nav + page padding + gap — matches sidebar max-height calc; must be `height` (not min-height) so child height:100% resolves
-    border: 1px solid $border-default;
-    border-radius: $radius-md;
-    padding-bottom: 0;
-  }
-}
-
-// --- About Circular SA section ---
-
-.aboutSection {
-  display: none;
-
-  @include desktop {
-    display: block;
-    margin-top: $space-6; // 24px gap after map area
-    padding-bottom: $space-6;
-  }
-}
-
-// --- Mobile bottom sheet ---
-
-.mobileSheet {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: $surface-raised;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: $radius-xl $radius-xl 0 0; // 12px top corners — Figma: rounded-tl-12 ✓
-  box-shadow: $shadow-md;
-  padding: $space-3 $space-4 $space-3;
+.searchWidgetInner {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: $space-3;
-  z-index: 20;
+  max-width: 542px;
+}
 
+.searchWidgetCol {
   @include desktop {
-    display: none;
+    flex: 1;
+    width: 50%;
   }
 }
 
-.sheetHandle {
-  width: 37px;
-  height: 4px;
-  background: $border-medium;
-  border-radius: $radius-lg; // 8px
-}
+// ─── About Circular SA wrapper ────────────────────────────────────────────────
 
-.sheetCount {
-  @include type-label-small; // 15px/500
-  color: $text-default;
-  margin: 0;
-  padding: $space-1 0;
+.aboutSection {
+  margin-top: $space-6;
+  padding: 0 $space-6 $space-6 $space-6;
+  @include desktop {
+      padding: 0 0 $space-6 0;
+
+  }
 }
