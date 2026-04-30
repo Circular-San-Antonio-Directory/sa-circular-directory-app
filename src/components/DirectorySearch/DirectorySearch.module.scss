@@ -1,0 +1,209 @@
+// DirectorySearch — SA Circular Directory
+// =============================================================================
+// Token map
+// widget bg:              transparent (inherits from section)
+// field label:            $text-subtle
+// search input bg:        $surface-raised
+// search input border:    $border-default
+// search input shadow:    $shadow-sm
+// search icon:            $text-disabled
+// clear input:            $text-subtle
+// action pill bg:         $surface-raised
+// action pill border:     $border-default
+// action pill active bg:  $primary-default
+// action pill active text:$text-inverse
+// autocomplete bg:        $surface-raised
+// autocomplete border:    $border-default
+// =============================================================================
+
+@use '../../styles' as *;
+
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6; // 24px between fields and button
+}
+
+// ─── Field ────────────────────────────────────────────────────────────────────
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2; // 8px
+}
+
+.fieldLabel {
+  color: $text-subtle;
+}
+
+// ─── Action pills ─────────────────────────────────────────────────────────────
+
+.actionPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2; // 8px
+}
+
+.actionPill {
+  padding: 10px $space-3; // 10px 12px
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-sm; // 4px
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $text-default;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.actionPillActive {
+  background: $primary-default;
+  border-color: $primary-default;
+  color: $text-inverse;
+
+  &:hover {
+    background: $primary-hover;
+    border-color: $primary-hover;
+  }
+}
+
+// ─── Search input ─────────────────────────────────────────────────────────────
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $space-2; // 8px
+  height: 48px;
+  padding: 0 $space-3; // 0 12px
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-md; // 6px
+  box-shadow: $shadow-sm;
+
+  > i {
+    color: $text-disabled;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 400;
+  color: $text-default;
+  outline: none;
+  min-width: 0;
+
+  &::placeholder {
+    color: $text-disabled;
+  }
+}
+
+.clearInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: $text-subtle;
+  font-size: 14px;
+  flex-shrink: 0;
+  padding: $space-1;
+}
+
+// ─── Autocomplete ─────────────────────────────────────────────────────────────
+
+.autocomplete {
+  position: absolute;
+  top: calc(100% + $space-1);
+  left: 0;
+  right: 0;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg; // 8px
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.autocompleteItem {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-3 $space-4;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid $border-subtle;
+  text-align: left;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $surface-sunken;
+  }
+}
+
+.autocompleteIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: $surface-sunken;
+  border-radius: $radius-md;
+  color: $text-subtle;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.autocompleteText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.autocompleteMain {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $text-default;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocompleteSub {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 400;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Search button ────────────────────────────────────────────────────────────
+
+.searchBtn {
+  width: 100%;
+  justify-content: center;
+}
