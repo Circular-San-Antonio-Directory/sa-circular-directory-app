@@ -23,6 +23,7 @@ const ACTION_LABELS: Record<ActionName, string> = {
   refill:      'Refill',
   rent:        'Rent',
   process:     'Process',
+  access:      'Access',
   dineOrDrink: 'Dine or Drink',
 };
 

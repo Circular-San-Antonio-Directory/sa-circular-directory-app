@@ -343,7 +343,7 @@ async function upsertBusinesses(
         f['OUTPUT - Notes Field'] ?? null,
         f['OUTPUT Category - Override (Unique items or category)'] ?? null,
         f['SERVICE - Notes Field'] ?? null,
-        f['SERVICE Category - Override (Unique items or category)'] ?? null,
+        f['SERVICE - Override or Specific (Unique items or category)'] ?? null,
         f['Has Delivery services'] ?? false,
         f['Has Pick Up service'] ?? false,
         f['Has Online Shop'] ?? false,
