@@ -33,6 +33,18 @@ async function promote() {
 
   console.log(`Tables: ${tables.map(t => t.tablename).join(', ')}\n`);
 
+  const { rows: prodTables } = await prod.query(`
+    SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+  `);
+  const prodTableSet = new Set(prodTables.map(t => t.tablename));
+
+  const missing = tables.map(t => t.tablename).filter(t => !prodTableSet.has(t));
+  if (missing.length > 0) {
+    console.error(`ERROR: Production DB is missing tables: ${missing.join(', ')}`);
+    console.error('Apply migrations/current_schema.sql and any incremental migrations to production first.');
+    process.exit(1);
+  }
+
   for (const { tablename } of tables) {
     process.stdout.write(`Copying ${tablename}... `);
 
