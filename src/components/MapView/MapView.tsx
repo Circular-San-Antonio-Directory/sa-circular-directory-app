@@ -363,10 +363,25 @@ export function MapView({
       el.classList.toggle(styles.markerSelected, id === selectedId);
     });
 
-    if (selectedId && map) {
+    if (!map) return;
+
+    if (selectedId) {
       const marker = markersRef.current.get(selectedId);
       if (marker) {
-        map.flyTo({ center: marker.getLngLat(), zoom: Math.max(map.getZoom(), 14), speed: 1.1 });
+        const isMobile = window.innerWidth < 820;
+        map.flyTo({
+          center: marker.getLngLat(),
+          zoom: Math.max(map.getZoom(), 14),
+          speed: 1.1,
+          padding: isMobile
+            ? { top: 0, bottom: 320, left: 0, right: 0 }
+            : { top: 0, bottom: 0, left: 0, right: 0 },
+        });
+      }
+    } else {
+      // Reset padding when the preview card closes so free panning isn't offset.
+      if (window.innerWidth < 820) {
+        map.easeTo({ padding: { top: 0, bottom: 0, left: 0, right: 0 }, duration: 300 });
       }
     }
   }, [selectedId]);
