@@ -11,7 +11,7 @@
     "fetch:airtable": "node scripts/fetchAirtable.js",
     "migrate:sql": "node scripts/migrateToSQL.js",
     "db:reset": "node scripts/resetDatabase.js",
-    "db:promote": "bash scripts/promote-db.sh"
+    "db:promote": "node scripts/promote-db.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
