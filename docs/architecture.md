@@ -67,7 +67,7 @@ graph TB
 
 | | Staging | Production |
 |---|---|---|
-| **Trigger** | Push to `main` branch | Git tag push (e.g. `v1.0.0`) — triggers DB promotion (pre-deploy) then app cutover |
+| **Trigger** | Push to `main` branch | Merge `main` → `production` branch |
 | **Database** | Staging PostgreSQL | Production PostgreSQL |
 | **Airtable sync** | Daily cron + manual via Railway dashboard "Deploy Now" | Promoted from staging only |
 | **Purpose** | QA & verification | Live to end users |
@@ -76,13 +76,20 @@ graph TB
 ```
 Airtable UI (data changes)
   └── Daily cron job (airtable-sync service, 0 6 * * * UTC) → Staging DB
-        └── QA passes → git tag push (e.g. v1.0.0)
+        └── QA passes on staging → merge main → production branch
                           └── Railway builds production app (~3-5 min)
                                 └── Pre-deploy: scripts/promote-db.sh
                                       ├── pg_dump staging DB (~15s)
                                       └── pg_restore production DB (~30s, blocks existing queries)
                                             └── ✅ Success → traffic switches to new app
                                             └── ❌ Failure → old deployment stays live
+```
+
+**Release workflow:**
+```bash
+git checkout main && git pull
+git checkout production && git merge main && git push origin production
+# Optionally tag for version tracking: git tag v1.0.0 && git push origin v1.0.0
 ```
 
 ---
@@ -144,7 +151,7 @@ The sync fetches all 8 Airtable tables into memory, upserts lookup tables in par
 
 ### Production promotion (Staging DB → Production DB)
 
-- **Trigger** — Push a git tag matching `v*` (e.g. `v1.0.0`); always a deliberate human action
+- **Trigger** — Merge `main` → `production` branch; always a deliberate human action
 - **Automated via Railway pre-deploy** — `scripts/promote-db.sh` runs as the pre-deploy command on the production `sa-circular-directory-app` service; if it fails, the deployment is aborted and the old version stays live
 - **Manual fallback** — `npm run db:promote` (requires `STAGING_DB_URL` and `DATABASE_URL` in `.env`)
 - **Script:** `scripts/promote-db.sh` — `pg_dump --format=custom` staging → `pg_restore --clean --if-exists --single-transaction` production

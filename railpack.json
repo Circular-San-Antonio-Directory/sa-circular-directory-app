@@ -1,5 +1,3 @@
 {
-  "packages": {
-    "postgresql-client": ""
-  }
+  "aptPackages": ["postgresql-client"]
 }
