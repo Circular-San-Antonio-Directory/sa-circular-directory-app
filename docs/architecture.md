@@ -67,7 +67,7 @@ graph TB
 
 | | Staging | Production |
 |---|---|---|
-| **Trigger** | Push to `main` branch | Git tag release (e.g. `v1.0.0`) |
+| **Trigger** | Push to `main` branch | Git tag push (e.g. `v1.0.0`) — triggers DB promotion (pre-deploy) then app cutover |
 | **Database** | Staging PostgreSQL | Production PostgreSQL |
 | **Airtable sync** | Daily cron + manual via Railway dashboard "Deploy Now" | Promoted from staging only |
 | **Purpose** | QA & verification | Live to end users |
@@ -76,8 +76,13 @@ graph TB
 ```
 Airtable UI (data changes)
   └── Daily cron job (airtable-sync service, 0 6 * * * UTC) → Staging DB
-        └── QA passes → Manual promotion → Production DB
-                            └── Git tag → Production App deploys
+        └── QA passes → git tag push (e.g. v1.0.0)
+                          └── Railway builds production app (~3-5 min)
+                                └── Pre-deploy: scripts/promote-db.sh
+                                      ├── pg_dump staging DB (~15s)
+                                      └── pg_restore production DB (~30s, blocks existing queries)
+                                            └── ✅ Success → traffic switches to new app
+                                            └── ❌ Failure → old deployment stays live
 ```
 
 ---
@@ -139,9 +144,11 @@ The sync fetches all 8 Airtable tables into memory, upserts lookup tables in par
 
 ### Production promotion (Staging DB → Production DB)
 
-- **Manual step** — run after QA sign-off
-- Script: `npm run db:promote` (pg_dump staging → pg_restore production)
-- Never auto-promoted; always a deliberate human decision
+- **Trigger** — Push a git tag matching `v*` (e.g. `v1.0.0`); always a deliberate human action
+- **Automated via Railway pre-deploy** — `scripts/promote-db.sh` runs as the pre-deploy command on the production `sa-circular-directory-app` service; if it fails, the deployment is aborted and the old version stays live
+- **Manual fallback** — `npm run db:promote` (requires `STAGING_DB_URL` and `DATABASE_URL` in `.env`)
+- **Script:** `scripts/promote-db.sh` — `pg_dump --format=custom` staging → `pg_restore --clean --if-exists --single-transaction` production
+- **Downtime:** ~30s of blocked (hanging) queries during the restore; acceptable for infrequent releases
 
 ---
 
