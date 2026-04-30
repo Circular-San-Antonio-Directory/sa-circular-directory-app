@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/Button';
 import { QuestionsOrFeedback } from '@/components/QuestionsOrFeedback';
 import styles from './Nav.module.scss';
@@ -10,6 +11,7 @@ import styles from './Nav.module.scss';
 const CLOSE_DURATION = 180; // ms — must match menuSlideOut duration in SCSS
 
 export function Nav() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -60,7 +62,9 @@ export function Nav() {
         {/* Desktop nav links */}
         <div className={styles.desktopRight}>
           <div className={styles.navActions}>
-            <Link href="/map" className={styles.navLink}>Map</Link>
+            <Link href="/map">
+              <Button variant="ghost" className={pathname === '/map' ? styles.mapLinkActive : undefined}>Map</Button>
+            </Link>
             <a
               href="https://www.circularsanantonio.org/projects/directory"
               target="_blank"

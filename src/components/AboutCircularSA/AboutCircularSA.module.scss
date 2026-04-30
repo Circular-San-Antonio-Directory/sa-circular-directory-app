@@ -159,6 +159,7 @@
   }
 
   .root:not(.rootMobile) .content {
+    width: 100%;
     padding: $space-8; // 32px
     gap: $space-8;
   }
