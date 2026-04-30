@@ -74,7 +74,7 @@ class BusinessRecord {
 
       // Classification
       category: fields['Category'] || '',
-      tiktokHandle: fields['Tiktok Handle'] || '',
+      tiktokHandle: fields['SOCIAL - Tiktok URL'] || '',
     };
   }
 

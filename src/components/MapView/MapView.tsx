@@ -475,7 +475,7 @@ export function MapView({
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               onFocus={(e) => {
-                if (onMobileSearchOpen && window.innerWidth < 1024) {
+                if (onMobileSearchOpen && window.innerWidth < 820) {
                   e.currentTarget.blur();
                   onMobileSearchOpen();
                 } else {

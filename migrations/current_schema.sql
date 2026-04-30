@@ -144,6 +144,7 @@ CREATE TABLE businesses (
   instagram_url_2 VARCHAR(500),
   facebook_url VARCHAR(500),
   linkedin_url VARCHAR(500),
+  tiktok_handle VARCHAR(500),
 
   -- Business Hours
   google_hours_accurate VARCHAR(50),
