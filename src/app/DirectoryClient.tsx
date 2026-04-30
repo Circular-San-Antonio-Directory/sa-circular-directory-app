@@ -23,13 +23,10 @@ const MapView = dynamic(
 
 // ─── Preview action helpers ───────────────────────────────────────────────────
 
-const INPUT_ACTIONS  = new Set<ActionName>(['donate', 'sell', 'trade']);
-const OUTPUT_ACTIONS = new Set<ActionName>(['buy', 'buyB2B', 'consign']);
-
 function getPreviewActionContent(action: ActionName, f: Listing['fields']) {
-  if (INPUT_ACTIONS.has(action))
+  if (f.inputActionNames.includes(action))
     return { categories: f.inputCategories,  override: f.inputCategoryOverride  };
-  if (OUTPUT_ACTIONS.has(action))
+  if (f.outputActionNames.includes(action))
     return { categories: f.outputCategories, override: f.outputCategoryOverride };
   if (action === 'volunteer')
     return { categories: [],                  override: ''                        };
@@ -149,7 +146,7 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
         <div className={styles.countPill}>
           <span className={styles.countBold}>{filteredListings.length} Listings</span>
           {' '}
-          <span className={styles.countLight}>in this area</span>
+          {/* <span className={styles.countLight}>in this area</span> */}
         </div>
 
         <p className={styles.sidebarHint}>

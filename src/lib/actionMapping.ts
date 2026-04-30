@@ -27,6 +27,7 @@ export const CSV_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
   'rents':                   'rent',
   'needs volunteers':        'volunteer',
   'has restaurant or bar':   'dineOrDrink',
+  'provides':                'access',
 };
 
 /**
@@ -48,6 +49,7 @@ export const CORRESPONDING_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionN
   'rent':          'rent',
   'process':       'process',
   'dine or drink': 'dineOrDrink',
+  'access':        'access',
 };
 
 /**
