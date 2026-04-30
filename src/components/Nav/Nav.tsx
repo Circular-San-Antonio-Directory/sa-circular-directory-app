@@ -60,7 +60,7 @@ export function Nav() {
         {/* Desktop nav links */}
         <div className={styles.desktopRight}>
           <div className={styles.navActions}>
-            {/* <Button variant="ghost">Map</Button> */}
+            <Link href="/map" className={styles.navLink}>Map</Link>
             <a
               href="https://www.circularsanantonio.org/projects/directory"
               target="_blank"
@@ -125,7 +125,10 @@ export function Nav() {
 
               <div className={styles.mobileBody}>
                 <div className={styles.primaryLinks}>
-                  {/* <Link href="/" className={styles.primaryItem} onClick={close}>Map</Link> */}
+                  <Link href="/map" className={styles.primaryItem} onClick={close}>
+                    Map
+                    <i className="fa-solid fa-map" aria-hidden="true" />
+                  </Link>
                   <a
                     href="https://www.circularsanantonio.org/projects/directory"
                     target="_blank"

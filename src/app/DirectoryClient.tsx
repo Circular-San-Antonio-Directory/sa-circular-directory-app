@@ -14,7 +14,7 @@ import { filterListings } from '@/lib/filterListings';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import { MobileMapPreview } from './MobileMapPreview';
 import { MobileSearchSheet } from './MobileSearchSheet';
-import styles from './page.module.scss';
+import styles from './map/page.module.scss';
 
 const MapView = dynamic(
   () => import('@/components/MapView').then((m) => m.MapView),
@@ -47,12 +47,14 @@ function tagColor(tag: string): PillColor {
 interface DirectoryClientProps {
   listings: Listing[];
   categories: Category[];
+  initialSearch?: string;
+  initialActionFilter?: ActionName | null;
 }
 
-export function DirectoryClient({ listings, categories }: DirectoryClientProps) {
+export function DirectoryClient({ listings, categories, initialSearch = '', initialActionFilter = null }: DirectoryClientProps) {
   const [previewId, setPreviewId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [actionFilter, setActionFilter] = useState<ActionName | null>(null);
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [actionFilter, setActionFilter] = useState<ActionName | null>(initialActionFilter);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const sidebarRef = useRef<HTMLElement>(null);

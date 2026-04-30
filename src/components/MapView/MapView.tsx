@@ -83,6 +83,7 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
+  const filteredListingsRef = useRef(filteredListings);
   // Tracks whether the current map click originated from a marker element so the
   // background-click handler can skip it (marker click events bubble to the canvas
   // container and would otherwise immediately clear the preview state).
@@ -316,6 +317,12 @@ export function MapView({
           markersRef.current.set(listing.id, marker);
         });
 
+        // Apply any active filter that arrived before the map finished loading
+        const initialVisibleIds = new Set(filteredListingsRef.current.map((l) => l.id));
+        markersRef.current.forEach((marker, id) => {
+          marker.getElement().classList.toggle(styles.markerHidden, !initialVisibleIds.has(id));
+        });
+
         // Set initial sizes once all markers exist
         applyMarkerSizes(map.getZoom());
 
@@ -348,6 +355,7 @@ export function MapView({
   // replaces separate effects for search and actionFilter.
 
   useEffect(() => {
+    filteredListingsRef.current = filteredListings;
     const visibleIds = new Set(filteredListings.map((l) => l.id));
     markersRef.current.forEach((marker, id) => {
       marker.getElement().classList.toggle(styles.markerHidden, !visibleIds.has(id));
