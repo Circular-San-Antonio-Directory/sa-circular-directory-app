@@ -19,7 +19,8 @@ export type ActionName =
   | 'refill'
   | 'rent'
   | 'process'
-  | 'dineOrDrink';
+  | 'dineOrDrink'
+  | 'access';
 
 export type ActionIconVariant = 'icon' | 'badge' | 'icon-with-label';
 

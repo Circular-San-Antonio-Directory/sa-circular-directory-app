@@ -242,7 +242,7 @@ async function upsertBusinesses(
         airtable_id, business_name, business_description, address,
         business_email, business_phone, website,
         contact_name, contact_email, contacted_by,
-        instagram_url_1, instagram_url_2, facebook_url, linkedin_url,
+        instagram_url_1, instagram_url_2, facebook_url, linkedin_url, tiktok_handle,
         google_hours_accurate, business_hours,
         input_notes, input_category_override,
         output_notes, output_category_override,
@@ -257,11 +257,11 @@ async function upsertBusinesses(
         hours_json
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
-        $11,$12,$13,$14,$15,$16,$17,$18,
-        $19,$20,$21,$22,$23,$24,$25,$26,
-        $27,$28,$29,$30,
-        $31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,
-        $42
+        $11,$12,$13,$14,$15,$16,$17,$18,$19,
+        $20,$21,$22,$23,$24,$25,$26,$27,
+        $28,$29,$30,$31,
+        $32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,
+        $43
       )
       ON CONFLICT (airtable_id) DO UPDATE SET
         business_name             = EXCLUDED.business_name,
@@ -291,6 +291,7 @@ async function upsertBusinesses(
         instagram_url_1           = EXCLUDED.instagram_url_1,
         facebook_url              = EXCLUDED.facebook_url,
         linkedin_url              = EXCLUDED.linkedin_url,
+        tiktok_handle             = EXCLUDED.tiktok_handle,
         google_hours_accurate     = EXCLUDED.google_hours_accurate,
         business_hours            = EXCLUDED.business_hours,
         input_notes               = EXCLUDED.input_notes,
@@ -334,6 +335,7 @@ async function upsertBusinesses(
         f['SOCIAL- Instagram URL 2'] ?? null,
         f['SOCIAL - Facebook URL'] ?? null,
         f['SOCIAL - LinkedIn URL'] ?? null,
+        f['SOCIAL - Tiktok URL'] ?? null,
         f['Google listed hours accurate?'] ?? null,
         f['Business Hours'] ?? null,
         f['INPUT - Notes Field'] ?? null,
@@ -341,7 +343,7 @@ async function upsertBusinesses(
         f['OUTPUT - Notes Field'] ?? null,
         f['OUTPUT Category - Override (Unique items or category)'] ?? null,
         f['SERVICE - Notes Field'] ?? null,
-        f['SERVICE Category - Override (Unique items or category)'] ?? null,
+        f['SERVICE - Override or Specific (Unique items or category)'] ?? null,
         f['Has Delivery services'] ?? false,
         f['Has Pick Up service'] ?? false,
         f['Has Online Shop'] ?? false,

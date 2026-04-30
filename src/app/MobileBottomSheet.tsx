@@ -69,7 +69,7 @@ export function MobileBottomSheet({ listings }: Props) {
             <p className={styles.count}>
               <span className={styles.countBold}>{listings.length} Listings</span>
               {' '}
-              <span className={styles.countLight}>in this area</span>
+              {/* <span className={styles.countLight}>in this area</span> */}
             </p>
 
             {isOpen && (

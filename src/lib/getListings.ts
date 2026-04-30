@@ -133,7 +133,7 @@ interface BusinessRow {
 // Unlisted actions (volunteer, dineOrDrink) are appended at the end.
 const ACTION_ORDER: ActionName[] = [
   'donate', 'buy', 'buyB2B', 'recycle', 'sell', 'repair', 'consign',
-  'compost', 'refill', 'rent', 'trade', 'process', 'volunteer', 'dineOrDrink',
+  'compost', 'refill', 'rent', 'trade', 'process', 'access', 'volunteer', 'dineOrDrink',
 ];
 
 function toActionNames(raw: string[] | null): ActionName[] {

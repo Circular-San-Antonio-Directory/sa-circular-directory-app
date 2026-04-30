@@ -10,6 +10,7 @@
     "sync": "tsx scripts/sync.ts",
     "fetch:airtable": "node scripts/fetchAirtable.js",
     "migrate:sql": "node scripts/migrateToSQL.js",
+    "db:migrate": "node scripts/runMigration.js",
     "db:reset": "node scripts/resetDatabase.js",
     "db:promote": "node scripts/promote-db.js"
   },

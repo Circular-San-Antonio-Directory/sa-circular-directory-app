@@ -1,11 +1,14 @@
+'use client';
+
 import type { Listing } from '@/lib/getListings';
 import type { ActionName } from '@/components/ActionIcon/ActionIcon';
-import { ActionIcon } from '@/components/ActionIcon';
+import { ActionIcon, useActionsConfig } from '@/components/ActionIcon';
 import { Pill } from '@/components/Pill';
 import styles from './ActionsBlock.module.scss';
 
 // ─── Action helpers ───────────────────────────────────────────────────────────
 
+// Fallback labels used only if the DB config hasn't loaded yet.
 const ACTION_LABELS: Record<ActionName, string> = {
   donate:      'Donate',
   buy:         'Buy',
@@ -20,16 +23,14 @@ const ACTION_LABELS: Record<ActionName, string> = {
   refill:      'Refill',
   rent:        'Rent',
   process:     'Process',
+  access:      'Access',
   dineOrDrink: 'Dine or Drink',
 };
 
-const INPUT_ACTIONS  = new Set<ActionName>(['donate', 'sell', 'trade']);
-const OUTPUT_ACTIONS = new Set<ActionName>(['buy', 'buyB2B', 'consign']);
-
 function getActionContent(action: ActionName, f: Listing['fields']) {
-  if (INPUT_ACTIONS.has(action))
+  if (f.inputActionNames.includes(action))
     return { categories: f.inputCategories,  override: f.inputCategoryOverride,  notes: f.inputNotes  };
-  if (OUTPUT_ACTIONS.has(action))
+  if (f.outputActionNames.includes(action))
     return { categories: f.outputCategories, override: f.outputCategoryOverride, notes: f.outputNotes };
   if (action === 'volunteer')
     return { categories: [],                  override: '',                        notes: f.volunteerNotes };
@@ -43,6 +44,7 @@ interface ActionsBlockProps {
 }
 
 export function ActionsBlock({ fields: f }: ActionsBlockProps) {
+  const actionsConfig = useActionsConfig();
   if (f.allActionNames.length === 0) return null;
 
   return (
@@ -50,12 +52,13 @@ export function ActionsBlock({ fields: f }: ActionsBlockProps) {
       {f.allActionNames.flatMap((action, i) => {
         const { categories, override, notes } = getActionContent(action, f);
         const hasContent = categories.length > 0 || override || notes;
+        const label = actionsConfig.find((c) => c.actionName === action)?.label ?? ACTION_LABELS[action];
         const row = (
           <details key={action} name="action-row" className={styles.actionRow}>
             <summary className={styles.actionSummary}>
               <ActionIcon action={action} variant="badge" />
               <span className={styles.actionLabel}>
-                {ACTION_LABELS[action]}
+                {label}
               </span>
               {hasContent && (
                 <i
