@@ -149,7 +149,7 @@ export function DirectoryClient({ listings, categories }: DirectoryClientProps) 
         <div className={styles.countPill}>
           <span className={styles.countBold}>{filteredListings.length} Listings</span>
           {' '}
-          <span className={styles.countLight}>in this area</span>
+          {/* <span className={styles.countLight}>in this area</span> */}
         </div>
 
         <p className={styles.sidebarHint}>
