@@ -116,7 +116,7 @@ export function DirectorySearch({ listings, categories }: DirectorySearchProps) 
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('q', searchQuery.trim());
     if (actionFilter) params.set('action', actionFilter);
-    router.push(params.toString() ? `/?${params.toString()}` : '/');
+    router.push(params.toString() ? `/map?${params.toString()}` : '/');
   }
 
   const showAutocomplete = isAutocompleteOpen && suggestions.length > 0;
