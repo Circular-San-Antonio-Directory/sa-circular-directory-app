@@ -1,0 +1,70 @@
+@use '../../styles' as *;
+
+.banner {
+  background: $primary-default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-2 $space-4; // nearest token: Figma used 10px vertical, mapped to $space-2 (8px)
+  overflow: hidden;
+  max-height: 80px;
+  opacity: 1;
+}
+
+.hiding {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: max-height 0.35s ease, opacity 0.25s ease, padding-top 0.35s ease, padding-bottom 0.35s ease;
+}
+
+.text {
+  color: $text-inverse;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+  @include type-caption-regular;
+
+  @include desktop {
+    @include type-body-small-regular;
+  }
+}
+
+.icon {
+  margin-right: $space-2;
+}
+
+.link {
+  color: $text-inverse;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  margin-left: $space-3;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.closeBtn {
+  color: $text-inverse;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

@@ -4,6 +4,7 @@ import "./globals.css";
 import "@/styles/globals.scss";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Script from 'next/script';
+import { Banner } from '@/components/Banner';
 
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Banner dismissable />
         {children}
         {modal}
         <Script src="https://kit.fontawesome.com/d951ac1750.js" crossOrigin="anonymous" strategy="afterInteractive" />

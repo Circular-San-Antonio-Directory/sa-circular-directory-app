@@ -23,6 +23,15 @@ export function Nav() {
   }, [isOpen]);
 
   useEffect(() => {
+    function onOpenFeedback() {
+      setIsOpen(true);
+      setView('feedback');
+    }
+    window.addEventListener('open-feedback-overlay', onOpenFeedback);
+    return () => window.removeEventListener('open-feedback-overlay', onOpenFeedback);
+  }, []);
+
+  useEffect(() => {
     const THRESHOLD = 24; // $space-6 — matches pageInner padding-top on desktop
     function onScroll() {
       setScrolled(window.scrollY >= THRESHOLD);
