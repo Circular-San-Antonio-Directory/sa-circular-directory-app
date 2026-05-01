@@ -87,10 +87,10 @@ export const BusinessAirtableSchema = z.object({
   'OUTPUT Category(s) (Product Sold)': z.array(z.string()).optional(),
   'SERVICE Category(s)': z.array(z.string()).optional(),
 
-  // Category overrides
-  'INPUT Category - Override (Unique items or category)': z.string().optional(),
-  'OUTPUT Category - Override (Unique items or category)': z.string().optional(),
-  'SERVICE Category - Override (Unique items or category)': z.string().optional(),
+  // Category overrides — Airtable sends either a plain string or an array; normalize to string
+  'INPUT Category - Override (Unique items or category)': z.union([z.string(), z.array(z.string()).transform(a => a.join(', '))]).optional(),
+  'OUTPUT Category - Override (Unique items or category)': z.union([z.string(), z.array(z.string()).transform(a => a.join(', '))]).optional(),
+  'SERVICE Category - Override (Unique items or category)': z.union([z.string(), z.array(z.string()).transform(a => a.join(', '))]).optional(),
 
   // Notes
   'INPUT - Notes Field': z.string().optional(),
