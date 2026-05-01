@@ -1,5 +1,5 @@
-import 'dotenv/config'; // ES module import, no require() needed
-import { Pool } from 'pg';
+import 'dotenv/config';
+import { Pool, PoolClient } from 'pg';
 
 /**
  * PostgreSQL connection pool configuration
@@ -52,12 +52,11 @@ export async function query(
  * Get a client from the pool for transactions
  * @returns Promise resolving to database client
  */
-export async function getClient(): Promise<any> {
+export async function getClient(): Promise<PoolClient> {
   const client = await pool.connect();
 
-  // Add query method with logging
   const originalQuery = client.query.bind(client);
-  
+
   (client as any).query = async (text: string, params?: any[]): Promise<any> => {
     const start = Date.now();
     const res = await originalQuery(text, params);
