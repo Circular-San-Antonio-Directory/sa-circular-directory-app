@@ -1,4 +1,4 @@
-import { AirtableRecord } from "@/data/airtable/types";
+import { AirtableRecord } from "../../src/data/airtable/types";
 import { BusinessMappings, DbClient, FieldMapping, LookupMapping } from "./types";
 import * as fs from 'fs';
 import * as path from 'path';
@@ -80,14 +80,9 @@ export async function insertLookupTable(
       RETURNING id, airtable_id
     `;
 
-    try {
-      const result = await client.query(query, values);
-      if (result.rows && result.rows.length > 0) {
-        mapping[record.id] = result.rows[0].id as number;
-      }
-    } catch (error) {
-      console.error(`   ❌ Error inserting ${tableName} record:`, error);
-      continue;
+    const result = await client.query(query, values);
+    if (result.rows && result.rows.length > 0) {
+      mapping[record.id] = result.rows[0].id as number;
     }
   }
 
@@ -136,10 +131,7 @@ export async function insertBusinesses(
     const output_action_ids = mapIdsToArray(fields['OUTPUT Action(s)'], mappings.actions);
     const service_action_ids = mapIdsToArray(fields['SERVICE Action(s)'], mappings.actions);
     const input_category_ids = mapIdsToArray(fields['INPUT Category(s)'], mappings.categories);
-    const output_category_ids = mapIdsToArray(
-      fields['OUTPUT Action(s) (Product Sold)'], 
-      mappings.categories
-    );
+    const output_category_ids = mapIdsToArray(fields['OUTPUT Category(s)'], mappings.categories);
     const service_category_ids = mapIdsToArray(fields['SERVICE Category(s)'], mappings.categories);
     const core_material_ids = mapIdsToArray(fields['Core Material System'], mappings.coreMaterials);
     const enabling_system_ids = mapIdsToArray(fields['Enabling System'], mappings.enablingSystems);
@@ -209,8 +201,7 @@ export async function insertBusinesses(
       activity_ids
     ];
 
-    // Build query dynamically to avoid hardcoding placeholders
-    const columnPlaceholders = valueList.map(() => '$' + (valueList.indexOf('$') + 1));
+    const columnPlaceholders = valueList.map((_, i) => `$${i + 1}`);
     
     const query = `
       INSERT INTO businesses (
@@ -221,13 +212,8 @@ export async function insertBusinesses(
       RETURNING id
     `;
 
-    try {
-      await client.query(query, valueList);
-      insertCount++;
-    } catch (error) {
-      console.error(`   ❌ Error inserting business:`, error);
-      continue;
-    }
+    await client.query(query, valueList);
+    insertCount++;
   }
 
   console.log(`   ✅ Inserted ${insertCount} businesses with relationship arrays\n`);
