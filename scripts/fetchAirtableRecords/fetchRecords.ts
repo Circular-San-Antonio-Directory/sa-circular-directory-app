@@ -2,7 +2,7 @@ import { FieldSet } from "airtable";
 import { base } from "./env";
 import { FetchOptions, RecordResult } from "./types";
 import { Records } from "airtable/lib/records";
-import { AirtableRecord } from "@/data/airtable/types";
+import { AirtableRecord } from "../../src/data/airtable/types";
 
 
 /**
@@ -18,37 +18,26 @@ export async function fetchRecords(
     try {
         const records: AirtableRecord[] = [];
 
-        // Build select options with defaults
         const selectOptions: Record<string, any> = {
-            maxRecords: options.maxRecords ?? 100,
             view: options.view || 'Grid view',
         };
 
-        // // Add additional options if provided
-        // Object.keys(options).forEach(key => {
-        //     if (key !== 'maxRecords' && key !== 'view') {
-        //         selectOptions[key] = options[key];
-        //     }
-        // });
+        if (options.maxRecords) {
+            selectOptions.maxRecords = options.maxRecords;
+        }
 
-        base(tableName)
+        await base(tableName)
             .select(selectOptions)
             .eachPage((pageRecords: Records<FieldSet>, processNextPage: () => void) => {
-                // Add current page records to collection
                 if (Array.isArray(pageRecords)) {
                     records.push(...pageRecords);
                 }
-
                 console.log(`📄 Fetched ${records.length} total records...`);
-
-                // Continue fetching until no more pages
-                return processNextPage();
-            })
-            .then(() => {
-                console.log(`✅ Fetched ${records.length} records from "${tableName}"`);            
+                processNextPage();
             });
 
-        return records
+        console.log(`✅ Fetched ${records.length} records from "${tableName}"`);
+        return records;
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         console.error(`❌ Error fetching records from "${tableName}":`, errorMessage);

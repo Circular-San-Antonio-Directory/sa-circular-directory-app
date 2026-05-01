@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import Airtable from "airtable";
 
 // Type-safe environment variable access

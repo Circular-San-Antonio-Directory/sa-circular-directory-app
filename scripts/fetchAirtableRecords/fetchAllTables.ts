@@ -1,4 +1,4 @@
-import { AirtableRecord } from "@/data/airtable/types";
+import { AirtableRecord } from "../../src/data/airtable/types";
 import { tables } from "./constants";
 import { fetchRecords } from "./fetchRecords";
 import { AllTablesData, FetchSummary } from "./types";

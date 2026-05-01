@@ -1,4 +1,4 @@
-import { AirtableRecord } from "@/data/airtable/types";
+import { AirtableRecord } from "../../src/data/airtable/types";
 import { base } from "./env";
 
 /**
@@ -7,7 +7,7 @@ import { base } from "./env";
  * @param recordId - The Airtable record ID
  * @returns Promise resolving to single record object
  */
-async function fetchRecord(
+export async function fetchRecord(
   tableName: string, 
   recordId: string
 ): Promise<AirtableRecord> {

@@ -7,7 +7,7 @@ async function main(): Promise<void> {
   try {
     // Validate environment variables (already validated at module load)
     
-    fetchAllTables();
+    await fetchAllTables();
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

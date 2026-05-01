@@ -1,4 +1,4 @@
-import { AirtableRecord } from "@/data/airtable/types";
+import { AirtableRecord } from "../../src/data/airtable/types";
 
 export interface TableDefinition {
   name: string;

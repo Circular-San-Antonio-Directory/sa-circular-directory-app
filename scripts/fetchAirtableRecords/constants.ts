@@ -1,5 +1,4 @@
 import { TableDefinition } from "./types";
-require('dotenv').config();
 
 export const PRODUCTION_DB = "Production DB";
 
