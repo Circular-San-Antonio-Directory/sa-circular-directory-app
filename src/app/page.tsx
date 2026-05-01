@@ -56,7 +56,12 @@ export default async function HomePage() {
           <div className={styles.descriptionTextGroup}>
             <p className={`${styles.descriptionText} body-default-regular`}>
               The San Antonio Circular Directory is the searchable platform that maps
-              San Antonio&rsquo;s circular economy. Built by Circular San Antonio,
+              San Antonio&rsquo;s circular economy. Built by{' '}
+
+              <Link href="https://www.circularsanantonio.org" className={styles.circularLink} target="_blank" rel="noopener noreferrer">
+                Circular San Antonio
+              </Link>,
+
               powered by local businesses.
             </p>
             <p className={`${styles.descriptionAccentText} heading-2`}>Are you a business that enables secondhand,
@@ -101,7 +106,7 @@ export default async function HomePage() {
       </div>{/* end pageInner */}
 
       {/* ── Questions & Feedback — full-bleed, outside pageInner ────────── */}
-      <QuestionsOrFeedback />
+      <QuestionsOrFeedback showOnMobile />
 
     </div>
   );

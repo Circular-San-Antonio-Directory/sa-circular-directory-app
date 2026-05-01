@@ -90,6 +90,18 @@
   text-align: center;
 }
 
+.rootShowOnMobile {
+  @include mobile {
+    display: flex;
+    padding: $space-10 $space-6;
+
+    .form,
+    .successState {
+      width: 100%;
+    }
+  }
+}
+
 // Mobile modal variant — no bg/padding/centering; widths expand to fill the overlay
 .mobileContent {
   display: flex;

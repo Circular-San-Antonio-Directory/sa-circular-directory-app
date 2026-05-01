@@ -10,9 +10,10 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 
 interface QuestionsOrFeedbackProps {
   mobile?: boolean;
+  showOnMobile?: boolean;
 }
 
-export function QuestionsOrFeedback({ mobile = false }: QuestionsOrFeedbackProps) {
+export function QuestionsOrFeedback({ mobile = false, showOnMobile = false }: QuestionsOrFeedbackProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -40,7 +41,9 @@ export function QuestionsOrFeedback({ mobile = false }: QuestionsOrFeedbackProps
     }
   };
 
-  const rootClass = mobile ? styles.mobileContent : styles.root;
+  const rootClass = mobile
+    ? styles.mobileContent
+    : `${styles.root}${showOnMobile ? ` ${styles.rootShowOnMobile}` : ''}`;
 
   if (status === 'success') {
     return (

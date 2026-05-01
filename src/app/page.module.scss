@@ -142,6 +142,15 @@
   }
 }
 
+.circularLink {
+  //text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  &:hover {
+    color: $offWhite-400;
+  }
+}
+
 .descriptionAccentText {
 
   color: $merlot-300;
@@ -160,9 +169,9 @@
   color: $merlot-300;
   text-decoration: underline;
   font-weight: 600;
-
+  transition: color 0.2s ease;
   &:hover {
-    text-decoration: underline;
+    color: $merlot-400;
   }
 }
 
