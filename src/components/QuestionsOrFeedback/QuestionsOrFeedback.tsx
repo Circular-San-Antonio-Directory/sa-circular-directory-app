@@ -44,16 +44,17 @@ export function QuestionsOrFeedback({ mobile = false, showOnMobile = false }: Qu
   const rootClass = mobile
     ? styles.mobileContent
     : `${styles.root}${showOnMobile ? ` ${styles.rootShowOnMobile}` : ''}`;
+  const rootId = mobile ? undefined : 'questions-feedback';
 
   if (status === 'success') {
     return (
-      <section className={rootClass}>
+      <section id={rootId} className={rootClass}>
         <div className={styles.header}>
           <h2 className={`heading-2 ${styles.heading}`}>
-            Questions about re-use or donation?
+            Questions or Feedback?
           </h2>
           <p className={`body-small-regular ${styles.description}`}>
-            Confused about where to drop off a certain material or where to find a specific item? Let us know. We&rsquo;ll provide a response and work to improve this platform!
+            We're building this directory with community input. Found something missing? Have a suggestion or a question? Let us know.
           </p>
         </div>
 
@@ -76,13 +77,13 @@ export function QuestionsOrFeedback({ mobile = false, showOnMobile = false }: Qu
   }
 
   return (
-    <section className={rootClass}>
+    <section id={rootId} className={rootClass}>
       <div className={styles.header}>
         <h2 className={`heading-2 ${styles.heading}`}>
-          Questions about re-use or donation?
+          Questions or Feedback?
         </h2>
         <p className={`body-small-regular ${styles.description}`}>
-          Confused about where to drop off a certain material or where to find a specific item? Let us know. We&rsquo;ll provide a response and work to improve this platform!
+            We're building this directory with community input. Found something missing? Have a suggestion or a question? Let us know.
         </p>
       </div>
 
