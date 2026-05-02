@@ -1,0 +1,127 @@
+name: Generate Changelog
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-changelog:
+    name: Generate and commit changelog entry
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore Ollama model cache
+        id: ollama-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama
+          key: ollama-llama3.2-3b
+
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama server
+        run: |
+          ollama serve &
+          sleep 5
+
+      - name: Pull model
+        run: ollama pull llama3.2:3b
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Resolve tag context
+        id: tag_context
+        run: |
+          CURRENT_TAG="${GITHUB_REF_NAME}"
+          echo "current_tag=${CURRENT_TAG}" >> $GITHUB_OUTPUT
+
+          PREV_TAG=$(git tag --sort=-version:refname \
+            | grep -E '^(v?[0-9]+\.[0-9]+\.[0-9]+)$' \
+            | grep -v "^${CURRENT_TAG}$" \
+            | head -n 1)
+
+          if [ -z "$PREV_TAG" ]; then
+            echo "prev_tag=" >> $GITHUB_OUTPUT
+            echo "No previous tag found — will collect all commits"
+          else
+            echo "prev_tag=${PREV_TAG}" >> $GITHUB_OUTPUT
+            echo "Previous tag: ${PREV_TAG}"
+          fi
+
+      - name: Collect git log
+        id: git_log
+        run: |
+          CURRENT="${{ steps.tag_context.outputs.current_tag }}"
+          PREV="${{ steps.tag_context.outputs.prev_tag }}"
+
+          if [ -z "$PREV" ]; then
+            RAW_LOG=$(git log --pretty=format:"%h %s" "${CURRENT}")
+          else
+            RAW_LOG=$(git log --pretty=format:"%h %s" "${PREV}..${CURRENT}")
+          fi
+
+          echo "raw_log<<EOF" >> $GITHUB_OUTPUT
+          echo "$RAW_LOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog entry
+        env:
+          CURRENT_TAG: ${{ steps.tag_context.outputs.current_tag }}
+          PREV_TAG: ${{ steps.tag_context.outputs.prev_tag }}
+          GIT_LOG: ${{ steps.git_log.outputs.raw_log }}
+        run: python .github/scripts/generate_changelog.py
+
+      - name: Update CHANGELOG.md
+        run: |
+          ENTRY_FILE="/tmp/changelog_entry.md"
+          CHANGELOG="CHANGELOG.md"
+
+          if [ ! -f "$CHANGELOG" ]; then
+            printf '# Changelog\n\nAll notable changes to SA Circular Directory are documented here.\nFormat follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).\n\n' > "$CHANGELOG"
+          fi
+
+          TMP=$(mktemp)
+          HEAD_LINES=$(grep -n "^## " "$CHANGELOG" | head -1 | cut -d: -f1)
+
+          if [ -z "$HEAD_LINES" ]; then
+            cat "$CHANGELOG" "$ENTRY_FILE" > "$TMP"
+          else
+            head -n $((HEAD_LINES - 1)) "$CHANGELOG" > "$TMP"
+            cat "$ENTRY_FILE" >> "$TMP"
+            tail -n +$((HEAD_LINES)) "$CHANGELOG" >> "$TMP"
+          fi
+
+          mv "$TMP" "$CHANGELOG"
+
+      - name: Commit and push changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add CHANGELOG.md
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "chore: add changelog entry for ${{ steps.tag_context.outputs.current_tag }} [skip ci]"
+          git push origin HEAD:main
