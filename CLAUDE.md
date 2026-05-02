@@ -16,6 +16,17 @@ Full system architecture, data flow, tech stack decisions, and environment strat
 
 ---
 
+## Spec Summaries
+
+When implementing changes that have a plan or spec attached (e.g. created via /plan, a user-provided spec, or a design document), write a summary of those changes to `/specs/<concise-title-summarizing-changes>.md` before closing out the task.
+
+The summary should include:
+- What was changed and why
+- Key decisions made during implementation
+- Any caveats, edge cases, or follow-up items
+
+---
+
 # Figma → Component: SA Circular Directory
 
 ## ⚠️ Prime Directive — Always Use Design Tokens
