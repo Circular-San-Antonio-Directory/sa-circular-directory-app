@@ -375,46 +375,33 @@ async function upsertBusinesses(
     }
 
     const f = parsed.data;
-
-    // Use field map to get scalar values cleanly
-    // Airtable value can be boolean or string; normalize to string for the DB VARCHAR column
-    const googleHoursStr = f['Google listed hours accurate?'] != null
-      ? String(f['Google listed hours accurate?'])
-      : null;
+    const fRaw = f as Record<string, unknown>;
 
     const newAddress = f['Address'] ?? null;
     const hoursJson = parseBusinessHoursText(f['Business Hours']);
 
+    // Boolean DB columns that default to false instead of null
+    const BOOLEAN_DB_COLUMNS = new Set([
+      'has_delivery', 'has_pickup', 'has_online_shop', 'volunteer_opportunities',
+    ]);
+
+    // Build scalar fields from BUSINESS_FIELD_MAP so adding a new Airtable field
+    // only requires updating mapping.ts + airtable.ts, not this function.
+    const scalarData: Record<string, unknown> = {};
+    for (const [airtableField, dbColumn] of Object.entries(BUSINESS_FIELD_MAP)) {
+      const raw = fRaw[airtableField];
+      if (dbColumn === 'google_hours_accurate') {
+        // Airtable sends boolean or string; DB column is VARCHAR
+        scalarData[dbColumn] = raw != null ? String(raw) : null;
+      } else if (BOOLEAN_DB_COLUMNS.has(dbColumn)) {
+        scalarData[dbColumn] = raw ?? false;
+      } else {
+        scalarData[dbColumn] = raw ?? null;
+      }
+    }
+
     const sharedData = {
-      business_name:              f['Business Name'] ?? null,
-      business_description:       f['Business Descriptios'] ?? null,
-      listing_photo_url:          f['Listing Photo'] ?? null,
-      address:                    newAddress,
-      business_email:             f['Business Email'] ?? null,
-      business_phone:             f['Business Phone'] ?? null,
-      website:                    f['Website'] ?? null,
-      contact_name:               f['Contact Name'] ?? null,
-      contact_email:              f['Contact Email'] ?? null,
-      contacted_by:               f['Contacted by'] ?? null,
-      instagram_url_1:            f['SOCIAL - Instagram URL 1'] ?? null,
-      instagram_url_2:            f['SOCIAL- Instagram URL 2'] ?? null,
-      facebook_url:               f['SOCIAL - Facebook URL'] ?? null,
-      linkedin_url:               f['SOCIAL - LinkedIn URL'] ?? null,
-      tiktok_handle:              f['Tiktok Handle'] ?? null,
-      google_hours_accurate:      googleHoursStr,
-      business_hours:             f['Business Hours'] ?? null,
-      input_notes:                f['INPUT - Notes Field'] ?? null,
-      input_category_override:    f['INPUT Category - Override (Unique items or category)'] ?? null,
-      output_notes:               f['OUTPUT - Notes Field'] ?? null,
-      output_category_override:   f['OUTPUT Category - Override (Unique items or category)'] ?? null,
-      service_notes:              f['SERVICE - Notes Field'] ?? null,
-      service_category_override:  f['SERVICE Category - Override (Unique items or category)'] ?? null,
-      has_delivery:               f['Has Delivery services'] ?? false,
-      has_pickup:                 f['Has Pick Up service'] ?? false,
-      has_online_shop:            f['Has Online Shop'] ?? false,
-      online_shop_link:           f['If online shop, Link'] ?? null,
-      volunteer_opportunities:    f['VOLUNTEER Opportunities'] ?? false,
-      volunteer_notes:            f['VOLUNTEER - Notes Field'] ?? null,
+      ...scalarData,
       airtable_created_at:        record.createdTime ? new Date(record.createdTime) : null,
       business_type_ids:          mapIds(f['Type of Listing'],                          mappings.businessTypes),
       tag_ids:                    mapIds(f['TAGS'],                                      mappings.tags),
