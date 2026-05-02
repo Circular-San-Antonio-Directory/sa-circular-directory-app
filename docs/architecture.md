@@ -14,13 +14,12 @@
 | Layer | Tool | Why |
 |---|---|---|
 | Data source of truth | Airtable | Non-technical team can manage data via UI |
-| App database | PostgreSQL + PostGIS (Railway) | Free on Railway hobby plan; PostGIS enables future map queries |
-| API layer | Raw `pg` pool queries via `src/lib/db.ts` | Prisma was planned but not yet implemented; pg is used directly |
+| App database | PostgreSQL (Railway) | Free on Railway hobby plan |
+| ORM / migrations | Prisma (v7, `prisma-client` provider + `@prisma/adapter-pg`) | Type-safe queries, `prisma migrate dev` generates SQL migrations |
+| Schema authority | `src/lib/schema/` — Zod schemas + field mappings | Single source of truth for Airtable field names, DB column names, and the mapping between them |
 | Frontend + backend | Next.js (App Router) | Monorepo — one repo, one deploy per environment |
 | Infrastructure | Railway | Git-based deploys, managed Postgres, environment support, no monthly fee on hobby |
 | Maps | Mapbox | Render location data on the frontend |
-
-> **Note:** The tech stack table originally listed Prisma and tRPC — neither is in use yet. The app queries the DB directly via `pg` pool.
 
 ---
 
@@ -119,10 +118,9 @@ Airtable is **read-only from the app's perspective.** All data edits happen in A
 ### Known Airtable field quirks
 
 - **`Listing Photo`** — stored as a plain URL string (not an Airtable attachment array). Extract directly: `f['Listing Photo']`, not `f['Listing Photo'][0].url`.
-- **`Business Descriptios`** — typo in Airtable field name ("Descriptios", not "Description"). The sync uses the misspelled name to match.
-- **`Type of Business`** — Airtable field name in `Production DB`; the sync references it as `Type of Listing` (legacy mismatch — verify if this causes data loss).
-- **`SERVICE Category - Override`** — Airtable field is named `SERVICE - Override or Specific (Unique items or category)`; verify sync field name matches.
+- **`Business Descriptios`** — typo in Airtable field name ("Descriptios", not "Description"). Documented as-is in the Zod schema; fix in Airtable when ready, then update `src/lib/schema/airtable.ts` and `src/lib/schema/mapping.ts`.
 - **`Business Actions` → `Action` field** — stores the business-perspective label (e.g. "Accepts Dropoff", "Sells"). The `Corresponding Action` field stores the user-facing label (e.g. "Donate", "Buy"). The app maps between them via `src/lib/actionMapping.ts`.
+- **All field names are canonical in `src/lib/schema/`** — if you find a mismatch between what Airtable sends and what the sync uses, `src/lib/schema/airtable.ts` is the first place to look.
 
 ---
 
@@ -136,7 +134,25 @@ Sync logic lives in `src/lib/sync.ts` and is called by one active entry point:
 |---|---|
 | `scripts/sync.ts` + `npm run sync` | Railway Cron service (primary), or local testing |
 
-The sync fetches all 8 Airtable tables into memory, upserts lookup tables in parallel, upserts businesses, then geocodes any un-geocoded addresses via the Mapbox Geocoding API. All upserts use `ON CONFLICT (airtable_id) DO UPDATE` so re-running is safe.
+The sync fetches all 8 Airtable tables into memory, validates each record against its Zod schema (invalid records are logged and skipped — no silent null inserts), upserts lookup tables in parallel via Prisma Client, upserts businesses, then geocodes any un-geocoded addresses via the Mapbox Geocoding API. All upserts use Prisma's `upsert()` (conflict on `airtable_id`) so re-running is safe.
+
+### Shared schema module (`src/lib/schema/`)
+
+This is the single source of truth for all Airtable ↔ DB field name mappings:
+
+| File | Purpose |
+|---|---|
+| `src/lib/schema/tables.ts` | Airtable table names and IDs (both `name` and `id` per table) |
+| `src/lib/schema/airtable.ts` | Zod schemas per entity — matches exact Airtable field names, including known typos |
+| `src/lib/schema/mapping.ts` | Maps Airtable field names → Prisma model field names for each entity |
+| `src/lib/schema/index.ts` | Barrel export |
+
+**Adding a new field:**
+1. Add the field to `src/lib/schema/airtable.ts`
+2. Add the mapping in `src/lib/schema/mapping.ts`
+3. Wire it into the Prisma upsert in `src/lib/sync.ts`
+4. Run `npx prisma migrate dev --name add_<field>` to generate the SQL migration
+5. TypeScript errors surface everywhere the field needs to be handled
 
 
 ### Railway Cron service (`airtable-sync`)
@@ -147,7 +163,7 @@ The sync fetches all 8 Airtable tables into memory, upserts lookup tables in par
 - **Manual trigger:** click **"Deploy Now"** in the Railway dashboard on the `airtable-sync` service
 - **Env vars required:** `DATABASE_URL`, `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `MAPBOX_SECRET_TOKEN`, `NODE_ENV=production`
 
-> **`NODE_ENV=production` is required** on the cron service so `src/lib/db.ts` enables SSL for the Railway internal Postgres connection.
+> **`NODE_ENV=production` is required** on the cron service so `src/lib/db.ts` enables SSL on the `pg.Pool` that backs the Prisma adapter.
 
 ### Production promotion (Staging DB → Production DB)
 
@@ -161,14 +177,23 @@ The sync fetches all 8 Airtable tables into memory, upserts lookup tables in par
 
 ## Database Schema
 
-Schema is managed with plain SQL migration files in `migrations/`. There is no ORM migration runner — apply files manually or via an admin script.
+Schema is now managed by **Prisma**. `prisma/schema.prisma` is the canonical schema definition — introspected from the live staging DB. Future schema changes flow through `prisma migrate dev`.
 
-| File | Purpose |
+| Path | Purpose |
 |---|---|
-| `migrations/current_schema.sql` | Canonical full schema — keep this up to date; used by `db:reset` + `migrate:sql` for fresh installs |
-| `migrations/003_add_action_columns.sql` | Incremental: adds `corresponding_action` + `display_order` to `business_actions`, updates `businesses_complete` view |
-| `migrations/004_add_geocoding.sql` | Incremental: adds `latitude`, `longitude`, `geocoded_at` to `businesses` for Mapbox map integration |
-| `migrations/006_add_category_items_and_icon.sql` | Incremental: adds `items TEXT` and `fa_icon VARCHAR(100)` to `categories`; recreates `businesses_complete` view with `*_category_icons` arrays appended at end |
+| `prisma/schema.prisma` | Canonical schema — edit this, then run `prisma migrate dev` |
+| `prisma/migrations/` | Auto-generated SQL migration history (commit these) |
+| `migrations/current_schema.sql` | Legacy reference only — no longer the source of truth |
+| `migrations/003_add_action_columns.sql` | Pre-Prisma incremental migration (historical) |
+| `migrations/004_add_geocoding.sql` | Pre-Prisma incremental migration (historical) |
+| `migrations/006_add_category_items_and_icon.sql` | Pre-Prisma incremental migration (historical) |
+
+**Migration workflow:**
+```bash
+# After editing prisma/schema.prisma:
+npx prisma migrate dev --name describe_the_change
+# This generates SQL in prisma/migrations/ and applies it to the connected DB
+```
 
 ### Key design decisions
 
@@ -210,11 +235,17 @@ sa-circular-directory-app/
       MapView/                # Mapbox GL JS map + floating search bar (client component, desktop-primary)
       Nav/                    # Navigation bar
     lib/
-      sync.ts                 # Core sync logic: Airtable upsert + Mapbox geocoding
-      db.ts                   # pg Pool singleton
-      getListings.ts          # DB → Listing type mapping; queries businesses_complete view
-      getCategories.ts        # DB → Category[] (category, items[], faIcon); used for search matching
-      slugify.ts              # slugify() utility (separate file to avoid client-bundle pg import)
+      sync.ts                 # Core sync logic: Zod validation + Prisma upserts + Mapbox geocoding
+      db.ts                   # Prisma Client singleton (backed by pg.Pool via @prisma/adapter-pg)
+      schema/                 # Single source of truth for Airtable ↔ DB field mappings
+        tables.ts             # Airtable table names + IDs
+        airtable.ts           # Zod schemas per entity (exact Airtable field names)
+        mapping.ts            # Airtable field name → Prisma field name per entity
+        index.ts              # Barrel export
+      getListings.ts          # DB → Listing type mapping; queries businesses_complete view via $queryRaw
+      getCategories.ts        # Prisma → Category[] (category, items[], faIcon); used for search matching
+      getActions.ts           # Prisma → ActionConfig[] (action label, icon, colorway)
+      slugify.ts              # slugify() utility (separate file to avoid client-bundle import)
       actionMapping.ts        # Airtable action string → ActionName mapping
   scripts/
     sync.ts                   # Standalone entry point for Railway Cron (calls src/lib/sync.ts)
@@ -283,9 +314,9 @@ On mobile (`window.innerWidth < 1024`), tapping the MapView search input blurs i
 
 | Task | AI Opportunity |
 |---|---|
-| Airtable schema changes | When new columns are added to Airtable, Claude can update the sync script, migration, `getListings.ts` types, and UI in one pass |
+| Airtable schema changes | Add a field to `src/lib/schema/airtable.ts` + `mapping.ts`, wire into `sync.ts`, run `prisma migrate dev` — Claude can do all four steps in one pass |
 | Sync script logic | Claude writes and maintains the upsert logic as Airtable schema evolves |
 | QA diffing | Claude can compare staging vs. production record counts / field changes before promotion |
 | Component generation | Claude builds UI components from Figma designs using design tokens (see CLAUDE.md) |
-| Data cleanup | Claude can flag Airtable records with missing required fields before sync |
-| Field name auditing | Use the Airtable MCP (`describe_table`) + Grep to verify field name alignment between Airtable and sync scripts |
+| Data cleanup | Zod `safeParse` already flags invalid records at sync time; Claude can query logs for skipped records and report on which fields are missing |
+| Field name auditing | Use the Airtable MCP (`describe_table`) to get live field names; compare against `src/lib/schema/airtable.ts` to surface drift |

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { runSync } from '../src/lib/sync';
-import pool from '../src/lib/db';
+import prisma from '../src/lib/db';
 
 async function main() {
   console.log(`[sync] Starting Airtable → PostgreSQL sync at ${new Date().toISOString()}`);
@@ -13,7 +13,7 @@ async function main() {
     console.error('[sync] Sync failed:', error);
     process.exit(1);
   } finally {
-    await pool.end();
+    await prisma.$disconnect();
   }
 }
 

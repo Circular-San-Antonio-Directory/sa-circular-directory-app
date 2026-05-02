@@ -1,5 +1,17 @@
 import Airtable from 'airtable';
-import pool from './db';
+import prisma from './db';
+import {
+  AIRTABLE_TABLES,
+  BusinessAirtableSchema,
+  BusinessTypeAirtableSchema,
+  CategoryAirtableSchema,
+  TagAirtableSchema,
+  BusinessActionAirtableSchema,
+  CoreMaterialSystemAirtableSchema,
+  EnablingSystemAirtableSchema,
+  BusinessActivityAirtableSchema,
+  BUSINESS_FIELD_MAP,
+} from './schema';
 import type { BusinessHoursJson, DayKey, DayEntry, DisplayRow } from './getListings';
 
 // ─── Hours text parser ────────────────────────────────────────────────────────
@@ -123,20 +135,7 @@ function parseBusinessHoursText(raw: unknown): BusinessHoursJson | null {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-const TABLES = [
-  { name: 'Production DB',        key: 'productionDb'    },
-  { name: 'Business Actions',     key: 'businessActions' },
-  { name: 'Categories',           key: 'categories'      },
-  { name: 'Business Type',        key: 'businessTypes'   },
-  { name: 'Core Material System', key: 'coreMaterials'   },
-  { name: 'Tag',                  key: 'tags'            },
-  { name: 'Business Activity',    key: 'activities'      },
-  { name: 'Enabling Systems',     key: 'enablingSystems' },
-] as const;
-
-type TableKey = typeof TABLES[number]['key'];
-type AirtableRecord = { id: string; fields: Record<string, unknown>; createdTime: string };
-type TableData = Record<TableKey, AirtableRecord[]>;
+type RawAirtableRecord = { id: string; fields: Record<string, unknown>; createdTime: string };
 type IdMapping = Record<string, number>;
 
 export interface SyncResult {
@@ -156,14 +155,17 @@ export interface SyncResult {
 
 // ─── Airtable fetch ───────────────────────────────────────────────────────────
 
+type TableFetchKey = keyof typeof AIRTABLE_TABLES;
+type TableData = Record<TableFetchKey, RawAirtableRecord[]>;
+
 async function fetchAllFromAirtable(): Promise<TableData> {
   const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
     .base(process.env.AIRTABLE_BASE_ID!);
 
   const results = {} as TableData;
 
-  for (const table of TABLES) {
-    const records: AirtableRecord[] = [];
+  for (const [key, table] of Object.entries(AIRTABLE_TABLES) as [TableFetchKey, { name: string; id: string }][]) {
+    const records: RawAirtableRecord[] = [];
     await base(table.name)
       .select({ view: 'Grid view' })
       .eachPage((pageRecords, fetchNextPage) => {
@@ -174,7 +176,7 @@ async function fetchAllFromAirtable(): Promise<TableData> {
         })));
         fetchNextPage();
       });
-    results[table.key] = records;
+    results[key] = records;
   }
 
   return results;
@@ -182,61 +184,191 @@ async function fetchAllFromAirtable(): Promise<TableData> {
 
 // ─── Upsert helpers ───────────────────────────────────────────────────────────
 
-async function upsertLookup(
-  tableName: string,
-  records: AirtableRecord[],
-  fieldMap: Record<string, string>,
-): Promise<IdMapping> {
+async function upsertBusinessTypes(records: RawAirtableRecord[]): Promise<IdMapping> {
   const mapping: IdMapping = {};
-
   for (const record of records) {
     if (!record.fields || Object.keys(record.fields).length === 0) continue;
-
-    const cols = ['airtable_id'];
-    const vals: unknown[] = [record.id];
-    const placeholders = ['$1'];
-    const updates: string[] = [];
-    let i = 2;
-
-    for (const [airtableField, sqlCol] of Object.entries(fieldMap)) {
-      if (record.fields[airtableField] != null) {
-        cols.push(sqlCol);
-        vals.push(record.fields[airtableField]);
-        placeholders.push(`$${i}`);
-        updates.push(`${sqlCol} = EXCLUDED.${sqlCol}`);
-        i++;
-      }
+    const parsed = BusinessTypeAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping business_type ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
     }
-
-    const result = await pool.query(
-      `INSERT INTO ${tableName} (${cols.join(', ')})
-       VALUES (${placeholders.join(', ')})
-       ON CONFLICT (airtable_id) DO UPDATE SET ${updates.join(', ')}, updated_at = NOW()
-       RETURNING id, airtable_id`,
-      vals,
-    );
-    mapping[record.id] = result.rows[0].id;
+    const row = await prisma.business_types.upsert({
+      where: { airtable_id: record.id },
+      create: { airtable_id: record.id, name: parsed.data.Name },
+      update: { name: parsed.data.Name, updated_at: new Date() },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
   }
-
   return mapping;
 }
 
-function mapIds(airtableIds: unknown, mapping: IdMapping): number[] | null {
-  if (!Array.isArray(airtableIds) || airtableIds.length === 0) return null;
-  const ids = (airtableIds as string[]).map(id => mapping[id]).filter(Boolean);
-  return ids.length > 0 ? ids : null;
+async function upsertCategories(records: RawAirtableRecord[]): Promise<IdMapping> {
+  const mapping: IdMapping = {};
+  for (const record of records) {
+    if (!record.fields || Object.keys(record.fields).length === 0) continue;
+    const parsed = CategoryAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping category ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+    const d = parsed.data;
+    const row = await prisma.categories.upsert({
+      where: { airtable_id: record.id },
+      create: {
+        airtable_id: record.id,
+        category: d.Category,
+        notes: d.Notes ?? null,
+        items: d.Items ?? null,
+        fa_icon: d['FA Icon'] ?? null,
+      },
+      update: {
+        category: d.Category,
+        notes: d.Notes ?? null,
+        items: d.Items ?? null,
+        fa_icon: d['FA Icon'] ?? null,
+        updated_at: new Date(),
+      },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
+  }
+  return mapping;
+}
+
+async function upsertTags(records: RawAirtableRecord[]): Promise<IdMapping> {
+  const mapping: IdMapping = {};
+  for (const record of records) {
+    if (!record.fields || Object.keys(record.fields).length === 0) continue;
+    const parsed = TagAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping tag ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+    const row = await prisma.tags.upsert({
+      where: { airtable_id: record.id },
+      create: { airtable_id: record.id, name: parsed.data.Name, description: parsed.data.Description ?? null },
+      update: { name: parsed.data.Name, description: parsed.data.Description ?? null, updated_at: new Date() },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
+  }
+  return mapping;
+}
+
+async function upsertBusinessActions(records: RawAirtableRecord[]): Promise<IdMapping> {
+  const mapping: IdMapping = {};
+  for (const record of records) {
+    if (!record.fields || Object.keys(record.fields).length === 0) continue;
+    const parsed = BusinessActionAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping business_action ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+    const d = parsed.data;
+    // Airtable stores "Icon 3" (space); DB uses "Icon-3" (hyphen)
+    const iconFile = d['Icon to Use'] ? d['Icon to Use'].replace(' ', '-') : null;
+    const row = await prisma.business_actions.upsert({
+      where: { airtable_id: record.id },
+      create: {
+        airtable_id: record.id,
+        action: d.Action,
+        corresponding_action: d['Corresponding Action'] ?? null,
+        display_order: d['Order for Display'] ?? null,
+        icon_file: iconFile,
+        colorway: d.Colorway ?? null,
+      },
+      update: {
+        action: d.Action,
+        corresponding_action: d['Corresponding Action'] ?? null,
+        display_order: d['Order for Display'] ?? null,
+        icon_file: iconFile,
+        colorway: d.Colorway ?? null,
+        updated_at: new Date(),
+      },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
+  }
+  return mapping;
+}
+
+async function upsertCoreMaterialSystems(records: RawAirtableRecord[]): Promise<IdMapping> {
+  const mapping: IdMapping = {};
+  for (const record of records) {
+    if (!record.fields || Object.keys(record.fields).length === 0) continue;
+    const parsed = CoreMaterialSystemAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping core_material_system ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+    const row = await prisma.core_material_systems.upsert({
+      where: { airtable_id: record.id },
+      create: { airtable_id: record.id, name: parsed.data.Name, description: parsed.data.Description ?? null },
+      update: { name: parsed.data.Name, description: parsed.data.Description ?? null, updated_at: new Date() },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
+  }
+  return mapping;
+}
+
+async function upsertEnablingSystems(records: RawAirtableRecord[]): Promise<IdMapping> {
+  const mapping: IdMapping = {};
+  for (const record of records) {
+    if (!record.fields || Object.keys(record.fields).length === 0) continue;
+    const parsed = EnablingSystemAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping enabling_system ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+    const row = await prisma.enabling_systems.upsert({
+      where: { airtable_id: record.id },
+      create: { airtable_id: record.id, name: parsed.data.Name, description: parsed.data.Description ?? null },
+      update: { name: parsed.data.Name, description: parsed.data.Description ?? null, updated_at: new Date() },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
+  }
+  return mapping;
+}
+
+async function upsertBusinessActivities(records: RawAirtableRecord[]): Promise<IdMapping> {
+  const mapping: IdMapping = {};
+  for (const record of records) {
+    if (!record.fields || Object.keys(record.fields).length === 0) continue;
+    const parsed = BusinessActivityAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping business_activity ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+    const row = await prisma.business_activities.upsert({
+      where: { airtable_id: record.id },
+      create: { airtable_id: record.id, name: parsed.data.Name, description: parsed.data.Description ?? null },
+      update: { name: parsed.data.Name, description: parsed.data.Description ?? null, updated_at: new Date() },
+      select: { id: true },
+    });
+    mapping[record.id] = row.id;
+  }
+  return mapping;
+}
+
+function mapIds(airtableIds: unknown, mapping: IdMapping): number[] {
+  if (!Array.isArray(airtableIds) || airtableIds.length === 0) return [];
+  return (airtableIds as string[]).map(id => mapping[id]).filter(Boolean);
 }
 
 async function upsertBusinesses(
-  records: AirtableRecord[],
+  records: RawAirtableRecord[],
   mappings: Record<string, IdMapping>,
 ): Promise<number> {
   let count = 0;
 
   for (const record of records) {
     if (!record.fields || Object.keys(record.fields).length === 0) continue;
-    const f = record.fields as Record<string, unknown>;
 
+<<<<<<< HEAD
     await pool.query(
       `INSERT INTO businesses (
         airtable_id, business_name, business_description, address,
@@ -366,6 +498,88 @@ async function upsertBusinesses(
         parseBusinessHoursText(f['Business Hours']),
       ],
     );
+=======
+    const parsed = BusinessAirtableSchema.safeParse(record.fields);
+    if (!parsed.success) {
+      console.warn(`[sync] Skipping business ${record.id}: invalid fields`, parsed.error.flatten());
+      continue;
+    }
+
+    const f = parsed.data;
+
+    // Use field map to get scalar values cleanly
+    // Airtable value can be boolean or string; normalize to string for the DB VARCHAR column
+    const googleHoursStr = f['Google listed hours accurate?'] != null
+      ? String(f['Google listed hours accurate?'])
+      : null;
+
+    const newAddress = f['Address'] ?? null;
+    const hoursJson = parseBusinessHoursText(f['Business Hours']);
+
+    const sharedData = {
+      business_name:              f['Business Name'] ?? null,
+      business_description:       f['Business Descriptios'] ?? null,
+      listing_photo_url:          f['Listing Photo'] ?? null,
+      address:                    newAddress,
+      business_email:             f['Business Email'] ?? null,
+      business_phone:             f['Business Phone'] ?? null,
+      website:                    f['Website'] ?? null,
+      contact_name:               f['Contact Name'] ?? null,
+      contact_email:              f['Contact Email'] ?? null,
+      contacted_by:               f['Contacted by'] ?? null,
+      instagram_url_1:            f['SOCIAL - Instagram URL 1'] ?? null,
+      instagram_url_2:            f['SOCIAL- Instagram URL 2'] ?? null,
+      facebook_url:               f['SOCIAL - Facebook URL'] ?? null,
+      linkedin_url:               f['SOCIAL - LinkedIn URL'] ?? null,
+      tiktok_handle:              f['Tiktok Handle'] ?? null,
+      google_hours_accurate:      googleHoursStr,
+      business_hours:             f['Business Hours'] ?? null,
+      input_notes:                f['INPUT - Notes Field'] ?? null,
+      input_category_override:    f['INPUT Category - Override (Unique items or category)'] ?? null,
+      output_notes:               f['OUTPUT - Notes Field'] ?? null,
+      output_category_override:   f['OUTPUT Category - Override (Unique items or category)'] ?? null,
+      service_notes:              f['SERVICE - Notes Field'] ?? null,
+      service_category_override:  f['SERVICE Category - Override (Unique items or category)'] ?? null,
+      has_delivery:               f['Has Delivery services'] ?? false,
+      has_pickup:                 f['Has Pick Up service'] ?? false,
+      has_online_shop:            f['Has Online Shop'] ?? false,
+      online_shop_link:           f['If online shop, Link'] ?? null,
+      volunteer_opportunities:    f['VOLUNTEER Opportunities'] ?? false,
+      volunteer_notes:            f['VOLUNTEER - Notes Field'] ?? null,
+      airtable_created_at:        record.createdTime ? new Date(record.createdTime) : null,
+      business_type_ids:          mapIds(f['Type of Listing'],                          mappings.businessTypes),
+      tag_ids:                    mapIds(f['TAGS'],                                      mappings.tags),
+      input_action_ids:           mapIds(f['INPUT Action(s)'],                          mappings.actions),
+      output_action_ids:          mapIds(f['OUTPUT Action(s)'],                         mappings.actions),
+      service_action_ids:         mapIds(f['SERVICE Action(s)'],                        mappings.actions),
+      input_category_ids:         mapIds(f['INPUT Category(s)'],                        mappings.categories),
+      output_category_ids:        mapIds(f['OUTPUT Category(s) (Product Sold)'],        mappings.categories),
+      service_category_ids:       mapIds(f['SERVICE Category(s)'],                      mappings.categories),
+      core_material_ids:          mapIds(f['Core Material System'],                     mappings.coreMaterials),
+      enabling_system_ids:        mapIds(f['Enabling System'],                          mappings.enablingSystems),
+      activity_ids:               mapIds(f['Notable Business Events/Activities'],       mappings.activities),
+      // JSON round-trip strips TypeScript type so Prisma accepts it as InputJsonValue
+      hours_json:                 hoursJson != null ? JSON.parse(JSON.stringify(hoursJson)) : undefined,
+      updated_at:                 new Date(),
+    };
+
+    // Check current address to determine if geocoding should be reset
+    const existing = await prisma.businesses.findUnique({
+      where: { airtable_id: record.id },
+      select: { address: true },
+    });
+    const addressChanged = existing !== null && existing.address !== newAddress;
+
+    await prisma.businesses.upsert({
+      where: { airtable_id: record.id },
+      create: { airtable_id: record.id, ...sharedData },
+      update: {
+        ...sharedData,
+        ...(addressChanged ? { geocoded_at: null, latitude: null, longitude: null } : {}),
+      },
+    });
+
+>>>>>>> f90f08e (prisma migration)
     count++;
   }
 
@@ -381,9 +595,10 @@ async function geocodeBusinesses(): Promise<number> {
     return 0;
   }
 
-  const { rows } = await pool.query<{ id: number; address: string }>(
-    `SELECT id, address FROM businesses WHERE geocoded_at IS NULL AND address IS NOT NULL AND address != ''`
-  );
+  const rows = await prisma.businesses.findMany({
+    where: { geocoded_at: null, address: { not: null } },
+    select: { id: true, address: true },
+  });
 
   let geocodedCount = 0;
 
@@ -404,10 +619,10 @@ async function geocodeBusinesses(): Promise<number> {
         continue;
       }
       const [lng, lat] = center;
-      await pool.query(
-        `UPDATE businesses SET longitude=$1, latitude=$2, geocoded_at=NOW() WHERE id=$3`,
-        [lng, lat, row.id],
-      );
+      await prisma.businesses.update({
+        where: { id: row.id },
+        data: { longitude: lng, latitude: lat, geocoded_at: new Date() },
+      });
       geocodedCount++;
     } catch (err) {
       console.warn(`[sync] Geocoding error for business id=${row.id}:`, err);
@@ -427,27 +642,26 @@ export async function runSync(): Promise<SyncResult> {
 
   const [businessTypes, categories, tags, actions, coreMaterials, enablingSystems, activities] =
     await Promise.all([
-      upsertLookup('business_types',        data.businessTypes,   { Name: 'name' }),
-      upsertLookup('categories',            data.categories,      { Category: 'category', Notes: 'notes', Items: 'items', 'FA Icon': 'fa_icon' }),
-      upsertLookup('tags',                  data.tags,            { Name: 'name', Description: 'description' }),
-      upsertLookup('business_actions',      data.businessActions, { Action: 'action', 'Corresponding Action': 'corresponding_action', 'Order for Display': 'display_order', 'Icon to Use': 'icon_file', 'Colorway': 'colorway' }),
-      upsertLookup('core_material_systems', data.coreMaterials,   { Name: 'name', Description: 'description' }),
-      upsertLookup('enabling_systems',      data.enablingSystems, { Name: 'name', Description: 'description' }),
-      upsertLookup('business_activities',   data.activities,      { Name: 'name', Description: 'description' }),
+      upsertBusinessTypes(data.businessTypes),
+      upsertCategories(data.categories),
+      upsertTags(data.tags),
+      upsertBusinessActions(data.businessActions),
+      upsertCoreMaterialSystems(data.coreMaterialSystems),
+      upsertEnablingSystems(data.enablingSystems),
+      upsertBusinessActivities(data.businessActivities),
     ]);
 
-  const businessCount = await upsertBusinesses(data.productionDb, {
+  const businessCount = await upsertBusinesses(data.businesses, {
     businessTypes, categories, tags, actions,
     coreMaterials, enablingSystems, activities,
   });
 
   // Delete businesses that no longer exist in Airtable
-  const activeIds = data.productionDb.map(r => r.id);
+  const activeIds = data.businesses.map(r => r.id);
   if (activeIds.length > 0) {
-    await pool.query(
-      `DELETE FROM businesses WHERE airtable_id != ALL($1::text[])`,
-      [activeIds],
-    );
+    await prisma.businesses.deleteMany({
+      where: { airtable_id: { notIn: activeIds } },
+    });
   }
 
   const geocodedCount = await geocodeBusinesses();
@@ -455,15 +669,15 @@ export async function runSync(): Promise<SyncResult> {
   return {
     syncedAt: new Date().toISOString(),
     counts: {
-      businesses:    businessCount,
-      geocoded:      geocodedCount,
-      businessTypes: Object.keys(businessTypes).length,
-      categories:    Object.keys(categories).length,
-      tags:          Object.keys(tags).length,
-      actions:       Object.keys(actions).length,
-      coreMaterials: Object.keys(coreMaterials).length,
+      businesses:     businessCount,
+      geocoded:       geocodedCount,
+      businessTypes:  Object.keys(businessTypes).length,
+      categories:     Object.keys(categories).length,
+      tags:           Object.keys(tags).length,
+      actions:        Object.keys(actions).length,
+      coreMaterials:  Object.keys(coreMaterials).length,
       enablingSystems: Object.keys(enablingSystems).length,
-      activities:    Object.keys(activities).length,
+      activities:     Object.keys(activities).length,
     },
   };
 }

@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model business_actions {
+  id                   Int       @id @default(autoincrement())
+  airtable_id          String    @unique @db.VarChar(50)
+  action               String    @db.VarChar(200)
+  corresponding_action String?   @db.VarChar(100)
+  display_order        Int?
+  created_at           DateTime? @default(now()) @db.Timestamp(6)
+  updated_at           DateTime? @default(now()) @db.Timestamp(6)
+  icon_file            String?   @db.VarChar(50)
+  colorway             String?   @db.VarChar(50)
+
+  @@index([action], map: "idx_business_actions_action")
+  @@index([airtable_id], map: "idx_business_actions_airtable_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model business_activities {
+  id          Int       @id @default(autoincrement())
+  airtable_id String    @unique @db.VarChar(50)
+  name        String    @db.VarChar(200)
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([airtable_id], map: "idx_business_activities_airtable_id")
+  @@index([name], map: "idx_business_activities_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model business_types {
+  id          Int       @id @default(autoincrement())
+  airtable_id String    @unique @db.VarChar(50)
+  name        String    @db.VarChar(100)
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([airtable_id], map: "idx_business_types_airtable_id")
+  @@index([name], map: "idx_business_types_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model businesses {
+  id                        Int       @id @default(autoincrement())
+  airtable_id               String    @unique @db.VarChar(50)
+  business_name             String?   @db.VarChar(255)
+  business_description      String?
+  address                   String?
+  business_email            String?   @db.VarChar(255)
+  business_phone            String?   @db.VarChar(50)
+  website                   String?   @db.VarChar(500)
+  contact_name              String?   @db.VarChar(255)
+  contact_email             String?   @db.VarChar(255)
+  contacted_by              String?   @db.VarChar(100)
+  instagram_url_1           String?   @db.VarChar(500)
+  instagram_url_2           String?   @db.VarChar(500)
+  facebook_url              String?   @db.VarChar(500)
+  linkedin_url              String?   @db.VarChar(500)
+  google_hours_accurate     String?   @db.VarChar(50)
+  business_hours            String?
+  business_type_ids         Int[]
+  tag_ids                   Int[]
+  input_action_ids          Int[]
+  output_action_ids         Int[]
+  service_action_ids        Int[]
+  input_category_ids        Int[]
+  output_category_ids       Int[]
+  service_category_ids      Int[]
+  core_material_ids         Int[]
+  enabling_system_ids       Int[]
+  activity_ids              Int[]
+  input_notes               String?
+  input_category_override   String?
+  output_notes              String?
+  output_category_override  String?
+  service_notes             String?
+  service_category_override String?
+  listing_photo_url         String?   @db.VarChar(500)
+  has_delivery              Boolean?  @default(false)
+  has_pickup                Boolean?  @default(false)
+  has_online_shop           Boolean?  @default(false)
+  online_shop_link          String?   @db.VarChar(500)
+  volunteer_opportunities   Boolean?  @default(false)
+  volunteer_notes           String?
+  airtable_created_at       DateTime? @db.Timestamp(6)
+  created_at                DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                DateTime? @default(now()) @db.Timestamp(6)
+  // TODO: evaluate if PostGIS geometry column is needed, or if Float lat/lng is sufficient (see grill-me session 2026-05-01)
+  latitude                  Float?
+  longitude                 Float?
+  geocoded_at               DateTime? @db.Timestamptz(6)
+  hours_json                Json?
+  tiktok_handle             String?   @db.VarChar(500)
+
+  @@index([activity_ids], map: "idx_businesses_activity_ids", type: Gin)
+  @@index([airtable_id], map: "idx_businesses_airtable_id")
+  @@index([business_email], map: "idx_businesses_business_email")
+  @@index([business_name], map: "idx_businesses_business_name")
+  @@index([business_type_ids], map: "idx_businesses_business_type_ids", type: Gin)
+  @@index([core_material_ids], map: "idx_businesses_core_material_ids", type: Gin)
+  @@index([enabling_system_ids], map: "idx_businesses_enabling_system_ids", type: Gin)
+  @@index([input_action_ids], map: "idx_businesses_input_action_ids", type: Gin)
+  @@index([input_category_ids], map: "idx_businesses_input_category_ids", type: Gin)
+  @@index([output_action_ids], map: "idx_businesses_output_action_ids", type: Gin)
+  @@index([output_category_ids], map: "idx_businesses_output_category_ids", type: Gin)
+  @@index([service_action_ids], map: "idx_businesses_service_action_ids", type: Gin)
+  @@index([service_category_ids], map: "idx_businesses_service_category_ids", type: Gin)
+  @@index([tag_ids], map: "idx_businesses_tag_ids", type: Gin)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model categories {
+  id          Int       @id @default(autoincrement())
+  airtable_id String    @unique @db.VarChar(50)
+  category    String    @db.VarChar(100)
+  notes       String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+  items       String?
+  fa_icon     String?   @db.VarChar(100)
+
+  @@index([airtable_id], map: "idx_categories_airtable_id")
+  @@index([category], map: "idx_categories_category")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model core_material_systems {
+  id          Int       @id @default(autoincrement())
+  airtable_id String    @unique @db.VarChar(50)
+  name        String    @db.VarChar(200)
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([airtable_id], map: "idx_core_material_systems_airtable_id")
+  @@index([name], map: "idx_core_material_systems_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model enabling_systems {
+  id          Int       @id @default(autoincrement())
+  airtable_id String    @unique @db.VarChar(50)
+  name        String    @db.VarChar(200)
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([airtable_id], map: "idx_enabling_systems_airtable_id")
+  @@index([name], map: "idx_enabling_systems_name")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tags {
+  id          Int       @id @default(autoincrement())
+  airtable_id String    @unique @db.VarChar(50)
+  name        String    @db.VarChar(100)
+  description String?
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([airtable_id], map: "idx_tags_airtable_id")
+  @@index([name], map: "idx_tags_name")
+}

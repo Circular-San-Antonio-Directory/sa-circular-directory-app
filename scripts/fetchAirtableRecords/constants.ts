@@ -1,38 +1,10 @@
-import { TableDefinition } from "./types";
+import { AIRTABLE_TABLES } from '../../src/lib/schema/tables';
+import type { TableDefinition } from './types';
 
-export const PRODUCTION_DB = "Production DB";
+// Derived from the single source of truth in src/lib/schema/tables.ts
+export const tables: TableDefinition[] = Object.values(AIRTABLE_TABLES).map(t => ({
+  name: t.name,
+  id: t.id,
+}));
 
-export const tables: TableDefinition[] = [
-  {
-    name: PRODUCTION_DB,
-    id: "tblujaqw04RqX2j3P",
-  },
-  {
-    name: "Business Actions",
-    id: "tblgqINSWO2dbU47G"
-  },
-  {
-    name: "Categories",
-    id: "tblBbF9twnZYHd8jz"
-  },
-  {
-    name: "Business Type",
-    id: "tbl6I6Lv3Tie1v5f3"
-  },
-  {
-    name: "Core Material System",
-    id: "tbl9CXIR5KUnby3el"
-  },
-  {
-    name: "Tag",
-    id: "tblFGOQaD3M8uffIq"
-  },
-  {
-    name: "Business Activity",
-    id: "tblhVXx855N83v61I"
-  },
-  {
-    name: "Enabling Systems",
-    id: "tbl2LvLDN92wihXrk"
-  },
-];
+export const PRODUCTION_DB = AIRTABLE_TABLES.businesses.name;
