@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 
 /**
  * PostgreSQL connection pool configuration
- * Uses DATABASE_URL from .env (Railway PostgreSQL)
+ * Uses DATABASE_URL from .env
  */
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

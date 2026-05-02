@@ -1,6 +1,6 @@
 import type { ActionName } from '@/components/ActionIcon/ActionIcon';
 import { csvActionToActionName } from './actionMapping';
-import pool from './db';
+import prisma from './db';
 export { slugify } from './slugify';
 
 // ─── Hours types ──────────────────────────────────────────────────────────────
@@ -248,10 +248,11 @@ function rowToListing(row: BusinessRow): Listing {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export async function getListings(): Promise<Listing[]> {
-  const result = await pool.query<BusinessRow>(
-    `SELECT * FROM businesses_complete
-     WHERE business_name IS NOT NULL
-     ORDER BY business_name`
-  );
-  return result.rows.map(rowToListing);
+  // businesses_complete is a view — queried via $queryRaw since Prisma doesn't model views
+  const rows = await prisma.$queryRaw<BusinessRow[]>`
+    SELECT * FROM businesses_complete
+    WHERE business_name IS NOT NULL
+    ORDER BY business_name
+  `;
+  return rows.map(rowToListing);
 }

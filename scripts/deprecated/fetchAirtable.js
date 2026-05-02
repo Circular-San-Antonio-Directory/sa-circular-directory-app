@@ -1,6 +1,6 @@
 require('dotenv').config();
 const Airtable = require('airtable');
-const { transformBusinessRecords } = require('./BusinessRecord');
+const { transformBusinessRecords } = require('../BusinessRecord');
 
 // Configure Airtable
 const base = new Airtable({

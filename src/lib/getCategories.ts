@@ -1,4 +1,4 @@
-import pool from './db';
+import prisma from './db';
 
 export interface Category {
   category: string;
@@ -8,10 +8,13 @@ export interface Category {
 }
 
 export async function getCategories(): Promise<Category[]> {
-  const result = await pool.query<{ category: string; items: string | null; fa_icon: string | null }>(
-    `SELECT category, items, fa_icon FROM categories WHERE category IS NOT NULL ORDER BY category`,
-  );
-  return result.rows.map((row) => ({
+  // category is a required field in schema (non-nullable), so no null filter needed
+  const rows = await prisma.categories.findMany({
+    orderBy: { category: 'asc' },
+    select: { category: true, items: true, fa_icon: true },
+  });
+
+  return rows.map((row) => ({
     category: row.category,
     items: row.items ? row.items.split(',').map((s) => s.trim().toLowerCase()) : [],
     faIcon: row.fa_icon ?? null,

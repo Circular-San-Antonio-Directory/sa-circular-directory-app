@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { getClient, testConnection, end } = require('./dbConfig');
+const { getClient, testConnection, end } = require('../dbConfig');
 
 /**
  * Read and parse JSON data file
