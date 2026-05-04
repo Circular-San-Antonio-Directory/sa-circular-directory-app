@@ -16,14 +16,20 @@ Full system architecture, data flow, tech stack decisions, and environment strat
 
 ---
 
-## Spec Summaries
+## Versioning
 
-When implementing changes that have a plan or spec attached (e.g. created via /plan, a user-provided spec, or a design document), write a summary of those changes to `/specs/<concise-title-summarizing-changes>.md` before closing out the task.
+After completing any task that changes user-facing behaviour, fixes a bug, or modifies the API/data layer, update **both** of these files before closing out:
 
-The summary should include:
-- What was changed and why
-- Key decisions made during implementation
-- Any caveats, edge cases, or follow-up items
+1. **`package.json` → `version`** — increment using semantic versioning:
+   - `PATCH` (x.x.**X**) — bug fixes, copy changes, style tweaks, non-breaking dependency bumps
+   - `MINOR` (x.**X**.0) — new features, new pages or components, new API endpoints, backwards-compatible changes
+   - `MAJOR` (**X**.0.0) — breaking changes to the API, data schema migrations that require coordination, major architectural changes
+
+2. **`CHANGELOG.md`** — prepend a new entry under the bumped version number following the existing format. Include:
+   - A short summary of what changed and why (1–3 sentences, written for a human reading release notes)
+   - Any notable decisions, caveats, or migration steps if relevant
+
+Do **not** bump the version for: internal refactors with no behaviour change, comment/doc updates, CI/tooling changes, or work-in-progress commits.
 
 ---
 
