@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] 
 
+## [1.0.1]
+- Enforcing semantic versioning
+
 ---
 
 [Unreleased]: https://github.com/gabrielkilly/sa-circular-directory-app/compare/v1.0.0...HEAD
