@@ -36,9 +36,11 @@ export const CSV_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
  */
 export const CORRESPONDING_ACTION_TO_ACTION_NAME: Partial<Record<string, ActionName>> = {
   'donate':        'donate',
+  'drop off':      'donate',
   'buy':           'buy',
   'buy (b2b)':     'buyB2B',
   'sell':          'sell',
+  'sell my items': 'sell',
   'consign':       'consign',
   'trade':         'trade',
   'repair':        'repair',

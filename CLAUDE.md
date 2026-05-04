@@ -9,6 +9,23 @@ description: >
 
 # SA Circular Directory — Claude Instructions
 
+## Branching
+
+**Never commit directly to `main`.** The remote rejects direct pushes to main.
+
+Before starting any work, check the current branch with `git branch --show-current`. If you are on `main`, create and switch to a new branch first:
+
+```
+git checkout -b <type>/<short-description>
+```
+
+- Use `fix/` for bug fixes (e.g. `fix/sell-action-missing-icon`)
+- Use `feature/` for new features or pages (e.g. `feature/listing-detail-page`)
+
+Keep the description lowercase, hyphen-separated, and short enough to scan at a glance. Create the branch before making any file edits.
+
+---
+
 ## Architecture & Data Flow
 
 Full system architecture, data flow, tech stack decisions, and environment strategy are documented in:
