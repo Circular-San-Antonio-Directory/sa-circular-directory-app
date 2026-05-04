@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2]
+- Fixed sell and donate action icons not appearing. The Airtable "Corresponding Action" values ("Sell my Items", "Drop Off") didn't match the keys in `CORRESPONDING_ACTION_TO_ACTION_NAME`, causing both rows to be silently skipped in `getActions()`.
+
 ## [1.0.0] 
 
 ## [1.0.1]
