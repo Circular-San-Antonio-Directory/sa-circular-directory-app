@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
-node scripts/runMigrations.js
+npx tsx scripts/runMigrations.ts
 node scripts/promote-db.js
