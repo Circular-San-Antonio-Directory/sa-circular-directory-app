@@ -21,15 +21,19 @@ const prod = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+// Internal tracking tables that belong to each environment independently
+const SKIP_TABLES = new Set(['_prisma_migrations', 'schema_migrations']);
+
 async function promote() {
   console.log('=== DB Promotion: staging → production ===');
   console.log(`Started at: ${new Date().toISOString()}`);
 
-  const { rows: tables } = await staging.query(`
+  const { rows: allTables } = await staging.query(`
     SELECT tablename FROM pg_tables
     WHERE schemaname = 'public'
     ORDER BY tablename
   `);
+  const tables = allTables.filter(t => !SKIP_TABLES.has(t.tablename));
 
   console.log(`Tables: ${tables.map(t => t.tablename).join(', ')}\n`);
 

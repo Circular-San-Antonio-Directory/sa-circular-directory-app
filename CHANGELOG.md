@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5]
+- Fixed production deployment failing in `promote-db.js` because staging has a `_prisma_migrations` table that doesn't exist in production. Internal migration tracking tables (`_prisma_migrations`, `schema_migrations`) are now excluded from the staging→production data promotion.
+
 ## [1.0.4]
 - Fixed Railway production build failing due to Railpack treating `MAPBOX_SECRET_TOKEN` as a required build-time secret. Switched to bracket notation in `sync.ts` so the variable is only resolved at runtime during `npm run sync`.
 
