@@ -444,7 +444,8 @@ async function upsertBusinesses(
 // ─── Geocoding ────────────────────────────────────────────────────────────────
 
 async function geocodeBusinesses(): Promise<number> {
-  const token = process.env.MAPBOX_SECRET_TOKEN;
+  // bracket notation prevents Railpack from treating this as a build-time secret
+  const token = process.env['MAPBOX_SECRET_TOKEN'];
   if (!token) {
     console.warn('[sync] MAPBOX_SECRET_TOKEN not set — skipping geocoding');
     return 0;
