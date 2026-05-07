@@ -1,8 +1,6 @@
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
-const { getClient, testConnection, end } = require('./dbConfig');
+import * as fs from 'fs';
+import * as path from 'path';
+import { getClient, testConnection, end } from './dbConfig';
 
 const MIGRATIONS_DIR = path.resolve(__dirname, '../migrations');
 const MIGRATION_PATTERN = /^\d{3}_.*\.sql$/;
@@ -27,7 +25,7 @@ async function runMigrations() {
 
     // Find applied migrations
     const { rows: applied } = await client.query('SELECT name FROM schema_migrations');
-    const appliedSet = new Set(applied.map(r => r.name));
+    const appliedSet = new Set(applied.map((r: any) => r.name));
 
     // Find pending migrations (numbered files only, sorted)
     const pending = fs.readdirSync(MIGRATIONS_DIR)
@@ -51,7 +49,7 @@ async function runMigrations() {
         await client.query('INSERT INTO schema_migrations (name) VALUES ($1)', [filename]);
         await client.query('COMMIT');
         console.log(`  ✅ Applied: ${filename}`);
-      } catch (err) {
+      } catch (err: any) {
         await client.query('ROLLBACK');
         console.error(`  ❌ Failed: ${filename} — ${err.message}`);
         process.exit(1);

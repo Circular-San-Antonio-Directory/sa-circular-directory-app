@@ -1,8 +1,6 @@
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
-const { getClient, testConnection, end } = require('./dbConfig');
+import * as fs from 'fs';
+import * as path from 'path';
+import { getClient, testConnection, end } from './dbConfig';
 
 async function runMigration() {
   const migrationFile = process.argv[2];
@@ -33,7 +31,7 @@ async function runMigration() {
     await client.query(sql);
     await client.query('COMMIT');
     console.log(`✅ Migration applied: ${path.basename(absolutePath)}`);
-  } catch (err) {
+  } catch (err: any) {
     await client.query('ROLLBACK');
     console.error('Migration failed — rolled back:', err.message);
     process.exit(1);

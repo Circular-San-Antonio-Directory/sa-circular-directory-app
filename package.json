@@ -1,6 +1,6 @@
 {
   "name": "circular-directory",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,8 +10,8 @@
     "sync": "tsx scripts/sync.ts",
     "fetch:airtable": "node scripts/fetchAirtable.js",
     "migrate:sql": "node scripts/migrateToSQL.js",
-    "db:migrate": "node scripts/runMigration.js",
-    "db:reset": "node scripts/resetDatabase.js",
+    "db:migrate": "tsx scripts/runMigration.ts",
+    "db:reset": "tsx scripts/resetDatabase.ts",
     "db:promote": "node scripts/promote-db.js"
   },
   "dependencies": {
