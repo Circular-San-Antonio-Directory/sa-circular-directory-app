@@ -57,6 +57,13 @@ export function ListingTabs({ fields: f, mapsUrl }: ListingTabsProps) {
       {activeTab === 'overview' && (
         <div className={styles.tabContent}>
 
+          {/* Description */}
+          {f.businessDescription && (
+            <div className={styles.section}>
+              <p className={`body-default-regular ${styles.description}`}>{f.businessDescription}</p>
+            </div>
+          )}
+
           {/* Quick actions: Website + Directions */}
           {(f.website || mapsUrl) && (
             <div className={styles.contactGrid}>
@@ -102,13 +109,6 @@ export function ListingTabs({ fields: f, mapsUrl }: ListingTabsProps) {
       {/* ── Details tab ──────────────────────────────────────────────── */}
       {activeTab === 'details' && (
         <div className={styles.tabContent}>
-
-          {/* Description */}
-          {f.businessDescription && (
-            <div className={styles.section}>
-              <p className={`body-default-regular ${styles.description}`}>{f.businessDescription}</p>
-            </div>
-          )}
 
           {/* Social links */}
           {hasSocial && (
