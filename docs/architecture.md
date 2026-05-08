@@ -118,7 +118,7 @@ Airtable is **read-only from the app's perspective.** All data edits happen in A
 ### Known Airtable field quirks
 
 - **`Listing Photo`** — stored as a plain URL string (not an Airtable attachment array). Extract directly: `f['Listing Photo']`, not `f['Listing Photo'][0].url`.
-- **`Business Descriptios`** — typo in Airtable field name ("Descriptios", not "Description"). Documented as-is in the Zod schema; fix in Airtable when ready, then update `src/lib/schema/airtable.ts` and `src/lib/schema/mapping.ts`.
+- **`Business Description`** — previously had a typo in Airtable ("Business Descriptios"). Airtable field has since been corrected; `src/lib/schema/airtable.ts` and `src/lib/schema/mapping.ts` updated to match.
 - **`Business Actions` → `Action` field** — stores the business-perspective label (e.g. "Accepts Dropoff", "Sells"). The `Corresponding Action` field stores the user-facing label (e.g. "Donate", "Buy"). The app maps between them via `src/lib/actionMapping.ts`.
 - **All field names are canonical in `src/lib/schema/`** — if you find a mismatch between what Airtable sends and what the sync uses, `src/lib/schema/airtable.ts` is the first place to look.
 
