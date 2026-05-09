@@ -15,7 +15,7 @@
 // card shadow:      $shadow-sm
 // =============================================================================
 
-@use '../styles' as *;
+@use '../../styles' as *;
 
 // Collapsed: only this much of the sheet peeks above the bottom edge.
 // handle (4px) + gap (8px) + text (~20px) + top/bottom padding (32px total) ≈ 64px

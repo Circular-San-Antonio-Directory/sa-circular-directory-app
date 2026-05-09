@@ -11,10 +11,10 @@ import { Pill } from '@/components/Pill';
 import type { PillColor } from '@/components/Pill';
 import { slugify } from '@/lib/slugify';
 import { filterListings } from '@/lib/filterListings';
-import { MobileBottomSheet } from './MobileBottomSheet';
-import { MobileMapPreview } from './MobileMapPreview';
-import { MobileSearchSheet } from './MobileSearchSheet';
-import styles from './map/page.module.scss';
+import { MobileBottomSheet } from '@/components/MobileBottomSheet';
+import { MobileMapPreview } from '@/components/MobileMapPreview';
+import { MobileSearchSheet } from '@/components/MobileSearchSheet';
+import styles from '@/app/map/page.module.scss';
 
 const MapView = dynamic(
   () => import('@/components/MapView').then((m) => m.MapView),

@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6]
+- Fixed Airtable sync reading the wrong column name for business descriptions. The typo `Business Descriptios` was corrected to `Business Description` in the Airtable base; updated schema, mapping, and migration helpers to match.
+- Reorganized `src/app/listings/[slug]` components into individual subdirectories following the project's component conventions. No behaviour change.
+
 ## [1.0.5]
 - Fixed production deployment failing in `promote-db.js` because staging has a `_prisma_migrations` table that doesn't exist in production. Internal migration tracking tables (`_prisma_migrations`, `schema_migrations`) are now excluded from the staging→production data promotion.
 

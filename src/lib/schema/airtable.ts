@@ -46,7 +46,7 @@ export const BusinessActivityAirtableSchema = z.object({
 export const BusinessAirtableSchema = z.object({
   // Basic info
   'Business Name': z.string().optional(),
-  'Business Descriptios': z.string().optional(), // Airtable typo — do not fix here
+  'Business Description': z.string().optional(),
   'Listing Photo': z.string().optional(),
   'Address': z.string().optional(),
   'Business Email': z.string().optional(),

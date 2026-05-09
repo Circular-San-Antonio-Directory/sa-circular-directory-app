@@ -1,0 +1,24 @@
+@use '../../../../styles' as *;
+
+.copyEmailButton {
+  @include type-body-small-regular();
+  color: $text-default;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  text-align: left;
+
+  &:hover {
+    color: $text-link;
+  }
+}
+
+.copyEmailIcon {
+  color: $text-subtle;
+  font-size: 13px;
+  flex-shrink: 0;
+}

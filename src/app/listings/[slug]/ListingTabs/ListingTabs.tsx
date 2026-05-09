@@ -5,8 +5,8 @@ import type { Listing } from '@/lib/getListings';
 import { Pill } from '@/components/Pill';
 import { ActionsBlock } from '@/components/ActionsBlock';
 import { SystemsMapping } from '@/components/SystemsMapping';
-import { CopyEmailButton } from './CopyEmailButton';
-import { BusinessHoursBlock } from './BusinessHoursBlock';
+import { CopyEmailButton } from '../CopyEmailButton';
+import { BusinessHoursBlock } from '../BusinessHoursBlock';
 import styles from './ListingTabs.module.scss';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

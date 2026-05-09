@@ -159,7 +159,7 @@ export async function insertBusinesses(
     const valueList = [
       record.id,
       fields['Business Name'] || null,
-      fields['Business Descriptios'] || null, // Note: typo in Airtable
+      fields['Business Description'] || null,
       fields['Address'] || null,
       fields['Business Email'] || null,
       fields['Business Phone'] || null,

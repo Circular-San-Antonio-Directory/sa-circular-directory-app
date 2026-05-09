@@ -16,7 +16,7 @@
 // z-index: 15       above map, below bottom sheet (z-index 20)
 // =============================================================================
 
-@use '../styles' as *;
+@use '../../styles' as *;
 
 $peek-height: 58px; // bottom sheet peek — must match MobileBottomSheet.module.scss
 

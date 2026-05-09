@@ -27,7 +27,7 @@
 // show results text:      $text-inverse
 // =============================================================================
 
-@use '../styles' as *;
+@use '../../styles' as *;
 
 // Only render on mobile — hidden entirely above 1024px
 .backdrop,

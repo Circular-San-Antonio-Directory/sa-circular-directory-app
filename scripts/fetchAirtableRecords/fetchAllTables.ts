@@ -47,8 +47,8 @@ export async function fetchAllTables(
   console.log(`🚀 Fetching ${tables.length} tables...\n`);
 
   // Create data directory if it doesn't exist
-  if (saveFiles && !fs.existsSync('./data')) {
-    fs.mkdirSync('./data');
+  if (saveFiles && !fs.existsSync('./tmp')) {
+    fs.mkdirSync('./tmp');
   }
 
   // Fetch each table with proper error handling
@@ -70,7 +70,7 @@ export async function fetchAllTables(
       // Save individual table file
       if (saveFiles) {
         const filename = sanitizeTableName(table.name);
-        const filepath = `./data/${filename}.json`;
+        const filepath = `./tmp/${filename}.json`;
         fs.writeFileSync(filepath, JSON.stringify(records, null, 2));
         console.log(`   💾 Saved to ${filepath}`);
       }
@@ -98,12 +98,12 @@ export async function fetchAllTables(
 
   // Save combined data file
   if (saveFiles) {
-    const allTablesPath = './data/all-tables.json';
+    const allTablesPath = './tmp/all-tables.json';
     fs.writeFileSync(allTablesPath, JSON.stringify(allTableData, null, 2));
     console.log(`\n💾 All tables saved to ${allTablesPath}`);
 
     // Save summary
-    const summaryPath = './data/fetch-summary.json';
+    const summaryPath = './tmp/fetch-summary.json';
     fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
     console.log(`📊 Summary saved to ${summaryPath}`);
   }
