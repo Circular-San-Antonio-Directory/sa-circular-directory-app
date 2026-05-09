@@ -3,7 +3,7 @@
 
 export const BUSINESS_FIELD_MAP = {
   'Business Name':                                       'business_name',
-  'Business Descriptios':                                'business_description', // Airtable typo preserved
+  'Business Description':                                'business_description',
   'Listing Photo':                                       'listing_photo_url',
   'Address':                                             'address',
   'Business Email':                                      'business_email',

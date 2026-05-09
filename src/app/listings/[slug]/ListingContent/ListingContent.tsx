@@ -2,11 +2,11 @@ import type { Listing } from '@/lib/getListings';
 import { Pill } from '@/components/Pill';
 import { ActionsBlock } from '@/components/ActionsBlock';
 import { SystemsMapping } from '@/components/SystemsMapping';
-import styles from './page.module.scss';
-import { CopyEmailButton } from './CopyEmailButton';
-import { ListingTabs } from './ListingTabs';
-import { MobileBackButton } from './MobileBackButton';
-import { BusinessHoursBlock } from './BusinessHoursBlock';
+import styles from './ListingContent.module.scss';
+import { CopyEmailButton } from '../CopyEmailButton';
+import { ListingTabs } from '../ListingTabs';
+import { MobileBackButton } from '../MobileBackButton';
+import { BusinessHoursBlock } from '../BusinessHoursBlock';
 
 // ─── Tag color picker (deterministic, no mono/offWhite) ───────────────────────
 

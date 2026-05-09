@@ -1,0 +1,397 @@
+@use '../../../../styles' as *;
+
+// ─── Mobile / tablet layout (≤900px) ─────────────────────────────────────────
+
+.mobileLayout {
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+  }
+}
+
+.mobilePhotoWrapper {
+  position: relative;
+}
+
+.mobilePhoto {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+
+  @media (min-width: 600px) {
+    height: 240px;
+  }
+}
+
+.mobilePhotoPlaceholder {
+  width: 100%;
+  height: 200px;
+  background: $surface-sunken;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-disabled;
+
+  @media (min-width: 600px) {
+    height: 240px;
+  }
+}
+
+.mobileCard {
+  position: relative;
+  z-index: 1;
+  margin-top: -$space-10; // overlap photo by ~40px
+  margin-left: $space-3;
+  margin-right: $space-3;
+  margin-bottom: $space-4;
+  background: $surface-raised;
+  border: 1px solid $border-default;
+  border-radius: $radius-lg $radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+.mobileCardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4;
+
+  // Override hero-2-strong (50px) → hero-4 (28px/500) on mobile
+  .businessName {
+    @include type-hero-4();
+  }
+}
+
+.pillRowHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  padding-top: $space-2;
+  padding-bottom: $space-2;
+}
+
+// ─── Desktop two-column layout (>900px) ───────────────────────────────────────
+
+.desktopLayout {
+  display: block;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.main {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: $space-8;
+  border-right: 1px solid $border-subtle;
+}
+
+.mainInner {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  max-width: 1100px;
+  //margin: 0 auto;
+}
+
+.sidebar {
+  flex: 0 0 30%;
+  min-width: 320px;
+  padding: $space-8 $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+
+  @media (min-width: 1200px) {
+    padding: $space-8 $space-8;
+  }
+}
+
+// ─── Header section ───────────────────────────────────────────────────────────
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  padding: 0 $space-2;
+}
+
+.nameAddress {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.businessName {
+  // Uses global .hero-2-light class — Archivo 50px/300
+  margin: 0;
+  line-height: 1;
+  color: $text-default;
+}
+
+.address {
+  color: $text-subtle;
+  margin: 0;
+}
+
+.description {
+  color: $text-default;
+  margin: 0;
+}
+
+// ─── Photo ────────────────────────────────────────────────────────────────────
+
+.photo {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  display: block;
+}
+
+.photoPlaceholder {
+  width: 100%;
+  height: 260px;
+  border-radius: $radius-sm;
+  background: $surface-sunken;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-disabled;
+}
+
+// ─── Sections (shared) ────────────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-5 0;
+  //border-top: 1px solid $border-default;
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.sectionLabel {
+  @include type-heading-3();
+  color: $text-default;
+  margin: 0;
+  padding-bottom: $space-3;
+}
+
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}
+
+// ─── Sidebar: Quick contact grid ─────────────────────────────────────────────
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-2;
+}
+
+.contactCard {
+  background: $surface-sunken;
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: $space-5 $space-3 $space-4;
+  text-decoration: none;
+  color: $text-default;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $border-default;
+  }
+}
+
+.contactCardFull {
+  grid-column: 1 / -1;
+}
+
+.contactCardIcon {
+  font-size: 20px;
+  color: $text-default;
+}
+
+.contactCardLabel {
+  @include type-body-small-regular();
+  color: $text-default;
+}
+
+// ─── Sidebar: Divider ────────────────────────────────────────────────────────
+
+.sidebarDivider {
+  border: none;
+  border-top: 1px solid $border-default;
+  margin: 0;
+}
+
+// ─── Sidebar: Social (Keep Up) ───────────────────────────────────────────────
+
+.socialRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.socialLabel {
+  @include type-body-default-medium();
+  color: $text-default;
+}
+
+.socialLinks {
+  display: flex;
+  gap: $space-2 + 2px; // nearest token: 10px, between $space-2 (8px) and $space-3 (12px)
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+
+  &.instagram {
+    background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+  }
+
+  &.facebook {
+    background: $blue-600; // nearest token: Figma used #2563eb
+  }
+
+  &.linkedin {
+    background: #0077b5; // TODO: token needed? No LinkedIn color token exists
+  }
+
+  &.tiktok {
+    background: $mono-800;
+  }
+}
+
+// ─── Sidebar: Contact (Phone + Email) ────────────────────────────────────────
+
+.contactSection {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.contactHeading {
+  @include type-body-default-medium();
+  color: $text-default;
+  margin: 0;
+}
+
+.contactRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 0;
+  border-bottom: 1px dashed $border-default;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.contactKey {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.contactValue {
+  @include type-body-small-regular();
+  color: $text-default;
+  text-decoration: none;
+}
+
+.contactValueEmpty {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+// ─── Sidebar: Service Options ────────────────────────────────────────────────
+
+.serviceOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.serviceHeading {
+  @include type-body-default-medium();
+  color: $text-default;
+  margin: 0;
+}
+
+.serviceRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 0;
+  border-bottom: 1px dashed $border-default;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.serviceKey {
+  @include type-body-small-regular();
+  color: $text-subtle;
+}
+
+.serviceValue {
+  @include type-body-small-regular();
+  color: $text-default;
+}
+
+.serviceLink {
+  @include type-body-small-regular();
+  color: $text-link;
+  text-decoration: none;
+  border: 1px solid $text-link;
+  border-radius: $radius-md;
+  padding: $space-1 $space-3;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: $text-link;
+    color: $text-inverse;
+  }
+}

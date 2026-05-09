@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import styles from './page.module.scss';
+import styles from './CopyEmailButton.module.scss';
 
 interface CopyEmailButtonProps {
   email: string;
