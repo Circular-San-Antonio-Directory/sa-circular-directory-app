@@ -12,7 +12,9 @@
     "migrate:sql": "node scripts/migrateToSQL.js",
     "db:migrate": "tsx scripts/runMigration.ts",
     "db:reset": "tsx scripts/resetDatabase.ts",
-    "db:promote": "node scripts/promote-db.js"
+    "db:promote": "node scripts/promote-db.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -44,6 +46,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "sass": "^1.97.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }
