@@ -20,6 +20,7 @@
 | Frontend + backend | Next.js (App Router) | Monorepo — one repo, one deploy per environment |
 | Infrastructure | Railway | Git-based deploys, managed Postgres, environment support, no monthly fee on hobby |
 | Maps | Mapbox | Render location data on the frontend |
+| Component & UI testing | Vitest + React Testing Library (`jsdom`) | Colocated `__tests__/` directories; covers client components and self-contained server components; no DB or running server required |
 
 ---
 
@@ -247,6 +248,7 @@ sa-circular-directory-app/
       getActions.ts           # Prisma → ActionConfig[] (action label, icon, colorway)
       slugify.ts              # slugify() utility (separate file to avoid client-bundle import)
       actionMapping.ts        # Airtable action string → ActionName mapping
+    test-setup.ts             # Global test setup — extends Vitest expect with @testing-library/jest-dom
   scripts/
     sync.ts                   # Standalone entry point for Railway Cron (calls src/lib/sync.ts)
   migrations/
@@ -318,5 +320,6 @@ On mobile (`window.innerWidth < 1024`), tapping the MapView search input blurs i
 | Sync script logic | Claude writes and maintains the upsert logic as Airtable schema evolves |
 | QA diffing | Claude can compare staging vs. production record counts / field changes before promotion |
 | Component generation | Claude builds UI components from Figma designs using design tokens (see CLAUDE.md) |
+| UI test generation | When adding a new page or interactive component, Claude writes RTL tests alongside the feature — see CLAUDE.md Testing section for scope rules and patterns |
 | Data cleanup | Zod `safeParse` already flags invalid records at sync time; Claude can query logs for skipped records and report on which fields are missing |
 | Field name auditing | Use the Airtable MCP (`describe_table`) to get live field names; compare against `src/lib/schema/airtable.ts` to surface drift |

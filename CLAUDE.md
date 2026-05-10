@@ -50,6 +50,83 @@ Do **not** bump the version for: internal refactors with no behaviour change, co
 
 ---
 
+## Testing
+
+Run all tests: `npm test` · watch mode: `npm run test:watch`
+
+### When tests are required
+
+Write UI tests whenever you add or significantly change:
+- A **new page** — test its key components (tabs, interactive sections, conditional display)
+- A **new client component** with user interaction (clicks, state changes, browser APIs)
+- A **display component** with meaningful conditional logic (e.g. open/closed states, empty vs. populated)
+
+Do **not** write tests for: static layout-only components, full page server components that call Prisma directly (need a running DB), or tRPC routes (test those at the integration level separately).
+
+### Scope: what the test suite covers
+
+| Layer | Approach |
+|---|---|
+| Client components (`'use client'`) | React Testing Library in jsdom |
+| Self-contained server components (no Prisma/Next.js APIs) | React Testing Library in jsdom |
+| Full page server components (`page.tsx`) | Out of scope for this suite |
+| Pure utility functions | Vitest unit tests (`environment: 'node'`) |
+
+### File placement
+
+Colocate tests with the component they cover:
+
+```
+ComponentName/
+  ComponentName.tsx
+  ComponentName.module.scss
+  index.ts
+  __tests__/
+    ComponentName.test.tsx
+    fixtures.ts          ← shared mock data for this page/section (if needed)
+```
+
+### Non-obvious setup rules
+
+**Always add `// @vitest-environment jsdom` as the first line of every `.test.tsx` file.**
+The `vitest.config.ts` defaults to `node`. `environmentMatchGlobs` cannot be used here because the `[slug]` directory name contains glob special characters — the per-file annotation is the only reliable override.
+
+**Mock heavy child components** that have their own context or complexity so tests stay focused:
+```tsx
+vi.mock('@/components/ActionsBlock', () => ({
+  ActionsBlock: () => <div data-testid="actions-block" />,
+}));
+```
+Mock paths are resolved relative to the **test file**, not the component under test — double-check depth when mocking sibling directories (e.g. `'../../BusinessHoursBlock'` not `'../BusinessHoursBlock'`).
+
+**Mock browser APIs** before each test that needs them:
+```tsx
+// Clipboard
+Object.defineProperty(navigator, 'clipboard', {
+  value: { writeText: vi.fn().mockResolvedValue(undefined) },
+  configurable: true, writable: true,
+});
+```
+
+**Control time** for components that use the current date (e.g. hours open/closed):
+```tsx
+vi.setSystemTime(new Date('2026-01-07T16:00:00.000Z')); // Wed 10am Chicago
+```
+Always restore with `vi.useRealTimers()` in `afterEach`.
+
+**Use `fireEvent` + `act` (not `userEvent`) when fake timers are active** — `userEvent.setup()` hangs waiting for real timers to advance when `vi.useFakeTimers()` is in effect.
+
+**SCSS modules** are automatically proxied to identity strings by the vitest config — no extra setup needed.
+
+### Existing test examples
+
+- **Client component with state + browser API:** `src/app/listings/[slug]/CopyEmailButton/__tests__/CopyEmailButton.test.tsx`
+- **Client component with tab navigation + mocked children:** `src/app/listings/[slug]/ListingTabs/__tests__/ListingTabs.test.tsx`
+- **Server component with time-dependent logic:** `src/app/listings/[slug]/BusinessHoursBlock/__tests__/BusinessHoursBlock.test.tsx`
+- **Pure unit tests (schema/mapping):** `src/lib/schema/__tests__/mapping.test.ts`
+
+---
+
 # Figma → Component: SA Circular Directory
 
 ## ⚠️ Prime Directive — Always Use Design Tokens
