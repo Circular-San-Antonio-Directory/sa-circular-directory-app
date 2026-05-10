@@ -10,7 +10,7 @@ import {
   CoreMaterialSystemAirtableSchema,
   EnablingSystemAirtableSchema,
   BusinessActivityAirtableSchema,
-  BUSINESS_FIELD_MAP,
+  applyBusinessFieldMap,
 } from './schema';
 import type { BusinessHoursJson, DayKey, DayEntry, DisplayRow } from './getListings';
 
@@ -380,25 +380,9 @@ async function upsertBusinesses(
     const newAddress = f['Address'] ?? null;
     const hoursJson = parseBusinessHoursText(f['Business Hours']);
 
-    // Boolean DB columns that default to false instead of null
-    const BOOLEAN_DB_COLUMNS = new Set([
-      'has_delivery', 'has_pickup', 'has_online_shop', 'volunteer_opportunities',
-    ]);
-
-    // Build scalar fields from BUSINESS_FIELD_MAP so adding a new Airtable field
-    // only requires updating mapping.ts + airtable.ts, not this function.
-    const scalarData: Record<string, unknown> = {};
-    for (const [airtableField, dbColumn] of Object.entries(BUSINESS_FIELD_MAP)) {
-      const raw = fRaw[airtableField];
-      if (dbColumn === 'google_hours_accurate') {
-        // Airtable sends boolean or string; DB column is VARCHAR
-        scalarData[dbColumn] = raw != null ? String(raw) : null;
-      } else if (BOOLEAN_DB_COLUMNS.has(dbColumn)) {
-        scalarData[dbColumn] = raw ?? false;
-      } else {
-        scalarData[dbColumn] = raw ?? null;
-      }
-    }
+    // Build scalar fields via the shared pure helper (see mapping.ts).
+    // Adding a new Airtable field only requires updating mapping.ts + airtable.ts.
+    const scalarData = applyBusinessFieldMap(fRaw);
 
     const sharedData = {
       ...scalarData,

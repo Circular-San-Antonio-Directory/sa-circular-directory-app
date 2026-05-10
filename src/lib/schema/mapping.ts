@@ -33,6 +33,32 @@ export const BUSINESS_FIELD_MAP = {
   'VOLUNTEER - Notes Field':                             'volunteer_notes',
 } as const satisfies Record<string, string>;
 
+// ─── Transform helper ─────────────────────────────────────────────────────────
+
+const BOOLEAN_DB_COLUMNS = new Set([
+  'has_delivery', 'has_pickup', 'has_online_shop', 'volunteer_opportunities',
+]);
+
+/**
+ * Applies BUSINESS_FIELD_MAP to a raw Airtable fields object, returning the
+ * corresponding DB column values. Pure function — no Prisma or DB dependency.
+ */
+export function applyBusinessFieldMap(fRaw: Record<string, unknown>): Record<string, unknown> {
+  const scalarData: Record<string, unknown> = {};
+  for (const [airtableField, dbColumn] of Object.entries(BUSINESS_FIELD_MAP)) {
+    const raw = fRaw[airtableField];
+    if (dbColumn === 'google_hours_accurate') {
+      // Airtable sends boolean or string; DB column is VARCHAR
+      scalarData[dbColumn] = raw != null ? String(raw) : null;
+    } else if (BOOLEAN_DB_COLUMNS.has(dbColumn)) {
+      scalarData[dbColumn] = raw ?? false;
+    } else {
+      scalarData[dbColumn] = raw ?? null;
+    }
+  }
+  return scalarData;
+}
+
 // Lookup table field maps: Airtable field name → SQL column name
 export const BUSINESS_TYPE_FIELD_MAP = {
   Name: 'name',
