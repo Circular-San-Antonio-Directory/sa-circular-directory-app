@@ -1,6 +1,6 @@
 {
   "name": "circular-directory",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -33,6 +33,10 @@
     "react-dom": "19.2.3",
     "tsx": "^4.19.3",
     "zod": "^4.4.1"
+  },
+  "engines": {
+    "node": "^22",
+    "npm": "^10"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
