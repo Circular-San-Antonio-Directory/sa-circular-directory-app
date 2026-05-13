@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2]
+- Fixed Railway staging deploys failing because `package-lock.json` was missing resolved entries for `@emnapi/core@1.10.0` and `@emnapi/runtime@1.10.0`. These are transitive deps of an optional wasm32 package; npm 11 (local) skips them but npm 10 (Railway / Node 22) fails the pre-flight lockfile check. Added the entries manually and pinned Node 22 via `.nvmrc` and the `engines` field to prevent the version mismatch from recurring.
+
 ## [1.1.1]
 - Fixed staging deploy failing because `package-lock.json` was out of sync with `package.json` — two transitive packages (`@emnapi/runtime`, `@emnapi/core`) were missing from the lockfile. Regenerated the lockfile via `npm install`.
 
