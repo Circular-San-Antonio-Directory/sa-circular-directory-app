@@ -15,6 +15,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 1.0,
   };
 
+  const map: MetadataRoute.Sitemap[number] = {
+    url: absoluteUrl('/map'),
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.9,
+  };
+
   const listingEntries: MetadataRoute.Sitemap = listings.map(l => ({
     url: absoluteUrl(`/listings/${slugify(l.fields.businessName)}`),
     lastModified: now,
@@ -22,5 +29,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [home, ...listingEntries];
+  return [home, map, ...listingEntries];
 }
