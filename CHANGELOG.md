@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1]
+- Fixed staging deploy failing because `package-lock.json` was out of sync with `package.json` — two transitive packages (`@emnapi/runtime`, `@emnapi/core`) were missing from the lockfile. Regenerated the lockfile via `npm install`.
+
 ## [1.1.0]
 - Added SEO metadata across all pages: `<title>` templates, Open Graph tags, Twitter card tags, and canonical URLs on the root layout, home page, and each listing detail page. Listing pages generate per-business descriptions and pull the listing photo as the OG image with a branded fallback.
 - Added `LocalBusiness` JSON-LD structured data to every listing page so Google can render rich results (address, phone, hours, map pin). Fields are sourced directly from Airtable via the existing data pipeline.
