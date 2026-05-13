@@ -1,6 +1,6 @@
 {
   "name": "circular-directory",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -35,6 +35,9 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^20",
     "@types/pg": "^8",
@@ -45,6 +48,7 @@
     "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "jsdom": "^29.1.1",
     "sass": "^1.97.3",
     "typescript": "^5",
     "vitest": "^4.1.5"

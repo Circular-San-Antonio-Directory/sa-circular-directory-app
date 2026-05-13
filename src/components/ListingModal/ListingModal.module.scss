@@ -53,6 +53,7 @@
 
 .content {
   overflow-y: auto;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   flex: 1;
   min-height: 0; // required for flex + overflow-y to work correctly
