@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl, SITE_URL } from '@/lib/siteUrl';
 
-const PROD_URL = 'https://directory.circularsanantonio.com';
+const PROD_URL = 'https://directory.circularsanantonio.org';
 
 export default function robots(): MetadataRoute.Robots {
   if (SITE_URL !== PROD_URL) {
