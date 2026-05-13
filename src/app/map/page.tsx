@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
+import { absoluteUrl } from '@/lib/siteUrl';
 import { Nav } from '@/components/Nav';
+
+export const metadata: Metadata = {
+  title: 'Map | SA Circular Directory',
+  alternates: { canonical: absoluteUrl('/map') },
+};
 import { getListings } from '@/lib/getListings';
 import { getCategories } from '@/lib/getCategories';
 import { getActions } from '@/lib/getActions';
