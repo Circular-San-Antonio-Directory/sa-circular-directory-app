@@ -62,6 +62,9 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  verification: {
+    google: 'bBHtBN3wcF2yPksHhC73yv7NiSjfWspunucfW5W5o-I',
+  },
 };
 
 export default function RootLayout({

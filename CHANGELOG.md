@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4]
+- Added Google Search Console verification meta tag to the root layout so both staging and production can be verified in Google Search Console.
+
 ## [1.1.3]
 - Fixed `/map` page appearing in Google Search under the staging domain (`s-directory.circularsanantonio.org`). Added a canonical URL metadata tag to the map page pointing to the production domain, and added `/map` to the dynamic sitemap so production is clearly signalled as authoritative to crawlers.
 
