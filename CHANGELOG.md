@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5]
+- Fixed favicon not appearing in browser tabs or Google Search results. The `layout.tsx` metadata was pointing to `/favicon.ico` and `/apple-touch-icon.png` which didn't exist, overriding Next.js's file-based icon convention. Removed the explicit `icons` block so Next.js serves `src/app/icon.svg` automatically, and generated `src/app/apple-icon.png` (180×180) for Apple devices.
+
 ## [1.1.4]
 - Added Google Search Console verification meta tag to the root layout so both staging and production can be verified in Google Search Console.
 

@@ -58,9 +58,8 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+  verification: {
+    google: 'bBHtBN3wcF2yPksHhC73yv7NiSjfWspunucfW5W5o-I',
   },
   verification: {
     google: 'bBHtBN3wcF2yPksHhC73yv7NiSjfWspunucfW5W5o-I',
