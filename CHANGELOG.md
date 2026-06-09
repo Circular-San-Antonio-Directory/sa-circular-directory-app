@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6]
+- Fixed staging build failing with TypeScript error "An object literal cannot have multiple properties with the same name." PR #38 (Google Search Console) and PR #39 (favicon fix) both independently added a `verification` block to the root layout metadata, resulting in a duplicate. Removed the second copy.
+
 ## [1.1.5]
 - Fixed favicon not appearing in browser tabs or Google Search results. The `layout.tsx` metadata was pointing to `/favicon.ico` and `/apple-touch-icon.png` which didn't exist, overriding Next.js's file-based icon convention. Removed the explicit `icons` block so Next.js serves `src/app/icon.svg` automatically, and generated `src/app/apple-icon.png` (180×180) for Apple devices.
 
