@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.8]
+- Replaced the default Next.js boilerplate README with a project-specific README covering the app's purpose, tech stack, local setup, environment variables, available scripts, data pipeline, deployment workflow, branching rules, versioning policy, and testing notes.
+
 ## [1.1.7]
 - Added automated test coverage to the CI pipeline. A GitHub Actions workflow now runs the full test suite on every PR targeting `main`, blocking merge if any tests fail or coverage drops below 90%. Added unit tests for `filterListings` (search + action filter logic, including cross-group enforcement) and `actionMapping` (Airtable action string → ActionName mapping). Added a `test:coverage` script to `package.json`.
 
