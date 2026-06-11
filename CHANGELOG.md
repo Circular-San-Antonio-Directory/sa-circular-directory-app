@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.8]
+- Resolved 14 of 17 npm audit vulnerabilities (moderate and high) via `npm audit fix` and targeted dependency updates. Bumped `next` to 16.2.9 and added a `postcss` override to force ≥8.5.10. Three remaining moderate vulnerabilities in `@hono/node-server` (via `@prisma/dev` inside `prisma`) cannot be fixed without downgrading Prisma from v7 to v6, which is a breaking change.
+
 ## [1.1.7]
 - Added automated test coverage to the CI pipeline. A GitHub Actions workflow now runs the full test suite on every PR targeting `main`, blocking merge if any tests fail or coverage drops below 90%. Added unit tests for `filterListings` (search + action filter logic, including cross-group enforcement) and `actionMapping` (Airtable action string → ActionName mapping). Added a `test:coverage` script to `package.json`.
 
