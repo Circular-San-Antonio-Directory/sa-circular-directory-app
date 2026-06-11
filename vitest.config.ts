@@ -16,6 +16,15 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./src/test-setup.ts'],
+    coverage: {
+      provider: 'v8',
+      thresholds: {
+        lines: 90,
+        functions: 85,
+        branches: 90,
+        statements: 90,
+      },
+    },
   },
   resolve: {
     alias: {
